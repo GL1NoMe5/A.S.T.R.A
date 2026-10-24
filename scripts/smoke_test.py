@@ -8,11 +8,11 @@ import httpx
 from websockets.asyncio.client import connect
 
 
-async def run(base, seconds):
+async def run(base, seconds, emit=True):
     started=time.monotonic()
     messages=0
     failures=[]
-    async with httpx.AsyncClient(base_url=base,timeout=30) as client:
+    async with httpx.AsyncClient(base_url=base,timeout=30,trust_env=False) as client:
         health=await client.get("/health")
         health.raise_for_status()
         initial=(await client.get("/api/v1/metrics")).json()["stream"]["processed_readings"]
@@ -37,7 +37,8 @@ async def run(base, seconds):
                 "new_readings":metrics["stream"]["processed_readings"]-initial,
                 "mode":metrics["mode"],"health_failures":failures,
                 "optimization_zones":len(result.json()["zones"]),"status":"passed"}
-        print(json.dumps(report,ensure_ascii=False,indent=2))
+        if emit:
+            print(json.dumps(report,ensure_ascii=False,indent=2))
         return report
 
 
