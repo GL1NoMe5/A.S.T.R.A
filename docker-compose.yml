@@ -1,0 +1,47 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: astra
+      POSTGRES_USER: astra
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-astra_demo_local_only}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U astra -d astra"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+    restart: unless-stopped
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "128mb", "--maxmemory-policy", "noeviction"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+    restart: unless-stopped
+  astra:
+    build: .
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      ASTRA_MODE: docker
+      ASTRA_DATABASE_URL: postgresql+asyncpg://astra:${POSTGRES_PASSWORD:-astra_demo_local_only}@postgres:5432/astra
+      ASTRA_REDIS_URL: redis://redis:6379/0
+      ASTRA_DATA_DIR: /app/data
+    volumes:
+      - astra_data:/app/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+volumes:
+  postgres_data:
+  redis_data:
+  astra_data:

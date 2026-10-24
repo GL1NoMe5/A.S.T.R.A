@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+data/
+.env
+*.log
+artifacts/
+.wheelhouse/
+.cache/
+argon-delivery/

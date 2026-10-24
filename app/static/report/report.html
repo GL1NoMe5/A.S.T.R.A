@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a111b">
+  <meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>ASTRA — Печатный отчёт по сценарию озеленения</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath fill='%2365e6bd' d='M20 2 38 36H2zm0 12-8 16h16z'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./report.css">
+  <script defer src="./report.js"></script>
+</head>
+<body>
+  <header class="app-bar no-print">
+    <div class="app-bar-inner">
+      <div class="brand">
+        <span class="brand-symbol" aria-hidden="true">△</span>
+        <div class="brand-text">
+          <strong>ASTRA</strong>
+          <small>городская экология · модуль отчётности</small>
+        </div>
+      </div>
+      <div class="toolbar-actions">
+        <a id="dashboard-link" class="btn btn-secondary" href="/" hidden>← К дашборду</a>
+        <input id="json-file-input" type="file" accept=".json,application/json" hidden>
+        <span id="loaded-file-badge" class="file-badge" hidden></span>
+        <button type="button" id="pick-file-btn" class="btn btn-secondary">Выбрать JSON расчёта</button>
+        <button type="button" id="print-btn" class="btn btn-primary" disabled>Печать / сохранить PDF</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="intake-wrap no-print" aria-label="Загрузка файла расчёта">
+    <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-describedby="dropzone-hint">
+      <div class="dropzone-icon" aria-hidden="true">♧</div>
+      <div class="dropzone-copy">
+        <div class="eyebrow">ЛОКАЛЬНАЯ ОБРАБОТКА В БРАУЗЕРЕ · БЕЗ ПЕРЕДАЧИ В СЕТЬ</div>
+        <h2 id="dropzone-title">Откройте JSON-результат планирования озеленения</h2>
+        <p id="dropzone-hint">
+          Выберите или перетащите сюда файл, скачанный в дашборде ASTRA кнопкой «Скачать расчёт JSON».
+          Допустимый размер файла — до 5 МБ.
+        </p>
+      </div>
+      <span class="btn btn-secondary dropzone-cta">Обзор файла…</span>
+    </div>
+
+    <div id="error-panel" class="error-panel" role="alert" hidden>
+      <div class="error-header">
+        <span class="error-icon" aria-hidden="true">!</span>
+        <div>
+          <strong>Файл расчёта не прошёл проверку</strong>
+          <p id="error-summary">Проверьте целостность JSON-файла и соответствие формату выгрузки ASTRA.</p>
+        </div>
+      </div>
+      <ul id="error-list" class="error-list"></ul>
+    </div>
+  </section>
+
+  <article id="empty-guide" class="empty-guide no-print" aria-label="Порядок работы с отчётом">
+    <div class="eyebrow">ИНСТРУКЦИЯ ДЛЯ СПЕЦИАЛИСТА</div>
+    <h2>Как подготовить печатную ведомость A4</h2>
+    <ol class="steps-grid">
+      <li>
+        <span class="step-num">01</span>
+        <strong>Сформируйте расчёт в ASTRA</strong>
+        <p>Задайте район, бюджет деревьев, породу, горизонт и сценарные расценки, затем нажмите «Скачать расчёт JSON».</p>
+      </li>
+      <li>
+        <span class="step-num">02</span>
+        <strong>Загрузите полученный файл</strong>
+        <p>Отчёт проверит структуру данных, переведёт временные метки в часовой пояс Астаны (UTC+5) и построит сводку без пересчёта модели.</p>
+      </li>
+      <li>
+        <span class="step-num">03</span>
+        <strong>Сохраните в PDF или распечатайте</strong>
+        <p>Нажмите «Печать / сохранить PDF». Элементы управления скроются, а отчёт переключится в светлую экономную вёрстку A4.</p>
+      </li>
+    </ol>
+  </article>
+
+  <main id="report-document" class="report-sheet" hidden>
+    <header class="doc-header">
+      <div class="doc-topline">
+        <div class="doc-brand">
+          <span class="doc-symbol" aria-hidden="true">△</span>
+          <span>ASTRA · ЭКОЛОГИЧЕСКАЯ АНАЛИТИКА Г. АСТАНА · GREENHACK KAZAKHSTAN 2026</span>
+        </div>
+        <span class="doc-stamp">СЦЕНАРНАЯ РЕКОМЕНДАЦИЯ</span>
+      </div>
+
+      <h1 class="doc-title">Отчёт по результату расчёта городского озеленения</h1>
+      <p class="doc-subtitle">
+        Предварительная сценарная ведомость распределения посадок, модельного экологического эффекта и ориентировочных затрат
+      </p>
+
+      <dl class="passport-grid" aria-label="Паспорт расчёта">
+        <div class="passport-item passport-wide">
+          <dt>Номер расчёта (run_id)</dt>
+          <dd id="meta-run-id" class="mono">—</dd>
+        </div>
+        <div class="passport-item">
+          <dt>Дата формирования (UTC+5)</dt>
+          <dd id="meta-created-at">—</dd>
+        </div>
+        <div class="passport-item">
+          <dt>Целевая территория</dt>
+          <dd id="meta-district">—</dd>
+        </div>
+        <div class="passport-item">
+          <dt>Порода деревьев</dt>
+          <dd id="meta-species">—</dd>
+        </div>
+        <div class="passport-item">
+          <dt>Бюджет посадки</dt>
+          <dd id="meta-budget">—</dd>
+        </div>
+        <div class="passport-item">
+          <dt>Горизонт сценария</dt>
+          <dd id="meta-horizon">—</dd>
+        </div>
+      </dl>
+    </header>
+
+    <section class="report-section" aria-labelledby="sec-decision-title">
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">01 / РЕШЕНИЕ ДЛЯ ГОРОДСКИХ СЛУЖБ</div>
+          <h2 id="sec-decision-title">Сводка распределения посадочного фонда</h2>
+        </div>
+        <span class="badge badge-scenario">Сценарный расчёт</span>
+      </div>
+
+      <div class="decision-grid">
+        <div class="metric-card metric-card-accent">
+          <span class="metric-label">Распределено деревьев</span>
+          <strong id="dec-used-trees" class="metric-value">—</strong>
+          <span id="dec-used-sub" class="metric-sub">—</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Нераспределённый остаток</span>
+          <strong id="dec-unused-trees" class="metric-value">—</strong>
+          <span id="dec-unused-sub" class="metric-sub">—</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Задействовано зон</span>
+          <strong id="dec-zones-count" class="metric-value">—</strong>
+          <span id="dec-zones-sub" class="metric-sub">—</span>
+        </div>
+      </div>
+
+      <div id="allocation-bar-wrap" class="svg-card" aria-label="Структура освоения бюджета деревьев"></div>
+
+      <div class="callout">
+        <strong>Статус рекомендации и примечание модели:</strong>
+        <p id="dec-model-note">—</p>
+        <p class="callout-sub">
+          Документ носит характер сценарной аналитической рекомендации для предварительной приоритизации участков городскими службами и не заменяет натурное дендрологическое обследование, согласование инженерных сетей и рабочий проект благоустройства.
+        </p>
+      </div>
+    </section>
+
+    <section class="report-section" aria-labelledby="sec-eco-title">
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">02 / ИНЖЕНЕРНАЯ ОЦЕНКА ЭФФЕКТА</div>
+          <h2 id="sec-eco-title">Показатели среды до и после вмешательства</h2>
+        </div>
+        <span id="eco-horizon-tag" class="badge">—</span>
+      </div>
+
+      <div class="eco-grid">
+        <article class="eco-card">
+          <div class="eco-card-top">
+            <span class="metric-label">Снижение PM2.5</span>
+            <span class="unit-pill">мкг/м³</span>
+          </div>
+          <strong id="eco-pm25-main" class="eco-value">—</strong>
+          <div id="eco-pm25-pct" class="eco-delta">—</div>
+          <dl class="before-after">
+            <div><dt>До</dt><dd id="eco-pm25-before">—</dd></div>
+            <div><dt>После</dt><dd id="eco-pm25-after">—</dd></div>
+          </dl>
+          <p id="eco-pm25-range" class="sensitivity-line">—</p>
+        </article>
+
+        <article class="eco-card">
+          <div class="eco-card-top">
+            <span class="metric-label">Охлаждение поверхности</span>
+            <span class="unit-pill">°C</span>
+          </div>
+          <strong id="eco-cooling-main" class="eco-value">—</strong>
+          <div id="eco-cooling-note" class="eco-delta">—</div>
+          <dl class="before-after">
+            <div><dt>До</dt><dd id="eco-temp-before">—</dd></div>
+            <div><dt>После</dt><dd id="eco-temp-after">—</dd></div>
+          </dl>
+          <p id="eco-cooling-range" class="sensitivity-line">—</p>
+        </article>
+
+        <article class="eco-card">
+          <div class="eco-card-top">
+            <span class="metric-label">Годовое связывание CO₂</span>
+            <span class="unit-pill">т/год</span>
+          </div>
+          <strong id="eco-co2-main" class="eco-value">—</strong>
+          <div class="eco-delta">Суммарно по выбранным зонам</div>
+          <p id="eco-co2-range" class="sensitivity-line sensitivity-spaced">—</p>
+        </article>
+
+        <article class="eco-card">
+          <div class="eco-card-top">
+            <span class="metric-label">Условный охват населения</span>
+            <span class="unit-pill">чел.</span>
+          </div>
+          <strong id="eco-pop-main" class="eco-value">—</strong>
+          <div id="eco-pop-kind" class="eco-delta">—</div>
+          <p class="sensitivity-line sensitivity-spaced">
+            Оценка расчётной численности в границах задействованных непересекающихся виртуальных ячеек.
+          </p>
+        </article>
+      </div>
+
+      <div class="charts-row">
+        <figure class="svg-card chart-box">
+          <figcaption class="chart-caption">Сравнение средневзвешенных показателей «До / После»</figcaption>
+          <div id="before-after-svg"></div>
+        </figure>
+        <figure class="svg-card chart-box">
+          <figcaption id="sensitivity-caption" class="chart-caption">Чувствительность эффекта к допущениям модели</figcaption>
+          <div id="sensitivity-svg"></div>
+        </figure>
+      </div>
+    </section>
+
+    <section class="report-section section-zones" aria-labelledby="sec-zones-title">
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">03 / ВЕДОМОСТЬ УЧАСТКОВ</div>
+          <h2 id="sec-zones-title">Распределение деревьев и расчётный эффект по зонам</h2>
+        </div>
+        <span id="zones-count-badge" class="badge">—</span>
+      </div>
+
+      <div id="zones-empty" class="empty-zones" hidden>
+        <strong>В данном расчёте задействованные зоны отсутствуют (0 участков).</strong>
+        <p>Деревья не были распределены ни в одну виртуальную зону при заданных параметрах фильтрации или ёмкости участков.</p>
+      </div>
+
+      <div id="zones-table-wrapper" class="table-wrapper" tabindex="0" role="region" aria-labelledby="sec-zones-title">
+        <table class="zones-table">
+          <caption class="sr-only">Позонное распределение деревьев и расчётный экологический эффект</caption>
+          <thead>
+            <tr>
+              <th scope="col">Зона / район</th>
+              <th scope="col" class="num">Деревья, шт.</th>
+              <th scope="col" class="num">PM2.5 до, мкг/м³</th>
+              <th scope="col" class="num">PM2.5 после, мкг/м³</th>
+              <th scope="col" class="num">Сниж. PM2.5, мкг/м³</th>
+              <th scope="col" class="num">Охлажд., °C</th>
+              <th scope="col" class="num">CO₂, т/год</th>
+              <th scope="col" class="num">Усл. охват, чел.</th>
+            </tr>
+          </thead>
+          <tbody id="zones-tbody"></tbody>
+          <tfoot id="zones-tfoot"></tfoot>
+        </table>
+      </div>
+    </section>
+
+    <section class="report-section" aria-labelledby="sec-costs-title">
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">04 / СЦЕНАРНАЯ СМЕТА</div>
+          <h2 id="sec-costs-title">Ориентировочный расчёт затрат</h2>
+        </div>
+        <span id="costs-kind-badge" class="badge badge-warn">Редактируемые допущения</span>
+      </div>
+
+      <div class="costs-layout">
+        <div class="costs-card">
+          <h3>Сводные статьи расходов (<span id="costs-currency">KZT</span>)</h3>
+          <dl class="cost-lines">
+            <div class="cost-row">
+              <dt>Посадка деревьев (саженцы и работы)</dt>
+              <dd id="cost-planting" class="num">—</dd>
+            </div>
+            <div class="cost-row">
+              <dt>Ежегодный агротехнический уход</dt>
+              <dd id="cost-care" class="num">—</dd>
+            </div>
+            <div class="cost-row">
+              <dt>Пилотное оборудование мониторинга</dt>
+              <dd id="cost-equipment" class="num">—</dd>
+            </div>
+            <div class="cost-row">
+              <dt>Ежегодное сопровождение платформы</dt>
+              <dd id="cost-platform" class="num">—</dd>
+            </div>
+            <div class="cost-row cost-total-first">
+              <dt>Итого за первый год</dt>
+              <dd id="cost-first-year" class="num">—</dd>
+            </div>
+            <div class="cost-row cost-total-horizon">
+              <dt id="cost-horizon-label">Итого за весь горизонт</dt>
+              <dd id="cost-horizon" class="num">—</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="costs-card">
+          <h3>Принятые в расчёте единичные ставки</h3>
+          <dl class="cost-lines cost-rates">
+            <div class="cost-row">
+              <dt>Стоимость одного саженца</dt>
+              <dd id="rate-sapling" class="num">—</dd>
+            </div>
+            <div class="cost-row">
+              <dt>Работы по посадке (за 1 дерево)</dt>
+              <dd id="rate-planting" class="num">—</dd>
+            </div>
+            <div class="cost-row">
+              <dt>Годовой уход (за 1 дерево в год)</dt>
+              <dd id="rate-care" class="num">—</dd>
+            </div>
+            <div class="cost-row">
+              <dt>Комплект пилотного оборудования</dt>
+              <dd id="rate-equipment" class="num">—</dd>
+            </div>
+            <div class="cost-row">
+              <dt>Сопровождение платформы в год</dt>
+              <dd id="rate-platform" class="num">—</dd>
+            </div>
+          </dl>
+          <p class="cost-disclaimer">
+            Цены задаются пользователем как редактируемые сценарные допущения для предварительного сопоставления вариантов. Расчёт не является офертой, сметной документацией или финансовым обязательством.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="report-section" aria-labelledby="sec-meth-title">
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">05 / ИСТОЧНИКИ И ОГРАНИЧЕНИЯ</div>
+          <h2 id="sec-meth-title">Фоновые условия, методика и границы применимости</h2>
+        </div>
+        <span id="meth-version-badge" class="badge">—</span>
+      </div>
+
+      <div class="bg-grid" aria-label="Фоновые источники">
+        <div class="bg-card">
+          <div class="bg-card-head">
+            <strong>Фон качества воздуха (Open-Meteo / CAMS)</strong>
+            <span id="bg-air-status" class="status-pill">—</span>
+          </div>
+          <dl class="bg-meta">
+            <div><dt>Время модели (UTC+5)</dt><dd id="bg-air-source-time">—</dd></div>
+            <div><dt>Время опроса (UTC+5)</dt><dd id="bg-air-fetched-at">—</dd></div>
+          </dl>
+          <p id="bg-air-values" class="bg-values">—</p>
+        </div>
+
+        <div class="bg-card">
+          <div class="bg-card-head">
+            <strong>Метеорологический фон (Open-Meteo)</strong>
+            <span id="bg-weather-status" class="status-pill">—</span>
+          </div>
+          <dl class="bg-meta">
+            <div><dt>Время модели (UTC+5)</dt><dd id="bg-weather-source-time">—</dd></div>
+            <div><dt>Время опроса (UTC+5)</dt><dd id="bg-weather-fetched-at">—</dd></div>
+          </dl>
+          <p id="bg-weather-values" class="bg-values">—</p>
+        </div>
+      </div>
+
+      <div class="meth-box">
+        <h3>Параметры инженерной модели и породы</h3>
+        <p id="meth-note" class="meth-note">—</p>
+        <p id="meth-params-line" class="meth-params">—</p>
+      </div>
+
+      <div class="limitations-box">
+        <h3>Обязательные методологические ограничения при чтении отчёта</h3>
+        <ul class="limitations-list">
+          <li>
+            <strong>Модельный городской фон Open-Meteo / CAMS:</strong> показатели качества воздуха для Астаны поступают из CAMS Global с сеткой около 45 км; разрешение погодных данных Open-Meteo зависит от используемой модели. Эти фоновые показатели не являются прямыми измерениями локальных станций мониторинга Астаны.
+          </li>
+          <li>
+            <strong>40 виртуальных узлов и синтетическое обучение:</strong> сеть участков, значения NDVI, транспортной нагрузки, температуры поверхности и ёмкости посадок представляют собой расчётную симуляцию; прогнозный ML-модуль приоритизации обучен на синтетической истории.
+          </li>
+          <li>
+            <strong>Сценарные коэффициенты и условное население:</strong> параметры кроны, скорости сухого осаждения частиц, приживаемости пород и расценки требуют местной полевой калибровки; показатель охвата населения отражает условную численность непересекающихся ячеек, а не подтверждённый медицинский эффект.
+          </li>
+          <li>
+            <strong id="lim-sensitivity-title">Диапазон чувствительности (×0,5–1,5):</strong> приведённые интервалы показывают чувствительность инженерной формулы к изменению сценарных допущений и <em>не являются статистическим доверительным интервалом</em> или гарантией результата.
+          </li>
+          <li>
+            <strong>Отложенный характер эффекта роста:</strong> расчётные показатели относятся к состоянию насаждений по достижении выбранного горизонта сценария при текущем погодном фоне и <em>не означают немедленный эффект</em> сразу после высадки саженцев.
+          </li>
+        </ul>
+      </div>
+
+      <div class="sources-box">
+        <h3>Литературные и методические источники модели</h3>
+        <ol id="meth-sources-list" class="sources-list"></ol>
+      </div>
+    </section>
+
+    <footer class="doc-footer">
+      <span>ASTRA · Прототип экологической аналитики Астаны · GreenHack Kazakhstan 2026</span>
+      <span>Часовой пояс отчёта: Asia/Qyzylorda (UTC+5) · Расчётная симуляция</span>
+    </footer>
+  </main>
+</body>
+</html>

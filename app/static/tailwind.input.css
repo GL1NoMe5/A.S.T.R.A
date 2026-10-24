@@ -1,0 +1,2 @@
+/* Build-time utilities only. The shipped CSS has no browser compiler or CDN. */
+@tailwind utilities;

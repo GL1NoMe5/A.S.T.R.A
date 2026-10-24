@@ -1,0 +1,193 @@
+{
+  "run_id": "cbf32282-6310-4c70-a1a1-d7d5eed3ea18",
+  "created_at": "2026-10-24T20:03:53.954357+00:00",
+  "request": {
+    "budget_trees": 1000,
+    "species": "pine",
+    "target_district": "yesil",
+    "horizon_years": 10,
+    "sapling_cost_kzt": 20000,
+    "planting_cost_kzt": 10000,
+    "annual_care_cost_kzt": 3000,
+    "pilot_equipment_cost_kzt": 600000,
+    "annual_platform_cost_kzt": 1200000
+  },
+  "zones": [
+    {
+      "id": "AST-007",
+      "name": "Есиль · зона 7",
+      "district": "yesil",
+      "district_name": "Есиль",
+      "latitude": 51.131,
+      "longitude": 71.437,
+      "density": 0.65,
+      "ndvi": 0.14,
+      "traffic_base": 0.38,
+      "area_m2": 140000,
+      "planting_capacity": 800,
+      "population": 3174,
+      "metadata_kind": "scenario",
+      "population_kind": "scenario_disjoint_cells",
+      "trees": 800,
+      "surviving_trees": 640,
+      "canopy_m2": 11520,
+      "pm25_before": 5.759,
+      "pm25_after": 5.636578598802362,
+      "pm25_reduction": 0.12242140119763835,
+      "pm25_reduction_pct": 2.1257406007577417,
+      "surface_temp_before": -0.637,
+      "surface_temp_after": -0.637,
+      "cooling_c": 0,
+      "co2_tons_year": 11.52,
+      "priority_score": 15.83203523455486,
+      "population_covered": 3174
+    },
+    {
+      "id": "AST-008",
+      "name": "Есиль · зона 8",
+      "district": "yesil",
+      "district_name": "Есиль",
+      "latitude": 51.131,
+      "longitude": 71.445,
+      "density": 0.4,
+      "ndvi": 0.25,
+      "traffic_base": 0.51,
+      "area_m2": 160000,
+      "planting_capacity": 200,
+      "population": 3553,
+      "metadata_kind": "scenario",
+      "population_kind": "scenario_disjoint_cells",
+      "trees": 200,
+      "surviving_trees": 160,
+      "canopy_m2": 2880,
+      "pm25_before": 4.392,
+      "pm25_after": 4.372958912316943,
+      "pm25_reduction": 0.019041087683058153,
+      "pm25_reduction_pct": 0.433540247792763,
+      "surface_temp_before": -0.914,
+      "surface_temp_after": -0.914,
+      "cooling_c": 0,
+      "co2_tons_year": 2.88,
+      "priority_score": 14.00529505199837,
+      "population_covered": 3553
+    }
+  ],
+  "used_trees": 1000,
+  "unused_trees": 0,
+  "horizon_years": 10,
+  "background": {
+    "kind": "model_background",
+    "provider": "Open-Meteo / CAMS",
+    "requested_latitude": 51.1694,
+    "requested_longitude": 71.4491,
+    "poll_interval_seconds": 300,
+    "units": {
+      "pm25": "µg/m³",
+      "pm10": "µg/m³",
+      "no2": "µg/m³",
+      "co": "µg/m³",
+      "european_aqi": "index",
+      "air_temp_c": "°C",
+      "humidity": "%",
+      "wind_speed": "m/s",
+      "wind_direction": "°"
+    },
+    "attribution_url": "https://open-meteo.com/en/docs/air-quality-api",
+    "air": {
+      "values": {
+        "pm10": 4.9,
+        "pm25": 4.7,
+        "no2": 5.9,
+        "co": 200,
+        "european_aqi": 19
+      },
+      "source_time": "2026-10-24T20:00:00+00:00",
+      "fetched_at": "2026-10-24T20:01:18.932864+00:00",
+      "interval_seconds": 3600,
+      "grid_latitude": 51.199997,
+      "grid_longitude": 71.40001,
+      "status": "live",
+      "cache_age_seconds": 155,
+      "error": null
+    },
+    "weather": {
+      "values": {
+        "air_temp_c": -1.1,
+        "humidity": 81,
+        "wind_speed": 3.39,
+        "wind_direction": 233
+      },
+      "source_time": "2026-10-24T20:00:00+00:00",
+      "fetched_at": "2026-10-24T20:01:18.777967+00:00",
+      "interval_seconds": 900,
+      "grid_latitude": 51.142353,
+      "grid_longitude": 71.41831,
+      "status": "live",
+      "cache_age_seconds": 155.2,
+      "error": null
+    }
+  },
+  "summary": {
+    "pm25_before": 5.029933333333333,
+    "pm25_after": 4.962648099343471,
+    "pm25_reduction": 0.06728523398986225,
+    "pm25_reduction_pct": 1.337696337722082,
+    "surface_temp_before": -0.7847333333333333,
+    "surface_temp_after": -0.7847333333333333,
+    "cooling_c": 0,
+    "co2_tons_year": 14.399999999999999,
+    "population_covered": 6727,
+    "population_kind": "scenario_disjoint_cells",
+    "range_kind": "sensitivity_band_not_confidence_interval",
+    "pm25_reduction_range": [
+      0.033642616994931124,
+      0.10092785098479337
+    ],
+    "cooling_c_range": [
+      0,
+      0
+    ],
+    "co2_tons_year_range": [
+      7.199999999999999,
+      21.599999999999998
+    ]
+  },
+  "costs": {
+    "currency": "KZT",
+    "kind": "editable_scenario_assumptions",
+    "planting": 30000000,
+    "annual_care": 3000000,
+    "equipment": 600000,
+    "annual_platform": 1200000,
+    "first_year_total": 34800000,
+    "horizon_total": 72600000
+  },
+  "methodology": {
+    "version": "scenario-v1",
+    "parameter_kind": "illustrative_assumptions_not_astana_calibration",
+    "mixing_height_m": 20,
+    "residence_seconds": 3600,
+    "maturity_years": 10,
+    "deposition_basis": "F = Vd × C × leaf area; scenario box-model concentration response",
+    "sources": [
+      "https://www.itreetools.org/eco/resources/iTree_Eco_Dry_Deposition_Model_Descriptions.pdf",
+      "https://research.fs.usda.gov/treesearch/46254",
+      "https://www.epa.gov/heatislands/benefits-trees-and-vegetation"
+    ],
+    "note": "Источники обосновывают механизмы; численные коэффициенты пород — сценарные допущения, не измерения Астаны",
+    "species_parameters": {
+      "label": "Сосна",
+      "crown_m2": 18,
+      "lai": 3.5,
+      "deposition_m_s": 0.0025,
+      "survival": 0.8,
+      "annual_co2_kg": 18,
+      "cooling_max_c": 3
+    },
+    "sensitivity_factors": [
+      0.5,
+      1.5
+    ]
+  },
+  "note": "Эффект через заданное число лет при текущем погодном фоне; зоны, население и коэффициенты сценарные"
+}

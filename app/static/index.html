@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0a111b"><title>ASTRA — экологическая аналитика Астаны</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath fill='%2365e6bd' d='M20 2 38 36H2zm0 12-8 16h16z'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/static/vendor/leaflet.css">
+  <link rel="stylesheet" href="/static/vendor/tailwind.css">
+  <link rel="stylesheet" href="/static/style.css">
+  <script defer src="/static/vendor/leaflet.js"></script>
+  <script defer src="/static/vendor/leaflet-heat.js"></script>
+  <script defer src="/static/vendor/plotly.min.js"></script>
+  <script defer src="/static/vendor/plotly-locale-ru.js"></script>
+  <script defer src="/static/app.js"></script>
+</head>
+<body>
+  <aside class="rail">
+    <a class="brand" href="/" aria-label="ASTRA главная"><span class="brand-symbol">△</span><span>ASTRA<small>городская экология</small></span></a>
+    <div class="rail-label">РАБОЧЕЕ ПРОСТРАНСТВО</div>
+    <a class="nav-item active" href="#overview"><span>◈</span> Обзор города</a>
+    <a class="nav-item" href="#planning"><span>♧</span> План озеленения</a>
+    <a class="nav-item" href="#analytics"><span>⌁</span> Аналитика потока</a>
+    <button class="nav-item" id="methodology-button"><span>ⓘ</span> Методика и данные</button>
+    <div class="rail-bottom"><div class="city-icon">◌</div><strong>Астана, Казахстан</strong><p>51.1694° N · 71.4491° E</p><span class="tag">КОНКУРСНЫЙ ПРОТОТИП</span><p class="muted">Решения для более<br>здорового города</p></div>
+  </aside>
+  <main id="overview" class="min-w-0">
+    <header><div><div class="eyebrow">ЭКОЛОГИЧЕСКАЯ АНАЛИТИКА / 01</div><h1>Город, который дышит<span>.</span></h1><p>Мониторинг среды и сценарное планирование зелёной инфраструктуры</p></div><div class="header-meta"><span class="connection" id="connection">● Подключение</span><time id="clock"></time><span id="mode" class="muted">Инициализация</span></div></header>
+    <div class="source-banner"><span class="source-icon">◎</span><div><strong>Модельный фон Астаны · Open-Meteo / CAMS</strong><span>Микрозонирование: 40 виртуальных узлов. Эффект озеленения: расчётная симуляция.</span><small id="source-detail">Ожидание фоновых данных…</small></div><span class="source-badge" id="source-badge">—</span></div>
+    <section class="kpi-grid tabular-nums" aria-label="Городские показатели">
+      <article class="kpi"><div class="kpi-label">PM2.5 · виртуальные зоны <span>↗</span></div><div class="kpi-value"><span id="kpi-pm">—</span><small>мкг/м³</small></div><div class="kpi-footer">Средняя расчётная концентрация</div></article>
+      <article class="kpi"><div class="kpi-label">Температура поверхности <span>◉</span></div><div class="kpi-value"><span id="kpi-temp">—</span><small>°C</small></div><div class="kpi-footer">Расчётная, отличается от воздуха</div></article>
+      <article class="kpi"><div class="kpi-label">European AQI · фон <span>◎</span></div><div class="kpi-value"><span id="kpi-aqi">—</span><small id="aqi-label">индекс</small></div><div class="kpi-footer">Модельный городской фон Open-Meteo</div></article>
+      <article class="kpi"><div class="kpi-label">Виртуальные узлы <span>◈</span></div><div class="kpi-value"><span id="kpi-sensors">—</span><small>/ 40</small></div><div class="kpi-footer"><span class="dot"></span><span id="kpi-hotspots">—</span> зон с условным ESI ≥ 60</div></article>
+    </section>
+    <div class="workspace">
+      <section class="panel map-panel"><div class="panel-heading"><div><div class="eyebrow">ПРОСТРАНСТВЕННЫЙ ОБЗОР</div><h2>Пульс Астаны</h2></div><label class="toggle"><input type="checkbox" id="heat-toggle"><span></span> Тепловой слой</label></div>
+        <div class="map-wrap"><div id="map" aria-label="Карта виртуальных станций Астаны"></div><div class="map-overlay"><span class="dot"></span> <span id="map-count">40</span> виртуальных станций · обновление 2 с</div><div class="map-legend"><span><i style="background:#65e6bd"></i> ESI &lt; 30</span><span><i style="background:#f0c773"></i> 30–60</span><span><i style="background:#ef8593"></i> ≥ 60</span></div></div>
+        <div class="map-footer"><label for="sensor-picker">Карточка станции<select id="sensor-picker"><option value="">Выберите виртуальную станцию</option></select></label><span id="tile-status">Картографическая подложка: OpenStreetMap</span></div>
+      </section>
+      <section class="panel planning-panel" id="planning"><div class="panel-heading"><div><div class="eyebrow">СЦЕНАРИЙ ВМЕШАТЕЛЬСТВА</div><h2>Больше зелени.<br>Меньше нагрузки.</h2></div><span class="leaf">♧</span></div><p class="panel-description">Распределите деревья по зонам с наибольшей расчётной потребностью.</p>
+        <form id="optimize-form"><label for="district">Территория пилота</label><select id="district"><option value="all">Все пилотные районы</option><option value="yesil">Есиль</option><option value="nura">Нура</option><option value="almaty">Алматы</option><option value="saryarka">Сарыарка</option><option value="baikonyr">Байконыр</option></select>
+          <div class="field-title"><label for="trees">Бюджет деревьев</label><output id="trees-output" for="trees">1 000</output></div><input id="trees" type="range" min="100" max="10000" step="100" value="1000"><div class="range-labels"><span>100 деревьев</span><span>10 000</span></div>
+          <label for="species">Порода</label><select id="species"><option value="elm">Вяз · широкая крона</option><option value="pine">Сосна · вечнозелёная</option><option value="poplar">Тополь · быстрый рост</option></select>
+          <div class="field-title"><label for="horizon">Горизонт сценария</label><output id="horizon-output" for="horizon">10 лет</output></div><input id="horizon" type="range" min="1" max="30" value="10">
+          <details class="cost-inputs"><summary>Параметры сметы · тенге</summary><p>Сценарные цены, не коммерческое предложение</p><label>Саженец<input id="sapling-cost" type="number" min="0" max="10000000" value="15000" required></label><label>Посадка за дерево<input id="planting-cost" type="number" min="0" max="10000000" value="10000" required></label><label>Уход за деревом в год<input id="care-cost" type="number" min="0" max="10000000" value="3000" required></label><label>Оборудование пилота<input id="equipment-cost" type="number" min="0" max="10000000000" value="600000" required></label><label>Сопровождение в год<input id="platform-cost" type="number" min="0" max="10000000000" value="1200000" required></label></details>
+          <button class="primary-button" id="optimize-button" type="submit">Рассчитать план озеленения <span>↗</span></button><p class="form-note">ML определяет приоритет. Эффект и смета рассчитываются отдельной инженерной моделью.</p><div role="status" id="optimization-status"></div>
+        </form>
+      </section>
+    </div>
+    <section class="panel results-panel" id="results" hidden><div class="panel-heading"><div><div class="eyebrow">РЕЗУЛЬТАТ РАСЧЁТА</div><h2>План зелёного вмешательства</h2></div><div class="result-actions"><button id="open-report" class="secondary-button">Открыть отчёт / PDF</button><button id="export-result" class="secondary-button">↓ Скачать расчёт JSON</button></div></div><p id="result-description"></p><div class="result-kpis" id="result-kpis"></div><div class="result-columns"><div id="comparison-chart" class="chart"></div><div><h3>Распределение по зонам</h3><div class="table-scroll"><table><thead><tr><th>Зона</th><th>Деревья</th><th>Δ PM2.5</th><th>Δ °C</th></tr></thead><tbody id="zones-table"></tbody></table></div></div></div><p class="form-note">Диапазоны показывают чувствительность к допущениям (×0,5–1,5), а не статистический доверительный интервал. Охват населения расчётный; эффект не является результатом полевого эксперимента.</p></section>
+    <section class="panel telemetry-panel" id="analytics"><div class="panel-heading"><div><div class="eyebrow">ДИНАМИКА ВИРТУАЛЬНОЙ СЕТИ</div><h2>Среда в движении</h2></div><div class="chart-key"><span><i class="green"></i> PM2.5, мкг/м³</span><span><i class="gold"></i> Поверхность, °C</span></div></div><div id="telemetry-chart" class="chart"></div><div class="metrics-footer" id="model-metrics">Загрузка метрик модели…</div></section>
+    <footer><span>ASTRA / GreenHack Kazakhstan 2026</span><span>Данные: <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open-Meteo</a>, <a href="https://atmosphere.copernicus.eu/" target="_blank" rel="noreferrer">CAMS</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a> · Преобразования ASTRA</span><button class="footer-button" id="footer-methodology">Методика и данные</button><a href="/static/report/report.html">Отчёт из JSON</a><a href="/docs">Описание API ↗</a></footer>
+  </main>
+  <aside class="sensor-drawer" id="sensor-drawer" aria-label="Подробности виртуальной станции" hidden><button class="close-button" id="close-drawer" aria-label="Закрыть карточку">×</button><div class="eyebrow">ВИРТУАЛЬНАЯ СТАНЦИЯ</div><h2 id="sensor-name"></h2><p id="sensor-coordinates" class="muted"></p><div id="sensor-values" class="sensor-values"></div><h3>Прогноз через 3 часа</h3><div id="sensor-forecast"></div><label for="explain-target">Объяснение прогноза</label><select id="explain-target"><option value="pm25">PM2.5 через 3 часа</option><option value="esi">ESI через 3 часа</option></select><div id="shap-chart" class="chart"></div><p id="shap-status" class="form-note"></p><p class="form-note">SHAP объясняет поведение модели, обученной на синтетике. Вклад признака не доказывает причинный эффект.</p></aside>
+  <dialog id="methodology-dialog"><button class="close-button" id="close-methodology" aria-label="Закрыть методику">×</button><div class="eyebrow">ПРОИСХОЖДЕНИЕ И ОГРАНИЧЕНИЯ</div><h2>Как читать ASTRA</h2><p>Open-Meteo / CAMS задаёт модельный городской фон, а не измерения местных станций. Для Астаны воздушная модель имеет сетку порядка 45 км. Опрос раз в 5 минут проверяет ответ API; новые данные появляются по расписанию источника.</p><p>Все 40 узлов, их NDVI, трафик, население и температура поверхности — расчётная симуляция. Привязка к пяти районам является пилотной и не описывает официальные административные границы или все районы города.</p><p>ESI — собственный сценарный индекс 0–100: 50% PM2.5, 20% NO₂ и 30% тепловой нагрузки, с нормированием. European AQI берётся отдельно из Open-Meteo.</p><p>Два LightGBM-регрессора прогнозируют PM2.5 и ESI на 3 часа. Обучение и оценка выполняются на синтетической истории. SHAP показывает вклад признаков в прогноз.</p><p>Озеленение оценивается упрощённой моделью осаждения частиц и затенения. Коэффициенты пород, приживаемость и цены — сценарные допущения, требующие местной калибровки. Эффект относится к выбранному горизонту роста при текущем погодном фоне.</p><p>Сведения об источниках, формулах, стоимости и времени данных сохраняются в скачиваемом JSON.</p><a href="/api/v1/methodology" target="_blank" rel="noreferrer">Параметры методики ↗</a></dialog>
+  <div class="toast" id="toast" role="alert" hidden></div>
+</body>
+</html>

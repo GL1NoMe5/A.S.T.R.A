@@ -1,0 +1,149 @@
+"""One cached city-scale model background, never presented as station measurements."""
+import asyncio
+from copy import deepcopy
+from datetime import UTC, datetime
+import json
+import logging
+import math
+
+import httpx
+
+from app.core.config import Settings
+
+log = logging.getLogger(__name__)
+AIR_URL = "https://air-quality-api.open-meteo.com/v1/air-quality"
+WEATHER_URL = "https://api.open-meteo.com/v1/forecast"
+FIELDS = {
+    "air": {"pm10": "pm10", "pm25": "pm2_5", "no2": "nitrogen_dioxide",
+            "co": "carbon_monoxide", "european_aqi": "european_aqi"},
+    "weather": {"air_temp_c": "temperature_2m", "humidity": "relative_humidity_2m",
+                "wind_speed": "wind_speed_10m", "wind_direction": "wind_direction_10m"},
+}
+DEFAULTS = {
+    "air": {"pm25": 20.0, "pm10": 32.0, "no2": 25.0, "co": 250.0, "european_aqi": None},
+    "weather": {"air_temp_c": 8.0, "humidity": 65.0, "wind_speed": 3.0, "wind_direction": 240.0},
+}
+UNITS = {"pm25": "µg/m³", "pm10": "µg/m³", "no2": "µg/m³", "co": "µg/m³",
+         "european_aqi": "index", "air_temp_c": "°C", "humidity": "%",
+         "wind_speed": "m/s", "wind_direction": "°"}
+
+
+def utcnow() -> datetime:
+    return datetime.now(UTC)
+
+
+def parse_time(value: str) -> datetime:
+    result = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    return result.replace(tzinfo=UTC) if result.tzinfo is None else result.astimezone(UTC)
+
+
+class BackgroundService:
+    def __init__(self, settings: Settings, client: httpx.AsyncClient | None = None):
+        self.settings = settings
+        self.path = settings.data_dir / "background-cache.json"
+        self.client = client
+        self.cache: dict = {}
+        self.errors: dict = {}
+        self.loaded = set()
+        try:
+            value = json.loads(self.path.read_text(encoding="utf-8"))
+            if value.get("version") == 1:
+                for part in FIELDS:
+                    block = value.get(part)
+                    if block:
+                        self._validate_values(part, block["values"])
+                        parse_time(block["fetched_at"])
+                        parse_time(block["source_time"])
+                        self.cache[part] = block
+                        self.loaded.add(part)
+        except (OSError, ValueError, TypeError, KeyError):
+            log.info("No usable background cache; using labelled scenario defaults")
+
+    @staticmethod
+    def _validate_values(part: str, values: dict):
+        for key in FIELDS[part]:
+            v = values[key]
+            if not isinstance(v, (int, float)) or not math.isfinite(v):
+                raise ValueError(f"Invalid {key}")
+            if key != "air_temp_c" and v < 0:
+                raise ValueError(f"Negative {key}")
+        if part == "weather" and (not -100 <= values["air_temp_c"] <= 65
+                                  or values["humidity"] > 100
+                                  or values["wind_speed"] > 150
+                                  or values["wind_direction"] > 360):
+            raise ValueError("Weather outside physical bounds")
+
+    async def refresh(self):
+        if not self.settings.background_enabled:
+            return
+        owned = self.client is None
+        client = self.client or httpx.AsyncClient(timeout=self.settings.http_timeout_seconds)
+
+        async def fetch(part: str):
+            params = {"latitude": 51.1694, "longitude": 71.4491,
+                      "current": ",".join(FIELDS[part].values()), "timezone": "GMT"}
+            if part == "weather":
+                params["wind_speed_unit"] = "ms"
+            try:
+                r = await client.get(AIR_URL if part == "air" else WEATHER_URL, params=params)
+                r.raise_for_status()
+                body = r.json()
+                current = body["current"]
+                values = {key: current[field] for key, field in FIELDS[part].items()}
+                self._validate_values(part, values)
+                units = body["current_units"]
+                if part == "weather" and units.get("wind_speed_10m") != "m/s":
+                    raise ValueError("Unexpected wind speed unit")
+                if part == "air" and any(units.get(v) not in ("μg/m³", "µg/m³")
+                                         for k, v in FIELDS[part].items() if k != "european_aqi"):
+                    raise ValueError("Unexpected pollutant unit")
+                self.cache[part] = {
+                    "values": values, "source_time": parse_time(current["time"]).isoformat(),
+                    "fetched_at": utcnow().isoformat(), "interval_seconds": current.get("interval"),
+                    "grid_latitude": body.get("latitude"), "grid_longitude": body.get("longitude"),
+                }
+                self.errors.pop(part, None)
+                self.loaded.discard(part)
+            except (httpx.HTTPError, ValueError, KeyError, TypeError) as exc:
+                self.errors[part] = type(exc).__name__
+                log.warning("Open-Meteo %s unavailable (%s); keeping cache", part, type(exc).__name__)
+        try:
+            await asyncio.gather(*(fetch(part) for part in FIELDS))
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+            temp = self.path.with_suffix(".tmp")
+            temp.write_text(json.dumps({"version": 1, **self.cache}, ensure_ascii=False), encoding="utf-8")
+            temp.replace(self.path)
+        finally:
+            if owned:
+                await client.aclose()
+
+    def snapshot(self) -> dict:
+        result = {"kind": "model_background", "provider": "Open-Meteo / CAMS",
+                  "requested_latitude": 51.1694, "requested_longitude": 71.4491,
+                  "poll_interval_seconds": self.settings.background_interval_seconds,
+                  "units": UNITS, "attribution_url": "https://open-meteo.com/en/docs/air-quality-api"}
+        now = utcnow()
+        for part in FIELDS:
+            cached = self.cache.get(part)
+            age = (now - parse_time(cached["fetched_at"])).total_seconds() if cached else None
+            usable = cached is not None and 0 <= age <= self.settings.cache_max_age_seconds
+            if usable:
+                block = deepcopy(cached)
+                block["status"] = "cached" if part in self.errors or part in self.loaded else "live"
+            else:
+                block = {"values": deepcopy(DEFAULTS[part]), "source_time": None,
+                         "fetched_at": None, "interval_seconds": None, "status": "default"}
+                if cached:
+                    block["last_available_at"] = cached["source_time"]
+            block["cache_age_seconds"] = round(age, 1) if age is not None else None
+            block["error"] = self.errors.get(part)
+            result[part] = block
+        return result
+
+    async def run(self):
+        while True:
+            await asyncio.sleep(self.settings.background_interval_seconds)
+            try:
+                await self.refresh()
+            except OSError:
+                log.exception("Cannot persist background cache")

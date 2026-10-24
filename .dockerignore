@@ -1,0 +1,13 @@
+.venv
+.git
+.pytest_cache
+__pycache__
+data
+artifacts
+.cache
+.wheelhouse
+argon-delivery
+examples
+tests
+*.log
+.env
