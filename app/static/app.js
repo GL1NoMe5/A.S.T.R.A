@@ -94,20 +94,28 @@ function renderSensorValues() {
   $('sensor-values').replaceChildren(...[
     ['PM2.5',r.pm25,'мкг/м³'],['PM10',r.pm10,'мкг/м³'],['NO₂',r.no2,'мкг/м³'],['CO',r.co,'мкг/м³'],['CO₂ · симуляция',r.co2,'ppm'],['ESI · условный',r.esi,'/100'],['Воздух',r.air_temp_c,'°C'],['Поверхность · расчёт',r.surface_temp_c,'°C'],['Ветер',r.wind_speed,'м/с'],['Влажность',r.humidity,'%']
   ].map(v => sensorValue(...v)));
-  $('sensor-forecast').textContent = `PM2.5: ${fmt(r.predicted_pm25)} мкг/м³ · ESI: ${fmt(r.predicted_esi)} / 100`;
+  $('sensor-forecast').textContent = `PM2.5 — основной: ${fmt(r.predicted_pm25)} мкг/м³ (сохранение текущего значения). Экспериментальный ML: ${fmt(r.predicted_pm25_ml)} мкг/м³. ESI — ML: ${fmt(r.predicted_esi)} / 100.`;
 }
 async function openSensor(id) {
   state.selected = id; $('sensor-picker').value=id; $('sensor-drawer').hidden = false; renderSensorValues(); updateMarkers(); await loadExplanation();
 }
 async function loadExplanation() {
-  const id = state.selected, target = $('explain-target').value, version = ++state.shapSequence;
-  $('shap-status').textContent = 'Вычисление вклада признаков…';
+  const id = state.selected, selected = $('explain-target').value, version = ++state.shapSequence;
+  const target = selected === 'pm25_ml' ? 'pm25' : selected;
+  const method = selected === 'pm25_ml' ? 'ml' : 'primary';
+  $('shap-chart').hidden = true;
+  $('shap-status').textContent = 'Загрузка объяснения…';
   try {
-    const data = await api(`/api/v1/analytics/explain/${encodeURIComponent(id)}?target=${target}`);
+    const data = await api(`/api/v1/analytics/explain/${encodeURIComponent(id)}?target=${target}&method=${method}`);
     if (version !== state.shapSequence || state.selected !== id) return;
+    if (data.explanation_kind === 'persistence_rule') {
+      $('shap-status').textContent = `PM2.5 через 3 часа = текущие PM2.5: ${fmt(data.prediction,2)} ${data.units}. Это основной прогноз по правилу сохранения значения. Значение зафиксировано на момент запроса. Для сравнения выберите экспериментальный ML.`;
+      return;
+    }
+    $('shap-chart').hidden = false;
     const f = data.features.slice(0,8).reverse();
     Plotly.react('shap-chart',[{type:'bar',orientation:'h',x:f.map(v=>v.contribution),y:f.map(v=>v.label),marker:{color:f.map(v=>v.contribution>=0?'#ef8593':'#65e6bd')},hovertemplate:'%{y}: %{x:.3f}<extra></extra>'}],{...layout,margin:{l:152,r:15,t:20,b:35},xaxis:{...layout.xaxis,title:{text:`Вклад в ${data.units}`,font:{size:10}},zeroline:true,zerolinecolor:'#6d7d8d'},yaxis:{...layout.yaxis,automargin:true}},plotConfig);
-    $('shap-status').textContent = `Базовый прогноз ${fmt(data.base_value,2)} + вклады = ${fmt(data.prediction_raw,2)} ${data.units}. ${data.clipping_applied?'Показанный прогноз ограничен физическим диапазоном.':''} Объяснение зафиксировано на момент запроса.`;
+    $('shap-status').textContent = `${data.forecast_role==='experimental'?'Экспериментальный ML. ':''}Базовое значение ${fmt(data.base_value,2)} + вклады SHAP = ${fmt(data.prediction_raw,2)} ${data.units}. ${data.clipping_applied?'Показанный прогноз ограничен физическим диапазоном.':''} Объяснение зафиксировано на момент запроса.`;
   } catch (error) { if (version === state.shapSequence) $('shap-status').textContent = error.message; }
 }
 function resultCard(label,value,unit,detail) { const d=document.createElement('div');d.className='result-kpi';const l=document.createElement('small');l.textContent=label;const v=document.createElement('strong');v.textContent=`${value} ${unit}`;const s=document.createElement('span');s.textContent=detail;d.append(l,v,s);return d; }
@@ -170,7 +178,7 @@ async function init() {
     state.history=history.points;
     updateMarkers();renderTelemetry();connectSocket();
     const m=metrics.ml;
-    $('model-metrics').textContent=`LightGBM · ${fmt(m.rows,0)} синтетических строк · горизонт 3 ч · MAE PM2.5 ${fmt(m.targets.pm25.mae,2)} мкг/м³ (базовый ${fmt(m.targets.pm25.persistence_mae,2)}) · MAE ESI ${fmt(m.targets.esi.mae,2)} (базовый ${fmt(m.targets.esi.persistence_mae,2)}) · обучение ${fmt(m.training_seconds,2)} с. Проверка на синтетике.`;
+    $('model-metrics').textContent=`Горизонт 3 ч · MAE PM2.5: основной «как сейчас» ${fmt(m.targets.pm25.mae,2)}, экспериментальный ML ${fmt(m.targets.pm25.ml_mae,2)} мкг/м³ · MAE ESI: ML ${fmt(m.targets.esi.mae,2)}, «как сейчас» ${fmt(m.targets.esi.persistence_mae,2)}. Известный синтетический контроль: ${fmt(m.test_rows,0)} строк; обучение ML: ${fmt(m.train_rows,0)}. Точность для реальной Астаны не установлена.`;
   } catch(error){toast(`Не удалось загрузить данные: ${error.message}. Перезагрузите страницу после запуска сервера.`);}
 }
 document.addEventListener('DOMContentLoaded',init);

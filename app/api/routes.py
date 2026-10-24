@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import JSONResponse
 
 from app.core.zones import DISTRICTS
+from app.ml.engine import FORECAST_POLICY
 from app.ml.optimizer import METHODOLOGY, SPECIES, optimize
 from app.schemas.telemetry import OptimizeRequest
 from app.services.background import parse_time, utcnow
@@ -48,12 +49,13 @@ async def history(request: Request, minutes: int = Query(60, ge=1, le=1440), sen
 
 
 @router.get("/api/v1/analytics/explain/{sensor_id}")
-async def explain(request: Request, sensor_id: str, target: Literal["pm25", "esi"] = "pm25"):
+async def explain(request: Request, sensor_id: str, target: Literal["pm25", "esi"] = "pm25",
+                  method: Literal["primary", "ml"] = "primary"):
     r = request.app.state.runtime
     reading = r.worker.latest.get(sensor_id)
     if reading is None:
         raise HTTPException(404, "Виртуальная станция не найдена")
-    return await asyncio.to_thread(r.ml.explain, deepcopy(reading), target)
+    return await asyncio.to_thread(r.ml.explain, deepcopy(reading), target, method)
 
 
 @router.post("/api/v1/optimize/greening")
@@ -67,7 +69,7 @@ async def greening(request: Request, parameters: OptimizeRequest):
 
 @router.get("/api/v1/methodology")
 async def methodology():
-    return {**METHODOLOGY, "species": SPECIES,
+    return {**METHODOLOGY, "species": SPECIES, "forecast_policy": FORECAST_POLICY,
             "esi_formula": "100 × (0.5×clip(PM2.5/100) + 0.2×clip(NO2/100) + 0.3×clip((Tsurface−25)/20))",
             "clip": "Ограничение от 0 до 1", "esi_kind": "scenario_index_not_official_aqi"}
 

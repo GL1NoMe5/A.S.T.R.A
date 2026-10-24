@@ -4,6 +4,7 @@ import math
 from uuid import uuid4
 
 from app.core.zones import distance_m
+from app.ml.engine import FORECAST_POLICY
 from app.schemas.telemetry import OptimizeRequest
 from app.services.background import utcnow
 
@@ -125,6 +126,7 @@ def optimize(request: OptimizeRequest, zones: list[dict], latest: dict, backgrou
                   "horizon_total": planting + request.pilot_equipment_cost_kzt + request.horizon_years * (
                       yearly_care + request.annual_platform_cost_kzt)},
         "methodology": {**deepcopy(METHODOLOGY), "species_parameters": SPECIES[request.species],
-                        "sensitivity_factors": [0.5, 1.5]},
-        "note": "Эффект через заданное число лет при текущем погодном фоне; зоны, население и коэффициенты сценарные",
+                        "sensitivity_factors": [0.5, 1.5], "forecast_policy": deepcopy(FORECAST_POLICY)},
+        "note": FORECAST_POLICY["note"] + " Эффект через заданное число лет при текущем погодном фоне; "
+                "зоны, население и коэффициенты сценарные.",
     }

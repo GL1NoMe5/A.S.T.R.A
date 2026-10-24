@@ -21,7 +21,16 @@ LABELS = {"pm25": "Текущие PM2.5", "pm10": "Текущие PM10", "no2": 
           "humidity": "Влажность", "wind_speed": "Ветер", "traffic_index": "Трафик",
           "density": "Плотность застройки", "ndvi": "Условный NDVI",
           "hour_sin": "Время суток (sin)", "hour_cos": "Время суток (cos)"}
-MODEL_VERSION = "astra-synthetic-v2"
+MODEL_VERSION = "astra-synthetic-v3"
+PREDICTION_METHODS = {"pm25": "persistence", "pm25_ml": "lightgbm", "esi": "lightgbm"}
+FORECAST_POLICY = {
+    "horizon_hours": 3,
+    "primary": {"pm25": "persistence", "esi": "lightgbm"},
+    "experimental": {"pm25": "lightgbm"},
+    "data_kind": "synthetic",
+    "note": "PM2.5: сохранение текущего значения; ML доступен для сравнения. ESI: LightGBM. "
+            "Выбор основан на синтетической проверке; точность для реальной Астаны не установлена.",
+}
 
 
 def feature_row(reading: dict, zone: dict) -> list[float]:
@@ -100,9 +109,16 @@ class MLEngine:
                                   learning_rate=0.07, reg_lambda=1, n_jobs=2,
                                   random_state=self.seed, verbosity=-1)
             model.fit(data[train_mask], targets[train_mask, i])
+            raw = model.predict(data[test_mask])
+            clipped = np.maximum(0, raw) if target == "pm25" else np.clip(raw, 0, 100)
+            reference = baseline[test_mask, i]
+            primary = reference if target == "pm25" else clipped
             results[target] = {
-                "mae": float(mean_absolute_error(targets[test_mask, i], model.predict(data[test_mask]))),
-                "persistence_mae": float(mean_absolute_error(targets[test_mask, i], baseline[test_mask, i])),
+                "primary_method": PREDICTION_METHODS[target],
+                "mae": float(mean_absolute_error(targets[test_mask, i], primary)),
+                "ml_mae": float(mean_absolute_error(targets[test_mask, i], clipped)),
+                "ml_mae_raw": float(mean_absolute_error(targets[test_mask, i], raw)),
+                "persistence_mae": float(mean_absolute_error(targets[test_mask, i], reference)),
             }
             self.models[target] = model
         self.metrics = {
@@ -112,7 +128,10 @@ class MLEngine:
             "training_seconds": round(time.perf_counter() - started, 4),
             "train_last_feature_step": 98, "train_last_target_step": 99,
             "test_first_feature_step": 100, "targets": results,
-            "note": "Качество на синтетической контрольной выборке; реальная Астана не валидирована",
+            "forecast_policy": FORECAST_POLICY,
+            "control_is_independent_holdout": False,
+            "note": "Качество на известном синтетическом контрольном отрезке 100–124; "
+                    "это не новый независимый контроль. Реальная Астана не валидирована.",
         }
         self.path.parent.mkdir(parents=True, exist_ok=True)
         temp = self.path.with_suffix(".tmp")
@@ -120,14 +139,34 @@ class MLEngine:
         temp.replace(self.path)
 
     def enrich(self, readings: list[dict]) -> list[dict]:
+        if not readings:
+            return []
         frame = pd.DataFrame([feature_row(r, self.zones[r["sensor_id"]]) for r in readings], columns=FEATURES)
         predictions = {key: model.predict(frame) for key, model in self.models.items()}
-        return [{**reading, "predicted_pm25": round(max(0, float(predictions["pm25"][i])), 3),
+        return [{**reading, "predicted_pm25": round(max(0, float(reading["pm25"])), 3),
+                 "predicted_pm25_ml": round(max(0, float(predictions["pm25"][i])), 3),
                  "predicted_esi": round(min(100, max(0, float(predictions["esi"][i]))), 3),
-                 "prediction_horizon_hours": 3, "prediction_kind": "synthetic_model"}
+                 "prediction_horizon_hours": 3, "prediction_kind": "mixed_forecast",
+                 "prediction_methods": PREDICTION_METHODS.copy(), "model_version": MODEL_VERSION}
                 for i, reading in enumerate(readings)]
 
-    def explain(self, reading: dict, target: str):
+    def explain(self, reading: dict, target: str, method: str = "primary"):
+        if target not in ("pm25", "esi") or method not in ("primary", "ml"):
+            raise ValueError("Unknown forecast target or method")
+        if target == "pm25" and method == "primary":
+            raw = float(reading["pm25"])
+            return {
+                "sensor_id": reading["sensor_id"], "timestamp": reading["timestamp"],
+                "target": target, "horizon_hours": 3, "units": "µg/m³",
+                "explanation_kind": "persistence_rule", "forecast_method": "persistence",
+                "forecast_role": "primary", "base_value": 0.0,
+                "prediction_raw": raw, "prediction": max(0, raw),
+                "clipping_applied": raw < 0, "additivity_error": 0.0,
+                "features": [{"feature": "pm25", "label": LABELS["pm25"],
+                              "value": raw, "contribution": raw}],
+                "note": "Основной прогноз PM2.5 через 3 часа равен текущему значению. "
+                        "Это правило сохранения значения, а не SHAP-объяснение ML.",
+            }
         row = feature_row(reading, self.zones[reading["sensor_id"]])
         frame = pd.DataFrame([row], columns=FEATURES)
         explainer = self.explainers[target]
@@ -136,7 +175,10 @@ class MLEngine:
         raw = float(self.models[target].predict(frame)[0])
         displayed = max(0, raw) if target == "pm25" else min(100, max(0, raw))
         return {
-            "sensor_id": reading["sensor_id"], "target": target, "horizon_hours": 3,
+            "sensor_id": reading["sensor_id"], "timestamp": reading["timestamp"],
+            "target": target, "horizon_hours": 3,
+            "explanation_kind": "tree_shap", "forecast_method": "lightgbm",
+            "forecast_role": "experimental" if target == "pm25" else "primary",
             "units": "µg/m³" if target == "pm25" else "ESI",
             "base_value": base, "prediction_raw": raw, "prediction": displayed,
             "clipping_applied": raw != displayed,

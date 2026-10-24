@@ -89,11 +89,23 @@ async def run(seconds=30):
                     assert response.content, url
                 background = (await client.get("/api/v1/background")).json()
                 assert background["air"]["values"]["european_aqi"] is None
-                for target in ("pm25", "esi"):
-                    response = await client.get(f"/api/v1/analytics/explain/AST-001?target={target}")
+                explanations = []
+                for target, method, kind in (("pm25", "primary", "persistence_rule"),
+                                              ("pm25", "ml", "tree_shap"),
+                                              ("esi", "primary", "tree_shap")):
+                    response = await client.get(f"/api/v1/analytics/explain/AST-001?target={target}&method={method}")
                     response.raise_for_status()
-                    assert response.json()["additivity_error"] < 1e-5
-            report["stream"] = await smoke_run(base, seconds, emit=False)
+                    explanation = response.json()
+                    assert explanation["additivity_error"] < 1e-5
+                    assert explanation["explanation_kind"] == kind
+                    assert len(explanation["features"]) == (1 if kind == "persistence_rule" else 12)
+                    explanations.append({"target": target, "method": method, "kind": kind,
+                                         "additivity_error": explanation["additivity_error"]})
+                report["explanations"] = explanations
+            optimization_path = run_dir / "optimization.json"
+            report["stream"] = await smoke_run(base, seconds, emit=False, optimization_path=optimization_path)
+            report["optimization_path"] = str(optimization_path)
+            optimization = json.loads(optimization_path.read_text(encoding="utf-8"))
             model = data_dir / "models.joblib"
             model_mtime = model.stat().st_mtime_ns
             before = stored_counts(data_dir / "astra.db")
@@ -105,7 +117,17 @@ async def run(seconds=30):
             assert after["telemetry"] >= before["telemetry"]
             assert after["optimization_runs"] == before["optimization_runs"]
             assert model.stat().st_mtime_ns == model_mtime, "Модель должна читаться из кэша при перезапуске"
+            with sqlite3.connect((data_dir / "astra.db").as_uri() + "?mode=ro", uri=True) as connection:
+                stored = connection.execute("SELECT payload FROM optimization_runs WHERE id = ?",
+                                            (optimization["run_id"],)).fetchone()
+                assert json.loads(stored[0]) == optimization
+                reading = json.loads(connection.execute(
+                    "SELECT payload FROM telemetry ORDER BY timestamp DESC LIMIT 1").fetchone()[0])
+                assert reading["predicted_pm25"] == round(max(0, reading["pm25"]), 3)
+                assert reading["predicted_pm25_ml"] >= 0
+                assert reading["prediction_methods"]["pm25"] == "persistence"
             report.update(status="passed", restart="passed", model_reused=True,
+                          optimization_restored=True, forecast_fields_restored=True,
                           stored_before_restart=before, stored_after_restart=after)
         except BaseException as exc:
             report["error"] = f"{type(exc).__name__}: {exc}"

@@ -1,3 +1,4 @@
+from copy import deepcopy
 from datetime import UTC, datetime
 
 import numpy as np
@@ -30,6 +31,9 @@ def test_training_reproducibility_and_time_gap(zones, ml):
     for target in ml.metrics["targets"].values():
         assert np.isfinite(target["mae"]) and target["mae"] >= 0
         assert target["persistence_mae"] >= 0
+    pm25 = ml.metrics["targets"]["pm25"]
+    assert pm25["mae"] == pm25["persistence_mae"]
+    assert np.isfinite(pm25["ml_mae"]) and pm25["ml_mae"] >= 0
 
 
 def test_model_artifact_reused(ml, zones):
@@ -40,14 +44,48 @@ def test_model_artifact_reused(ml, zones):
     assert ml.path.stat().st_mtime_ns == original_mtime
 
 
-@pytest.mark.parametrize("target", ["pm25", "esi"])
-def test_shap_exact_additivity(ml, zones, tmp_path, target):
+@pytest.mark.parametrize("target,method", [("pm25", "ml"), ("esi", "primary")])
+def test_shap_exact_additivity(ml, zones, tmp_path, target, method):
     readings, _ = readings_for(zones, ml, tmp_path)
-    explanation = ml.explain(readings[zones[0]["id"]], target)
+    explanation = ml.explain(readings[zones[0]["id"]], target, method=method)
     reconstructed = explanation["base_value"] + sum(f["contribution"] for f in explanation["features"])
     assert reconstructed == pytest.approx(explanation["prediction_raw"], abs=1e-5)
     assert len(explanation["features"]) == len(FEATURES)
     assert explanation["additivity_error"] < 1e-5
+    assert explanation["explanation_kind"] == "tree_shap"
+    assert explanation["forecast_method"] == "lightgbm"
+    prediction_field = "predicted_pm25_ml" if target == "pm25" else "predicted_esi"
+    assert round(explanation["prediction"], 3) == readings[zones[0]["id"]][prediction_field]
+
+
+def test_primary_pm25_rule_and_experimental_ml_do_not_mutate_input(ml, zones, tmp_path):
+    bg = BackgroundService(Settings(data_dir=tmp_path, background_enabled=False)).snapshot()
+    rng = np.random.default_rng(42)
+    raw = [simulate_reading(z, datetime(2026, 7, 1, 8, tzinfo=UTC), bg, rng) for z in zones]
+    original = deepcopy(raw)
+    enriched = ml.enrich(raw)
+    assert raw == original
+    assert len(enriched) == 40
+    assert any(r["predicted_pm25"] != r["predicted_pm25_ml"] for r in enriched)
+    for reading in enriched:
+        assert reading["predicted_pm25"] == round(max(0, reading["pm25"]), 3)
+        assert np.isfinite(reading["predicted_pm25_ml"]) and reading["predicted_pm25_ml"] >= 0
+        assert reading["prediction_kind"] == "mixed_forecast"
+        assert reading["prediction_methods"] == {
+            "pm25": "persistence", "pm25_ml": "lightgbm", "esi": "lightgbm"}
+    enriched_before_explanation = deepcopy(enriched)
+    explanation = ml.explain(enriched[0], "pm25")
+    assert explanation["explanation_kind"] == "persistence_rule"
+    assert explanation["forecast_method"] == "persistence"
+    assert explanation["base_value"] == 0
+    assert explanation["prediction"] == original[0]["pm25"]
+    assert explanation["prediction_raw"] == original[0]["pm25"]
+    assert explanation["additivity_error"] == 0
+    assert len(explanation["features"]) == 1
+    assert explanation["features"][0]["feature"] == "pm25"
+    assert explanation["features"][0]["contribution"] == original[0]["pm25"]
+    assert raw == original
+    assert enriched == enriched_before_explanation
 
 
 def test_stress_index_bounds():

@@ -1,6 +1,8 @@
 import asyncio
 from copy import deepcopy
 from datetime import timedelta
+import json
+import sqlite3
 
 from fastapi.testclient import TestClient
 import numpy as np
@@ -32,11 +34,15 @@ def test_api_websocket_validation_and_restart(tmp_path):
         assert len(sensors) == 40
         assert all(s["latest"]["kind"] == "virtual_station" for s in sensors)
         sid = sensors[0]["id"]
-        for target in ("esi", "pm25"):
-            response = client.get(f"/api/v1/analytics/explain/{sid}?target={target}")
+        for target, method, kind in (("pm25", "primary", "persistence_rule"),
+                                      ("pm25", "ml", "tree_shap"),
+                                      ("esi", "primary", "tree_shap")):
+            response = client.get(f"/api/v1/analytics/explain/{sid}?target={target}&method={method}")
             assert response.status_code == 200 and response.json()["additivity_error"] < 1e-5
+            assert response.json()["explanation_kind"] == kind
         assert client.get("/api/v1/analytics/explain/missing").status_code == 404
         assert client.get(f"/api/v1/analytics/explain/{sid}?target=invalid").status_code == 422
+        assert client.get(f"/api/v1/analytics/explain/{sid}?method=invalid").status_code == 422
         for body in ({"budget_trees": 99}, {"species": "oak"}, {"target_district": "missing"},
                      {"annual_care_cost_kzt": -1}, {"unexpected": 1}):
             assert client.post("/api/v1/optimize/greening", json=body).status_code == 422
@@ -44,6 +50,7 @@ def test_api_websocket_validation_and_restart(tmp_path):
         assert result.status_code == 200
         assert result.json()["used_trees"] == 100
         assert result.json()["background"]["air"]["status"] == "default"
+        optimization = result.json()
         assert client.get("/api/v1/telemetry/history").json()["points"]
         assert client.get("/api/v1/telemetry/history?minutes=1440").json()["points"]
         assert client.get("/api/v1/telemetry/history?sensor_id=missing").status_code == 404
@@ -55,13 +62,26 @@ def test_api_websocket_validation_and_restart(tmp_path):
             assert initial["type"] == "snapshot" and len(initial["readings"]) == 40
             update = ws.receive_json()
             assert update["type"] == "telemetry" and len(update["readings"]) == 40
+            for batch in (initial, update):
+                assert all(r["predicted_pm25"] == round(max(0, r["pm25"]), 3)
+                           and r["predicted_pm25_ml"] >= 0
+                           and r["prediction_methods"]["pm25"] == "persistence"
+                           for r in batch["readings"])
         # Reconnection always starts with a complete snapshot.
         with client.websocket_connect("/ws/telemetry") as ws:
             assert len(ws.receive_json()["readings"]) == 40
     assert all(t.done() for t in application.state.runtime.tasks)
+    model_mtime = (tmp_path / "models.joblib").stat().st_mtime_ns
     with TestClient(create_app(settings)) as client:
         assert client.get("/health").status_code == 200
         assert len(client.app.state.runtime.tasks) == 3
+        assert (tmp_path / "models.joblib").stat().st_mtime_ns == model_mtime
+        assert all(s["latest"]["prediction_methods"]["pm25"] == "persistence"
+                   for s in client.get("/api/v1/sensors").json()["sensors"])
+    with sqlite3.connect((tmp_path / "astra.db").as_uri() + "?mode=ro", uri=True) as connection:
+        stored = connection.execute("SELECT payload FROM optimization_runs WHERE id = ?",
+                                    (optimization["run_id"],)).fetchone()
+        assert json.loads(stored[0]) == optimization
 
 
 async def test_storage_idempotence_retention_and_aggregates(tmp_path, zones, ml):
@@ -78,6 +98,9 @@ async def test_storage_idempotence_retention_and_aggregates(tmp_path, zones, ml)
         assert await storage.save_batch(readings) == []
         async with storage.sessions() as session:
             assert await session.scalar(select(func.count()).select_from(Telemetry)) == 40
+            stored = await session.scalar(select(Telemetry).where(Telemetry.sensor_id == readings[1]["sensor_id"]))
+            assert stored.payload["predicted_pm25_ml"] == readings[1]["predicted_pm25_ml"]
+            assert stored.payload["prediction_methods"] == readings[1]["prediction_methods"]
             aggregate = await session.scalar(select(MinuteAggregate))
             assert aggregate.payload["count"] == 1
         later = deepcopy(readings[:1])
@@ -98,6 +121,12 @@ async def test_storage_idempotence_retention_and_aggregates(tmp_path, zones, ml)
             assert await session.scalar(select(func.count()).select_from(MinuteAggregate)) == 41
     finally:
         await storage.close()
+    reopened = await create_storage(settings)
+    try:
+        restored = {r["sensor_id"]: r for r in await reopened.latest()}
+        assert restored[readings[1]["sensor_id"]] == readings[1]
+    finally:
+        await reopened.close()
 
 
 async def test_modes_without_infrastructure(tmp_path):

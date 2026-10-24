@@ -1,0 +1,178 @@
+{
+  "protocol_version": "1.1.0",
+  "derived_from": "Argon delivery protocol 1.0.0; models, seeds and splits unchanged",
+  "review_amendments": [
+    "Explicit stable tie break: mean MAE, worst-fold MAE, num_leaves, n_estimators, protocol order",
+    "Residual explanation uses one seeded sample of up to 100 training rows for both interventional SHAP terms"
+  ],
+  "locked_before_execution": true,
+  "task": "pm25_3h_forecast_evaluation_and_candidate_selection",
+  "horizon_hours": 3,
+  "gap_steps": 1,
+  "gap_hours": 3,
+  "zones_per_step": 40,
+  "features": [
+    "pm25",
+    "pm10",
+    "no2",
+    "air_temp_c",
+    "surface_temp_c",
+    "humidity",
+    "wind_speed",
+    "traffic_index",
+    "density",
+    "ndvi",
+    "hour_sin",
+    "hour_cos"
+  ],
+  "clipping_bounds": {
+    "pm25": {
+      "min": 0.0,
+      "max": null
+    },
+    "esi": {
+      "min": 0.0,
+      "max": 100.0
+    }
+  },
+  "primary_seed": 42,
+  "noise_robustness_seeds": [
+    7,
+    123
+  ],
+  "validation_splits": [
+    {
+      "name": "val_split_1_0_49_to_51_66",
+      "train_step_min": 0,
+      "train_step_max": 49,
+      "skipped_step": 50,
+      "val_step_min": 51,
+      "val_step_max": 66
+    },
+    {
+      "name": "val_split_2_0_65_to_67_82",
+      "train_step_min": 0,
+      "train_step_max": 65,
+      "skipped_step": 66,
+      "val_step_min": 67,
+      "val_step_max": 82
+    },
+    {
+      "name": "val_split_3_0_81_to_83_98",
+      "train_step_min": 0,
+      "train_step_max": 81,
+      "skipped_step": 82,
+      "val_step_min": 83,
+      "val_step_max": 98
+    }
+  ],
+  "legacy_control_split": {
+    "name": "control_0_98_to_100_124",
+    "train_step_min": 0,
+    "train_step_max": 98,
+    "skipped_step": 99,
+    "eval_step_min": 100,
+    "eval_step_max": 124,
+    "is_independent_holdout": false,
+    "note": "Existing benchmark control segment already reported in ASTRA; evaluated once after locking validation winner."
+  },
+  "baselines": [
+    {
+      "id": "persistence",
+      "kind": "persistence",
+      "description": "Forecasts pm25(t+3h) = pm25(t) without trainable parameters."
+    },
+    {
+      "id": "current_lgbm",
+      "kind": "direct_lgbm",
+      "description": "Frozen legacy astra-synthetic-v2 LGBMRegressor configuration predicting direct pm25(t+3h) under L2 objective; not an assertion about the currently deployed prediction policy.",
+      "params": {
+        "objective": "regression",
+        "n_estimators": 100,
+        "num_leaves": 15,
+        "max_depth": 5,
+        "learning_rate": 0.07,
+        "reg_lambda": 1.0,
+        "n_jobs": 2,
+        "verbosity": -1
+      }
+    }
+  ],
+  "candidates": [
+    {
+      "id": "regularized_direct_l1",
+      "kind": "direct_lgbm",
+      "description": "Simpler, stronger-regularized LGBMRegressor predicting direct pm25(t+3h) under L1 (MAE) loss with min_child_samples=120 (>=3 synchronous 40-zone steps).",
+      "params": {
+        "objective": "regression_l1",
+        "n_estimators": 80,
+        "num_leaves": 7,
+        "max_depth": 3,
+        "learning_rate": 0.05,
+        "min_child_samples": 120,
+        "reg_alpha": 1.0,
+        "reg_lambda": 10.0,
+        "colsample_bytree": 0.8,
+        "subsample": 0.8,
+        "subsample_freq": 1,
+        "n_jobs": 2,
+        "verbosity": -1
+      }
+    },
+    {
+      "id": "residual_lgbm_l1",
+      "kind": "residual_lgbm",
+      "description": "Forecasts 3h increment delta = pm25(t+3h) - pm25(t) using depth-3 L1 LightGBM with min_child_samples=160 (>=4 full steps) and reconstructs pm25(t) + delta_hat.",
+      "params": {
+        "objective": "regression_l1",
+        "n_estimators": 60,
+        "num_leaves": 7,
+        "max_depth": 3,
+        "learning_rate": 0.04,
+        "min_child_samples": 160,
+        "reg_alpha": 1.0,
+        "reg_lambda": 15.0,
+        "colsample_bytree": 0.75,
+        "subsample": 0.8,
+        "subsample_freq": 1,
+        "n_jobs": 2,
+        "verbosity": -1
+      }
+    },
+    {
+      "id": "conservative_residual_lgbm_l1",
+      "kind": "residual_lgbm",
+      "description": "Forecasts 3h increment delta = pm25(t+3h) - pm25(t) using shallow depth-2 L1 LightGBM with min_child_samples=240 (>=6 full steps) and heavy L1/L2 shrinkage.",
+      "params": {
+        "objective": "regression_l1",
+        "n_estimators": 45,
+        "num_leaves": 4,
+        "max_depth": 2,
+        "learning_rate": 0.03,
+        "min_child_samples": 240,
+        "reg_alpha": 2.0,
+        "reg_lambda": 25.0,
+        "colsample_bytree": 0.6,
+        "subsample": 0.8,
+        "subsample_freq": 1,
+        "n_jobs": 2,
+        "verbosity": -1
+      }
+    }
+  ],
+  "selection_rule": {
+    "primary_metric": "mean_validation_mae_clipped",
+    "tie_breakers": [
+      "max_validation_mae_clipped",
+      "fewer_leaves_and_trees"
+    ],
+    "fewer_leaves_and_trees_order": ["num_leaves", "n_estimators"],
+    "selection_scope": "ML candidates only; persistence is a separate acceptance gate",
+    "replacement_recommendation_criteria": {
+      "must_beat_current_lgbm_on_validation_mean": true,
+      "must_beat_persistence_on_validation_mean": true,
+      "must_confirm_vs_persistence_across_seeds_42_7_123": true,
+      "must_preserve_exact_shap_additivity": true
+    }
+  }
+}
