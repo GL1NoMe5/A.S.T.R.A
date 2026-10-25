@@ -1,10 +1,11 @@
 import asyncio
 from collections import defaultdict
+from contextlib import asynccontextmanager
 from datetime import timedelta
 import logging
 
 from redis.asyncio import Redis
-from sqlalchemy import delete, event, select, text
+from sqlalchemy import delete, event, func, select, text
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from app.core.config import Settings
@@ -13,6 +14,9 @@ from app.services.background import parse_time, utcnow
 
 log = logging.getLogger(__name__)
 METRIC_KEYS = ("pm25", "surface_temp_c", "air_temp_c", "esi", "predicted_pm25", "predicted_esi")
+OPTIMIZATION_RETENTION_DAYS = 30
+OPTIMIZATION_SUMMARY_KEYS = ("run_id", "created_at", "request", "used_trees", "unused_trees",
+                             "horizon_years", "costs", "summary")
 
 
 class Storage:
@@ -23,10 +27,19 @@ class Storage:
         self.reason = reason
         self.sessions = async_sessionmaker(engine, expire_on_commit=False)
 
+    @asynccontextmanager
+    async def write_session(self):
+        async with self.sessions() as session:
+            if self.engine.dialect.name == "sqlite":
+                # Reserve the single writer before reading deduplication/aggregate
+                # state. busy_timeout can then wait without upgrading a stale read.
+                await session.execute(text("BEGIN IMMEDIATE"))
+            yield session
+
     async def initialize(self, zones):
         async with self.engine.begin() as connection:
             await connection.run_sync(Base.metadata.create_all)
-        async with self.sessions() as session:
+        async with self.write_session() as session:
             for zone in zones:
                 await session.merge(Sensor(id=zone["id"], payload=zone))
             await session.commit()
@@ -34,7 +47,7 @@ class Storage:
     async def save_batch(self, readings):
         """Persist once; a replay cannot inflate minute counts."""
         inserted = []
-        async with self.sessions() as session:
+        async with self.write_session() as session:
             for reading in readings:
                 timestamp = parse_time(reading["timestamp"])
                 key = (reading["sensor_id"], timestamp)
@@ -85,15 +98,31 @@ class Storage:
             return (await session.scalars(query)).all()
 
     async def save_optimization(self, result):
-        async with self.sessions() as session:
+        async with self.write_session() as session:
             session.add(OptimizationRun(id=result["run_id"], timestamp=utcnow(), payload=result))
             await session.commit()
 
-    async def prune(self, settings):
+    async def list_optimizations(self, limit=20, offset=0):
+        """Return saved summaries, newest first, without recomputing a scenario."""
         async with self.sessions() as session:
+            total = await session.scalar(select(func.count()).select_from(OptimizationRun))
+            records = (await session.scalars(
+                select(OptimizationRun).order_by(OptimizationRun.timestamp.desc(), OptimizationRun.id.desc())
+                .limit(limit).offset(offset))).all()
+            items = [{key: record.payload[key] for key in OPTIMIZATION_SUMMARY_KEYS} for record in records]
+        return items, int(total or 0)
+
+    async def get_optimization(self, run_id):
+        """Return the original calculation snapshot, including its original background."""
+        async with self.sessions() as session:
+            record = await session.get(OptimizationRun, run_id)
+            return record.payload if record is not None else None
+
+    async def prune(self, settings):
+        async with self.write_session() as session:
             for model, cutoff in ((Telemetry, utcnow() - timedelta(minutes=settings.retention_minutes)),
                                   (MinuteAggregate, utcnow() - timedelta(hours=settings.aggregate_retention_hours)),
-                                  (OptimizationRun, utcnow() - timedelta(days=30))):
+                                  (OptimizationRun, utcnow() - timedelta(days=OPTIMIZATION_RETENTION_DAYS))):
                 await session.execute(delete(model).where(model.timestamp < cutoff))
             await session.commit()
 
@@ -131,8 +160,8 @@ async def create_storage(settings: Settings) -> Storage:
     @event.listens_for(engine.sync_engine, "connect")
     def configure_sqlite(connection, _):
         cursor = connection.cursor()
-        cursor.execute("PRAGMA journal_mode=WAL")
         cursor.execute("PRAGMA busy_timeout=5000")
+        cursor.execute("PRAGMA journal_mode=WAL")
         cursor.close()
 
     return Storage(engine, None, "local", reason)

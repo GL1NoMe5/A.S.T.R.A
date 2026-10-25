@@ -49,38 +49,23 @@
     wind_direction_10m: ["Направление ветра", "°"],
   });
 
-  const intFmt = new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 0 });
-  const dec2Fmt = new Intl.NumberFormat("ru-RU", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-  const dec3Fmt = new Intl.NumberFormat("ru-RU", {
-    minimumFractionDigits: 3,
-    maximumFractionDigits: 3,
-  });
-  const dec1Fmt = new Intl.NumberFormat("ru-RU", {
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-  });
-  const moneyFracFmt = new Intl.NumberFormat("ru-RU", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-
-  let tzDateFmt = null;
-  try {
-    tzDateFmt = new Intl.DateTimeFormat("ru-RU", {
-      timeZone: REPORT_TIMEZONE,
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      hourCycle: "h23",
-    });
-  } catch (_) {
-    tzDateFmt = null;
+  const reportI18n = () => typeof window !== "undefined" ? window.ReportI18n : null;
+  const localeText = value => reportI18n()?.text(value) ?? value;
+  const localizeDocument = doc => reportI18n()?.apply(doc);
+  let intFmt, dec2Fmt, dec3Fmt, dec1Fmt, moneyFracFmt, tzDateFmt;
+  function configureFormats() {
+    const locale = reportI18n()?.locale || "ru-RU";
+    intFmt = new Intl.NumberFormat(locale, { maximumFractionDigits: 0 });
+    dec2Fmt = new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    dec3Fmt = new Intl.NumberFormat(locale, { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+    dec1Fmt = new Intl.NumberFormat(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    moneyFracFmt = dec2Fmt;
+    try {
+      tzDateFmt = new Intl.DateTimeFormat(locale, { timeZone: REPORT_TIMEZONE,
+        year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
+    } catch (_) { tzDateFmt = null; }
   }
+  configureFormats();
 
   function isPlainObject(val) {
     return typeof val === "object" && val !== null && !Array.isArray(val);
@@ -944,10 +929,12 @@
         const th = doc.createElement("th");
         th.setAttribute("scope", "row");
         const nameSpan = doc.createElement("span");
-        nameSpan.textContent = zone.name;
+        nameSpan.textContent = reportI18n()?.zoneName(zone.name) ?? zone.name;
+        nameSpan.setAttribute("data-original", "");
         const metaSpan = doc.createElement("span");
         metaSpan.className = "zone-meta";
-        metaSpan.textContent = `${zone.district_name} · ID: ${zone.id} · ${zone.latitude.toFixed(
+        metaSpan.setAttribute("data-original", "");
+        metaSpan.textContent = `${localeText(zone.district_name)} · ID: ${zone.id} · ${zone.latitude.toFixed(
           4
         )}°, ${zone.longitude.toFixed(4)}°`;
         th.appendChild(nameSpan);
@@ -1099,6 +1086,7 @@
           li.textContent = "Адрес источника скрыт (допустимы только ссылки https/http)";
         } else {
           li.textContent = rawSrc;
+          li.setAttribute("data-original", "");
         }
         sourcesList.appendChild(li);
       }
@@ -1121,8 +1109,23 @@
     const reportSheet = document.getElementById("report-document");
 
     if (!fileInput || !pickBtn || !printBtn || !dropzone || !reportSheet) return;
+    document.documentElement?.setAttribute("data-report-build", "20261025-i18n1");
+    let currentData = null, currentSource = "", lastErrors = null;
+    const languageSelect = document.getElementById("report-language");
+    if (languageSelect && reportI18n()) {
+      languageSelect.value = reportI18n().lang;
+      languageSelect.addEventListener("change", () => {
+        reportI18n().setLang(languageSelect.value);
+        configureFormats();
+        if (currentData) applyValidReport(currentData, currentSource);
+        else if (lastErrors) showErrors(...lastErrors);
+        localizeDocument(document);
+      });
+    }
+    localizeDocument(document);
 
     function showErrors(summaryMsg, messages) {
+      currentData = null; lastErrors = [summaryMsg, messages];
       reportSheet.hidden = true;
       emptyGuide.hidden = false;
       printBtn.disabled = true;
@@ -1139,9 +1142,11 @@
         errorList.appendChild(li);
       }
       errorPanel.hidden = false;
+      localizeDocument(document);
     }
 
     function applyValidReport(data, sourceLabel) {
+      currentData = data; currentSource = sourceLabel; lastErrors = null;
       errorPanel.hidden = true;
       clearChildren(errorList);
       renderReportDom(data, document);
@@ -1156,6 +1161,7 @@
         fileBadge.textContent = sourceLabel;
         fileBadge.hidden = false;
       }
+      localizeDocument(document);
     }
 
     function loadJsonText(rawText, fileName) {

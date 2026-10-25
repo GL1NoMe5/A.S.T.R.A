@@ -1,5 +1,6 @@
 from datetime import timedelta
 import json
+from pathlib import Path
 
 import httpx
 import pytest
@@ -93,3 +94,34 @@ async def test_disabled_network_never_calls_transport(tmp_path):
         service = BackgroundService(Settings(data_dir=tmp_path, background_enabled=False), client)
         await service.refresh()
         assert service.snapshot()["weather"]["status"] == "default"
+
+
+@pytest.mark.parametrize("blocked_attempts", [1, 4])
+async def test_cache_replace_retries_transient_lock_but_preserves_permanent_error(
+        tmp_path, monkeypatch, blocked_attempts):
+    service = BackgroundService(Settings(data_dir=tmp_path, background_enabled=False))
+    service.cache = {"previous": "snapshot"}
+    await service._persist_cache()
+    previous = service.path.read_text(encoding="utf-8")
+    service.cache = {"updated": "snapshot"}
+    original_replace = Path.replace
+    attempts = 0
+
+    def replace(path, target):
+        nonlocal attempts
+        attempts += 1
+        if attempts <= blocked_attempts:
+            raise PermissionError(13, "Temporary Windows file lock")
+        return original_replace(path, target)
+
+    monkeypatch.setattr(Path, "replace", replace)
+    if blocked_attempts == 4:
+        with pytest.raises(PermissionError):
+            await service._persist_cache()
+        assert attempts == 4
+        assert service.path.read_text(encoding="utf-8") == previous
+    else:
+        await service._persist_cache()
+        assert attempts == 2
+        assert json.loads(service.path.read_text(encoding="utf-8"))["updated"] == "snapshot"
+    assert not list(tmp_path.glob("*.tmp"))

@@ -28,7 +28,8 @@ def main(argv=None):
     if result.returncode:
         return result.returncode
     if args.javascript or args.node:
-        return subprocess.run([node, "--test", "tests/report.test.cjs"], cwd=ROOT,
+        return subprocess.run([node, "--test", "tests/report.test.cjs", "tests/nature.test.cjs",
+                               "tests/i18n.test.cjs"], cwd=ROOT,
                               env=env, check=False).returncode
     return 0
 

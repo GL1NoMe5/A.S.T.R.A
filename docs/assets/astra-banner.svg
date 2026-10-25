@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="420" viewBox="0 0 1280 420" fill="none" role="img" aria-labelledby="title description">
+  <title id="title">ASTRA — экологическая карта и планирование озеленения</title>
+  <desc id="description">Лесной зелёный фон, светлая надпись ASTRA без засечек и собственный ботанический рисунок в шалфейных тонах.</desc>
+  <defs>
+    <pattern id="texture" width="7" height="7" patternUnits="userSpaceOnUse">
+      <path d="M0 7L7 0" stroke="#9cad83" stroke-opacity=".035"/>
+    </pattern>
+  </defs>
+  <rect width="1280" height="420" rx="24" fill="#1b3529"/>
+  <rect width="1280" height="420" rx="24" fill="url(#texture)"/>
+  <rect x="16.5" y="16.5" width="1247" height="387" rx="15.5" stroke="#9cad83" stroke-opacity=".38"/>
+  <path d="M48 335H1232" stroke="#9cad83" stroke-opacity=".36"/>
+  <circle cx="61" cy="67" r="5" fill="#9cad83"/>
+  <text x="80" y="73" fill="#9cad83" font-family="'Segoe UI', Arial, sans-serif" font-size="14" letter-spacing="3">ГОРОДСКАЯ ЭКОЛОГИЯ / АСТАНА</text>
+  <text x="49" y="215" fill="#f5f5ed" font-family="'Segoe UI', Arial, sans-serif" font-size="126" font-weight="700" letter-spacing="-3">ASTRA</text>
+  <text x="57" y="276" fill="#f5f5ed" font-family="'Segoe UI', Arial, sans-serif" font-size="25">Экологическая карта и планирование озеленения</text>
+  <text x="57" y="375" fill="#9cad83" font-family="'Segoe UI', Arial, sans-serif" font-size="12" letter-spacing="2">GREENHACK KAZAKHSTAN · КОНКУРСНЫЙ ПРОТОТИП</text>
+  <text x="1113" y="375" fill="#9cad83" font-family="'Segoe UI', Arial, sans-serif" font-size="12" letter-spacing="2">51° N / 71° E</text>
+  <g stroke="#9cad83" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M860 335C880 302 917 278 941 242C965 206 980 154 991 77"/>
+    <path d="M884 302C852 303 829 291 819 268C847 265 872 278 884 302Z" fill="#e4e9d9"/>
+    <path d="M903 282C906 253 927 234 954 231C952 257 933 277 903 282Z" fill="#e4e9d9"/>
+    <path d="M930 257C893 257 868 240 859 211C893 214 918 229 930 257Z"/>
+    <path d="M950 229C953 193 975 172 1007 163C1005 199 984 220 950 229Z" fill="#e4e9d9"/>
+    <path d="M965 196C933 190 914 166 914 139C944 148 960 166 965 196Z"/>
+    <path d="M977 155C981 122 1003 100 1032 96C1025 125 1007 147 977 155Z"/>
+    <path d="M984 119C963 105 954 83 961 58C981 75 989 94 984 119Z" fill="#e4e9d9"/>
+    <path d="M893 335C941 309 997 301 1045 274C1093 246 1113 215 1145 169"/>
+    <path d="M959 309C947 280 953 255 972 237C987 263 981 291 959 309Z"/>
+    <path d="M990 300C1017 298 1042 311 1055 331C1026 336 1003 326 990 300Z" fill="#e4e9d9"/>
+    <path d="M1029 283C1019 257 1024 228 1047 209C1056 238 1050 264 1029 283Z" fill="#e4e9d9"/>
+    <path d="M1065 260C1093 248 1120 253 1139 272C1111 283 1085 278 1065 260Z"/>
+    <path d="M1092 234C1087 204 1099 180 1124 169C1128 196 1117 221 1092 234Z"/>
+    <path d="M1121 202C1149 187 1176 191 1195 209C1168 222 1142 219 1121 202Z" fill="#e4e9d9"/>
+    <path d="M1144 170C1140 147 1151 126 1173 116C1175 141 1165 160 1144 170Z" fill="#e4e9d9"/>
+    <path d="M880 302L833 278M903 282L941 244M930 257L874 226M950 229L992 181M965 196L926 157M977 155L1017 111M984 119L967 77" stroke-opacity=".65"/>
+    <path d="M959 309L969 254M990 300L1036 323M1029 283L1043 228M1065 260L1119 269M1092 234L1116 187M1121 202L1174 206M1144 170L1167 133" stroke-opacity=".65"/>
+  </g>
+  <circle cx="1139" cy="66" r="20" stroke="#9cad83" stroke-opacity=".55"/>
+  <circle cx="1139" cy="66" r="3" fill="#9cad83"/>
+  <path d="M1139 36V28M1139 104V96M1109 66H1101M1177 66H1169" stroke="#9cad83" stroke-linecap="round"/>
+</svg>

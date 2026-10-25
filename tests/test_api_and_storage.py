@@ -21,12 +21,15 @@ def test_api_websocket_validation_and_restart(tmp_path):
     settings = Settings(data_dir=tmp_path, mode="local", background_enabled=False, tick_seconds=.1)
     application = create_app(settings)
     with TestClient(application) as client:
-        assert client.get("/").status_code == 200
+        page = client.get("/")
+        assert page.status_code == 200
+        assert page.headers["cache-control"] == "no-cache"
         for asset, mime in (("report.html", "text/html"), ("report.css", "text/css"),
-                            ("report.js", "javascript")):
+                            ("report.js", "javascript"), ("report-i18n.js", "javascript")):
             response = client.get(f"/static/report/{asset}")
             assert response.status_code == 200
             assert mime in response.headers["content-type"]
+            assert response.headers["cache-control"] == "no-cache"
         health = client.get("/health").json()
         assert health["status"] == "ok" and health["mode"] == "local"
         assert health["background"]["air"] == "default"
@@ -135,6 +138,30 @@ async def test_modes_without_infrastructure(tmp_path):
     await auto.close()
     with pytest.raises(RuntimeError, match="DATABASE_URL"):
         await create_storage(Settings(data_dir=tmp_path, mode="docker"))
+
+
+async def test_concurrent_sqlite_writers_keep_replays_idempotent(tmp_path, zones):
+    """A replay and a saved plan can arrive while another connection writes."""
+    settings = Settings(data_dir=tmp_path, mode="local", background_enabled=False)
+    first = await create_storage(settings)
+    second = await create_storage(settings)
+    try:
+        await first.initialize(zones)
+        await second.latest()
+        reading = {"sensor_id": zones[0]["id"], "timestamp": utcnow().isoformat(),
+                   "pm25": 20, "surface_temp_c": 12, "air_temp_c": 8, "esi": 70,
+                   "predicted_pm25": 20, "predicted_esi": 72}
+        batches = await asyncio.gather(
+            *(storage.save_batch([reading]) for storage in (first, second) * 4),
+            first.save_optimization({"run_id": "concurrent-plan"}))
+        assert sorted(len(batch) for batch in batches[:-1]) == [0] * 7 + [1]
+        async with first.sessions() as session:
+            assert await session.scalar(select(func.count()).select_from(Telemetry)) == 1
+            aggregate = await session.scalar(select(MinuteAggregate))
+            assert aggregate.payload["count"] == 1
+        assert await second.get_optimization("concurrent-plan") == {"run_id": "concurrent-plan"}
+    finally:
+        await asyncio.gather(first.close(), second.close())
 
 
 async def test_auto_falls_back_as_pair_and_docker_is_strict(tmp_path):

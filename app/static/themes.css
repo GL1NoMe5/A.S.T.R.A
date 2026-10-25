@@ -1,0 +1,221 @@
+/* All theme colors are local. Maps, data and report printouts keep their meaning. */
+:root{--chart-text:#536653;--chart-grid:#d4deca}
+
+.theme-control{display:inline-flex;align-items:center;gap:7px;font-size:11px;color:var(--muted)}
+
+.theme-control select,#language-mode{width:auto;max-width:145px;font-size:11px;padding:7px 24px 7px 9px;min-height:36px;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:5px}
+
+.header-meta{flex-wrap:wrap;justify-content:flex-end;gap:11px}
+.topbar{min-height:86px;height:auto;padding:14px 0}
+.language-control{display:flex;align-items:center;gap:6px;font-size:11px}
+
+.holiday-lights{display:none;pointer-events:none;position:absolute;inset:0 0 auto;height:23px;z-index:4;overflow:hidden;border-top:1px solid #8c814a;justify-content:space-around}
+
+.holiday-lights i{display:block;width:6px;height:10px;margin-top:5px;border-radius:50%;background:#f5c55b;box-shadow:0 0 8px #f5c55b77;animation:holiday-glow 4s ease-in-out infinite;animation-delay:calc(var(--n) * -.27s)}
+
+.holiday-lights i:before{content:'';display:block;width:1px;height:5px;background:#a9a078;position:relative;top:-5px;left:3px}
+
+.holiday-lights i:nth-child(3n){background:#c55c52;box-shadow:0 0 8px #cf6b5a77}
+.holiday-lights i:nth-child(3n+1){background:#b4d893;box-shadow:0 0 8px #b4d89377}
+
+:root[data-theme=dark],:root[data-theme=christmas]{--bg:#101c1b;--panel:#1a2b26;--forest:#183d2e;--green:#a7d58f;--sage:#94bd7a;--text:#e4eddb;--muted:#a6b89e;--line:#3d5141;--gold:#d4b779;--red:#d48b77;--chart-text:#b9cbb0;--chart-grid:#354b3b;color-scheme:dark;background:var(--bg);color:var(--text)}
+
+:root[data-theme=christmas]{--bg:#162f2b;--panel:#203c31;--forest:#5f2d2e;--green:#e5ce8b;--sage:#bbd095;--text:#f1efdb;--muted:#c5c5a6;--line:#586546;--gold:#e4c46e;--red:#dd9b87;--chart-text:#ddd8bc;--chart-grid:#4c5f46}
+
+[data-theme=dark] body,[data-theme=christmas] body{background-color:var(--bg);background-image:radial-gradient(#a0c18413 .8px,transparent .8px)}
+
+[data-theme=christmas] .holiday-lights{display:flex}
+
+[data-theme=dark] .rail{background:linear-gradient(150deg,#1a342b,#0d211b);border-right-color:#3b5140}
+
+[data-theme=christmas] .rail{background:linear-gradient(150deg,#263e2e,#182b22 45%,#49292b);border-right-color:#7d6b48}
+
+:is([data-theme=dark],[data-theme=christmas]) .topbar{background:transparent;border-color:var(--line)}
+
+:is([data-theme=dark],[data-theme=christmas]) .breadcrumb strong{color:var(--text)}
+
+:is([data-theme=dark],[data-theme=christmas]) .connection{background:#243b2b;color:#d2e6b9;border-color:#4b6440}
+
+:is([data-theme=dark],[data-theme=christmas]) .page-caption #mode{background:#2b432e;color:#bace9e}
+
+:is([data-theme=dark],[data-theme=christmas]) .overview-heading{background:linear-gradient(110deg,#213e2c,#274c38);border-color:#547443;box-shadow:0 5px 0 #091e1633}
+
+[data-theme=christmas] .overview-heading{background:linear-gradient(115deg,#482c2d,#214c36);border-color:#897543}
+
+:is([data-theme=dark],[data-theme=christmas]) .kpi{background:#1d3027e8;border-color:var(--line)!important;box-shadow:0 4px 0 #0b1d18}
+
+:is([data-theme=dark],[data-theme=christmas]) .kpi:hover{box-shadow:0 8px 0 #0b1d18,0 12px 25px #0002}
+
+:is([data-theme=dark],[data-theme=christmas]) .kpi-value{color:#cce4b7}
+
+:is([data-theme=dark],[data-theme=christmas]) .kpi-label>span{background:#30482f;color:#b4caa1}
+
+:is([data-theme=dark],[data-theme=christmas]) .kpi-value small{color:#a6bc96}
+
+:is([data-theme=dark],[data-theme=christmas]) .panel{background:var(--panel);border-color:var(--line);box-shadow:0 4px 0 #091e1633}
+
+:is([data-theme=dark],[data-theme=christmas]) .panel-heading{background:#24392c;border-color:var(--line);color:var(--text)}
+
+:is([data-theme=dark],[data-theme=christmas]) .map-controls{background:#1a2e25;border-color:var(--line)}
+
+:is([data-theme=dark],[data-theme=christmas]) .metric-switch{background:#14271e;border-color:#49603d}
+
+:is([data-theme=dark],[data-theme=christmas]) .metric-switch button{color:#adc198}
+
+:is([data-theme=dark],[data-theme=christmas]) .metric-switch button.active{background:#c3dba0;color:#213e28}
+
+:is([data-theme=dark],[data-theme=christmas]) .metric-switch button:hover:not(.active){background:#3e5735;color:#e4edcf}
+
+:is([data-theme=dark],[data-theme=christmas]) #map-scale{color:#adbf9b}
+
+:is([data-theme=dark],[data-theme=christmas]) .map-wrap{background:#24382b}
+
+:is([data-theme=dark],[data-theme=christmas]) .leaflet-tile-pane{filter:brightness(.72) saturate(.65)}
+
+:is([data-theme=dark],[data-theme=christmas]) .map-overlay,:is([data-theme=dark],[data-theme=christmas]) .map-legend{background:#142b20ed;color:#d8e7bf;border-color:#6b8552}
+
+:is([data-theme=dark],[data-theme=christmas]) .map-footer{background:#24392c;color:#b4c6a0}
+
+:is([data-theme=dark],[data-theme=christmas]) .map-footer select{background:#182c22;border-color:#4b6541;color:var(--text)}
+
+:is([data-theme=dark],[data-theme=christmas]) .leaflet-control-zoom a{background:#233c2b!important;color:#dceac5!important}
+
+:is([data-theme=dark],[data-theme=christmas]) .leaflet-control-attribution{background:#213626e8!important;color:#b9caa3}
+
+:is([data-theme=dark],[data-theme=christmas]) .leaflet-control-attribution a{color:#c6dcae}
+
+:is([data-theme=dark],[data-theme=christmas]) .leaflet-tooltip{background:#1c3325!important;color:#e2edce!important;border-color:#6d8756!important}
+
+:is([data-theme=dark],[data-theme=christmas]) .city-notes{background:linear-gradient(140deg,#293e2c,#203725);border-color:#4e6940;box-shadow:0 4px 0 #0b1e1533}
+
+:is([data-theme=dark],[data-theme=christmas]) .network-heading,:is([data-theme=dark],[data-theme=christmas]) .network-stat{border-color:#4a623b}
+
+:is([data-theme=dark],[data-theme=christmas]) .network-stat small,:is([data-theme=dark],[data-theme=christmas]) .network-note p{color:#b0c495}
+
+:is([data-theme=dark],[data-theme=christmas]) .network-heading h2{color:#e1ebca}
+
+:is([data-theme=dark],[data-theme=christmas]) .city-notes>.secondary-button{background:#324c30;color:#d3e7b1;border-color:#6e8953}
+
+:is([data-theme=dark],[data-theme=christmas]) .source-banner{background:#253b2a;border-color:#48613b;color:#c1d4ab}
+
+:is([data-theme=dark],[data-theme=christmas]) .source-badge{background:#354c2e;color:#d3e4ba;border-color:#66804c}
+
+:is([data-theme=dark],[data-theme=christmas]) .planning-guide{background:#293f2b;border-color:#526d40}
+
+:is([data-theme=dark],[data-theme=christmas]) .guide-ring .guide-leaf{background:#293f2b;color:#c2dca0}
+
+:is([data-theme=dark],[data-theme=christmas]) .planning-guide h2{color:#dce9c6}
+
+:is([data-theme=dark],[data-theme=christmas]) select,:is([data-theme=dark],[data-theme=christmas]) input[type=number]{background:#1b3024;color:var(--text);border-color:#597246}
+
+:is([data-theme=dark],[data-theme=christmas]) #nature-mode,:is([data-theme=dark],[data-theme=christmas]) .theme-control select,:is([data-theme=dark],[data-theme=christmas]) #language-mode{background:#233a29;color:#dce8c4;border-color:#4e663d}
+
+:is([data-theme=dark],[data-theme=christmas]) .nature-control,:is([data-theme=dark],[data-theme=christmas]) .theme-control{color:var(--muted)}
+
+:is([data-theme=dark],[data-theme=christmas]) .field-title output{background:#354f2f;color:#d2e7ad}
+
+:is([data-theme=dark],[data-theme=christmas]) .primary-button{background:#bcd998;color:#1a3523;border-color:#d0e6af;box-shadow:0 3px 0 #0d241c66}
+
+:is([data-theme=dark],[data-theme=christmas]) .primary-button:hover:not(:disabled){background:#d2e8b4}
+
+[data-theme=christmas] .primary-button,[data-theme=christmas] .hero-actions .primary-button{background:#a94c43;border-color:#d49470;color:#fff3da}
+
+[data-theme=christmas] .primary-button:hover:not(:disabled),[data-theme=christmas] .hero-actions .primary-button:hover{background:#bc6152;color:#fff8e8}
+
+:is([data-theme=dark],[data-theme=christmas]) .secondary-button{background:#2c422d;color:#d1e2b4;border-color:#68834e;box-shadow:0 2px 0 #13271c}
+
+:is([data-theme=dark],[data-theme=christmas]) .secondary-button:hover:not(:disabled){background:#3c5635}
+
+:is([data-theme=dark],[data-theme=christmas]) .metrics-footer{background:#263d2b;border-color:var(--line);color:#c0d1aa}
+
+:is([data-theme=dark],[data-theme=christmas]) .analysis-note{background:#2a412d;border-color:#536d41;color:#c6d9af}
+
+:is([data-theme=dark],[data-theme=christmas]) .saved-card{background:#203629;border-color:#4d663f;box-shadow:0 4px 0 #10251a}
+
+:is([data-theme=dark],[data-theme=christmas]) .saved-card:hover{border-color:#8aa56a}
+
+:is([data-theme=dark],[data-theme=christmas]) .result-kpi{background:#30482e;border-color:#536e40;box-shadow:inset 0 3px 0 #a4bf7c}
+
+:is([data-theme=dark],[data-theme=christmas]) .result-kpi strong{color:#d7e8bb}
+
+:is([data-theme=dark],[data-theme=christmas]) thead{background:#2a412d}
+
+:is([data-theme=dark],[data-theme=christmas]) .sensor-drawer{background:#1c3125;border-color:#728f56}
+
+:is([data-theme=dark],[data-theme=christmas]) .sensor-value{background:#29432e;border-color:#4f6d3e}
+
+:is([data-theme=dark],[data-theme=christmas]) #sensor-forecast{background:#354d2d;color:#e1edc6;border-color:#6c8950}
+
+:is([data-theme=dark],[data-theme=christmas]) .connection-notice{background:#493e26;border-color:#8c7545;color:#f4dfaa}
+
+:is([data-theme=dark],[data-theme=christmas]) .connection-notice button{color:#f4dfaa;border-color:#aa935e}
+
+:is([data-theme=dark],[data-theme=christmas]) .toast{background:#463d29;border-color:#9a8355;color:#f2e2b8}
+
+:is([data-theme=dark],[data-theme=christmas]) footer{border-color:var(--line)}
+
+:is([data-theme=dark],[data-theme=christmas]) :focus-visible{outline-color:#dbdda1}
+
+[data-theme=christmas] .nav-item.active{background:#ead6a4;color:#4c2d2c;border-color:#f5e7c3}
+
+[data-theme=christmas] .kpi:before{background:#c48e55}
+[data-theme=christmas] .kpi:nth-child(2):before{background:#b86352}
+[data-theme=christmas] .kpi:nth-child(3):before{background:#98b583}
+
+@keyframes holiday-glow{50%{opacity:.55;filter:brightness(.8)}
+}
+
+@media(max-width:1200px){.header-meta{max-width:73%;gap:8px}
+.topbar{align-items:flex-start}
+.breadcrumb{padding-top:10px}
+.theme-control{font-size:10px}
+.theme-control select,#language-mode{font-size:10px;max-width:135px}
+}
+
+@media(max-width:760px){.header-meta{max-width:none;width:100%;justify-content:flex-start}
+.header-meta #clock{margin-left:auto}
+.topbar{gap:10px}
+.nature-control,.theme-control{flex:1;min-width:145px}
+.nature-control select,.theme-control select{max-width:none;flex:1}
+.language-control{margin-left:auto}
+.breadcrumb{padding-top:0}
+}
+
+@media(max-width:540px){.topbar{padding:18px 0 13px}
+.header-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.connection{grid-column:1;justify-self:start}
+.header-meta #clock{grid-column:2;justify-self:end}
+.nature-control{order:0;grid-column:1/-1;min-width:0;justify-content:space-between}
+.nature-control select{max-width:210px!important;min-height:34px}
+.theme-control{grid-column:1;min-width:0;gap:5px}
+.theme-control>span{display:none}
+.theme-control select{width:100%;max-width:none;font-size:10px;padding-right:15px}
+.language-control{grid-column:2;min-width:0;justify-self:stretch;margin-left:0;justify-content:flex-end}
+#language-mode{max-width:100%;font-size:10px;min-height:34px}
+.holiday-lights{height:17px}
+.holiday-lights i{width:4px;height:7px}
+.holiday-lights i:before{left:2px}
+.header-meta>label{font-size:10px}
+}
+
+@media(prefers-reduced-motion:reduce){.holiday-lights i{animation:none}
+}
+
+@media print{.holiday-lights,.theme-control,.language-control{display:none!important}
+}
+
+/* Contextual depth: the background remains visible around the working area. */
+@media(min-width:1700px){main{width:calc(100% - 230px);max-width:1480px;margin-left:max(230px,calc((100vw - 1480px + 230px)/2));padding:0 38px}}
+body:before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 88% 12%,#e8d6a945,transparent 36%),repeating-radial-gradient(ellipse at 120% 85%,transparent 0 48px,#527c3910 49px 50px,transparent 51px 73px);opacity:.85}
+[data-theme=dark] body:before{background:radial-gradient(ellipse at 86% 6%,#5a8b8250,transparent 37%),radial-gradient(ellipse at 15% 75%,#3765482b,transparent 35%),repeating-radial-gradient(ellipse at 120% 85%,transparent 0 48px,#91ae7310 49px 50px,transparent 51px 73px)}
+[data-theme=christmas] body:before{background:radial-gradient(ellipse at 90% 6%,#e3bd682e,transparent 34%),radial-gradient(ellipse at 10% 70%,#8e3b4224,transparent 34%),repeating-radial-gradient(ellipse at 120% 85%,transparent 0 48px,#d5c07a0e 49px 50px,transparent 51px 73px)}
+.panel,.saved-card{border-top-color:#a9bf95;box-shadow:inset 0 1px 0 #fff9,0 4px 0 #9db58a40,0 9px 24px #1e3b2110}
+:is([data-theme=dark],[data-theme=christmas]) .panel,:is([data-theme=dark],[data-theme=christmas]) .saved-card{border-top-color:#657d53;box-shadow:inset 0 1px 0 #c3dbab0a,0 4px 0 #071b1660,0 9px 24px #0002}
+.panel-heading{background-image:linear-gradient(120deg,#ffffff15,transparent 60%)}
+:is(.saved-card,.kpi){--tilt-x:0deg;--tilt-y:0deg;--lift:0px;transform:perspective(800px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateY(var(--lift));transition:transform .2s ease-out,box-shadow .2s,border-color .2s}
+:is(.saved-card,.kpi):hover{--lift:-3px;transform:perspective(800px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateY(var(--lift))}
+.overview-heading .garden-illustration{transform:translate(var(--scene-x,0px),var(--scene-y,0px));transition:transform .45s ease-out}
+.overview-heading:hover .garden-illustration{transform:translate(var(--scene-x,0px),var(--scene-y,-3px))}
+tbody tr{transition:background .16s}tbody tr:hover{background:#86a66314}input[type=range]::-webkit-slider-thumb{box-shadow:0 0 0 4px #7b9a5d22;transition:box-shadow .2s}input[type=range]:hover::-webkit-slider-thumb{box-shadow:0 0 0 7px #7b9a5d33}
+@media(prefers-reduced-motion:reduce){:is(.saved-card,.kpi),:is(.saved-card,.kpi):hover,.overview-heading .garden-illustration,.overview-heading:hover .garden-illustration{transform:none!important}}
+@media(max-width:540px){.header-meta{grid-template-areas:'status clock' 'effects effects' 'theme language'}.header-meta .connection{grid-area:status}.header-meta #clock{grid-area:clock}.header-meta .nature-control{grid-area:effects}.header-meta .theme-control{grid-area:theme}.header-meta .language-control{grid-area:language}.holiday-lights{top:68px}}

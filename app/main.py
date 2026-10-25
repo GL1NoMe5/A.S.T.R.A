@@ -23,6 +23,14 @@ log = logging.getLogger(__name__)
 STATIC = Path(__file__).parent / "static"
 
 
+class RevalidatedStaticFiles(StaticFiles):
+    async def get_response(self, path, scope):
+        response = await super().get_response(path, scope)
+        # Keep ETag/304 caching, but never mix old scripts with updated HTML.
+        response.headers["Cache-Control"] = "no-cache"
+        return response
+
+
 def create_app(settings: Settings | None = None):
     @asynccontextmanager
     async def lifespan(app: FastAPI):
@@ -64,11 +72,11 @@ def create_app(settings: Settings | None = None):
     app = FastAPI(title="ASTRA · Экологическая аналитика Астаны", version="1.0.0", lifespan=lifespan)
     app.include_router(router)
     app.include_router(ws_router)
-    app.mount("/static", StaticFiles(directory=STATIC), name="static")
+    app.mount("/static", RevalidatedStaticFiles(directory=STATIC), name="static")
 
     @app.get("/", include_in_schema=False)
     async def dashboard():
-        return FileResponse(STATIC / "index.html")
+        return FileResponse(STATIC / "index.html", headers={"Cache-Control": "no-cache"})
 
     return app
 

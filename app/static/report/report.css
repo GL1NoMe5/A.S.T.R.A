@@ -1475,3 +1475,27 @@
     }
   }
 }
+@layer components {
+  .report-language-label{display:flex;align-items:center;gap:.5rem;font-size:.75rem;color:var(--muted)}
+  #report-language{font:inherit;color:var(--text);background:var(--panel);border:1px solid var(--line-strong);border-radius:.375rem;padding:.55rem .6rem;min-height:2.4rem}
+  #report-language:focus-visible{outline:2px solid var(--mint);outline-offset:3px}
+  .original-note-label{display:block;font-size:.75rem;color:var(--muted);margin-block:.6rem}
+  @media(max-width:540px){.report-language-label>span{display:none}.toolbar-actions{gap:.5rem}.toolbar-actions .btn{white-space:normal}}
+}
+@layer base {
+  @media screen {
+    :root[data-theme="forest"]{color-scheme:light;--bg:#e6eddf;--bg-elevated:#edf4e5;--panel:#f9fcf4;--panel-alt:#eaf2de;--panel-accent:#d9e8c7;--line:#c5d5b8;--line-strong:#a4bc93;--line-accent:#92b37b;--text:#223e2c;--text-soft:#3e5942;--muted:#5d7355;--mint:#327354;--mint-strong:#24573b;--mint-ink:#f5faec;--gold:#816627;--gold-bg:#f6edcc;--gold-line:#cdbb7b;--red:#a43b45;--red-bg:#fae5e3;--red-line:#d6a09c;--svg-track:#e2ecd7;--svg-before:#93aa7e;--svg-after:#3b7951;--svg-band:#bdd5a2;--svg-band-stroke:#477536;--svg-text:#24412f;--svg-muted:#5f7557;--svg-grid:#c9d9bc}
+    :root[data-theme="christmas"]{color-scheme:dark;--bg:#101d20;--bg-elevated:#15292c;--panel:#193135;--panel-alt:#203d40;--panel-accent:#243d30;--line:#39514b;--line-strong:#667b60;--line-accent:#73885d;--text:#fff3db;--text-soft:#d9dcca;--muted:#b9c7b5;--mint:#e4c477;--mint-strong:#f4d99a;--mint-ink:#293424;--gold:#edb96b;--gold-bg:#40301f;--gold-line:#947344;--svg-after:#e4c477;--svg-band:#4c6548;--svg-band-stroke:#e4c477;--svg-text:#fff3db;--svg-muted:#c7cdb6}
+  }
+}
+@layer components {
+  @media screen {
+    .app-bar{background:var(--bg-elevated)}
+    .btn-secondary:hover:not(:disabled){background:var(--panel-accent)}
+    .dropzone{background:linear-gradient(135deg,var(--panel-accent),var(--panel) 65%);border-color:var(--line-accent)}
+    .dropzone:hover,.dropzone.is-dragover{background:var(--panel-accent)}
+    .zones-table tbody tr:hover th,.zones-table tbody tr:hover td{background:var(--panel-alt)}
+    :root[data-theme="forest"] .error-panel,:root[data-theme="forest"] .error-header p{color:#92353c}
+    :root[data-theme="forest"] .error-icon{color:white}
+  }
+}

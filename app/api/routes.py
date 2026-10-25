@@ -1,11 +1,13 @@
 import asyncio
 from copy import deepcopy
 from typing import Literal
+from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import JSONResponse
 
 from app.core.zones import DISTRICTS
+from app.db.session import OPTIMIZATION_RETENTION_DAYS
 from app.ml.engine import FORECAST_POLICY
 from app.ml.optimizer import METHODOLOGY, SPECIES, optimize
 from app.schemas.telemetry import OptimizeRequest
@@ -64,6 +66,22 @@ async def greening(request: Request, parameters: OptimizeRequest):
     result = await asyncio.to_thread(optimize, parameters, r.zones,
                                      deepcopy(r.worker.latest), r.background.snapshot())
     await r.storage.save_optimization(result)
+    return result
+
+
+@router.get("/api/v1/optimizations")
+async def saved_optimizations(request: Request, limit: int = Query(20, ge=1, le=100),
+                              offset: int = Query(0, ge=0)):
+    items, total = await request.app.state.runtime.storage.list_optimizations(limit, offset)
+    return {"items": items, "total": total, "limit": limit, "offset": offset,
+            "retention_days": OPTIMIZATION_RETENTION_DAYS}
+
+
+@router.get("/api/v1/optimizations/{run_id}")
+async def saved_optimization(request: Request, run_id: UUID):
+    result = await request.app.state.runtime.storage.get_optimization(str(run_id))
+    if result is None:
+        raise HTTPException(404, "Сохранённый расчёт не найден. Расчёты хранятся 30 дней.")
     return result
 
 

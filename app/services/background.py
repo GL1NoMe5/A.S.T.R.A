@@ -5,6 +5,7 @@ from datetime import UTC, datetime
 import json
 import logging
 import math
+from uuid import uuid4
 
 import httpx
 
@@ -109,13 +110,32 @@ class BackgroundService:
                 log.warning("Open-Meteo %s unavailable (%s); keeping cache", part, type(exc).__name__)
         try:
             await asyncio.gather(*(fetch(part) for part in FIELDS))
-            self.path.parent.mkdir(parents=True, exist_ok=True)
-            temp = self.path.with_suffix(".tmp")
-            temp.write_text(json.dumps({"version": 1, **self.cache}, ensure_ascii=False), encoding="utf-8")
-            temp.replace(self.path)
+            await self._persist_cache()
         finally:
             if owned:
                 await client.aclose()
+
+    async def _persist_cache(self):
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        # Independent refreshes must never overwrite or rename each other's temp.
+        temp = self.path.with_name(f".{self.path.name}.{uuid4().hex}.tmp")
+        try:
+            temp.write_text(json.dumps({"version": 1, **self.cache}, ensure_ascii=False), encoding="utf-8")
+            for attempt in range(4):
+                try:
+                    temp.replace(self.path)
+                    return
+                except PermissionError:
+                    # Windows readers/virus scanners can briefly deny replacement.
+                    # Keep the previous complete cache and surface a lasting error.
+                    if attempt == 3:
+                        raise
+                    await asyncio.sleep(.05 * 2 ** attempt)
+        finally:
+            try:
+                temp.unlink(missing_ok=True)
+            except OSError:
+                log.warning("Cannot remove temporary background cache %s", temp)
 
     def snapshot(self) -> dict:
         result = {"kind": "model_background", "provider": "Open-Meteo / CAMS",
