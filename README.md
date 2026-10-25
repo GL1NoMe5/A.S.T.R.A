@@ -16,7 +16,7 @@
 [![Tests](https://img.shields.io/badge/Tests-81%20passed-2D5A43?style=flat-square)](VERIFICATION.md)
 ![License](https://img.shields.io/badge/Code-MIT-91A87A?style=flat-square)
 
-**[✨ Возможности](#features)** &nbsp;·&nbsp; **[🧭 Как это работает](#workflow)** &nbsp;·&nbsp; **[🚀 Быстрый запуск](#quick-start)** &nbsp;·&nbsp; **[🖼️ Скриншоты](#screenshots)** &nbsp;·&nbsp; **[🌿 Расчёты и данные](#model-and-data)**
+**[✨ Возможности](#features)** &nbsp;·&nbsp; **[🎬 Трейлер](#trailer)** &nbsp;·&nbsp; **[🧭 Как это работает](#workflow)** &nbsp;·&nbsp; **[🚀 Быстрый запуск](#quick-start)** &nbsp;·&nbsp; **[🖼️ Скриншоты](#screenshots)** &nbsp;·&nbsp; **[🌿 Расчёты и данные](#model-and-data)**
 
 <sub>Астана, Казахстан · Планирование городского озеленения</sub>
 
@@ -166,6 +166,26 @@ docker compose up --build
 Для JavaScript-проверок нужен **Node.js** в `PATH` (либо ключ `--node` с путём к нему). Зафиксированный прогон от 26.10.2026: **54 Python-теста и 27 JavaScript-тестов**, всего **81**. Они проверяют логику приложения, отчёт, переводы и управление анимациями; это не замер плавности в браузере. Вторая команда запускает отдельную приёмку с 30 секундами потока, перезапуском сервера и проверкой сохранности данных в SQLite WAL. Рабочая база не затрагивается. Подробный отчёт: [`VERIFICATION.md`](VERIFICATION.md).
 
 </details>
+
+<br/>
+
+<a id="trailer"></a>
+
+## <img src="docs/readme/icons/gallery.svg" width="30" align="top" /> Промотрейлер
+
+<div align="center">
+
+<a href="media/demos/ASTRA-v2.mp4" title="Открыть промотрейлер ASTRA v2">
+  <img src="docs/readme/trailer-v2.svg" width="100%" alt="ASTRA v2 — открыть промотрейлер: 30 секунд, Full HD, 60 fps" />
+</a>
+
+**[▶ Смотреть ASTRA v2](media/demos/ASTRA-v2.mp4)** &nbsp;·&nbsp; **[↓ Скачать MP4](https://github.com/GL1NoMe5/A.S.T.R.A/raw/refs/heads/main/media/demos/ASTRA-v2.mp4)**
+
+<sub>Короткий ролик о городской среде Астаны и планировании озеленения · 30 секунд · 1920 × 1080 · 60 fps</sub>
+
+<sub>[Музыка и сведения об источниках](media/CREDITS.md#astra-v2)</sub>
+
+</div>
 
 <br/>
 

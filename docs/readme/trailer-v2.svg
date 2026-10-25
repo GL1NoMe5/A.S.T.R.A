@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="440" viewBox="0 0 1280 440" fill="none" role="img" aria-labelledby="title description">
+  <title id="title">ASTRA — промотрейлер v2. Смотреть видео</title>
+  <desc id="description">Лесная зелёная обложка с картой кварталов, ботаническим рисунком и кнопкой воспроизведения. 30 секунд, Full HD, 60 кадров в секунду.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1280" y2="440" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1b3529"/><stop offset="1" stop-color="#284c38"/>
+    </linearGradient>
+    <pattern id="grain" width="8" height="8" patternUnits="userSpaceOnUse">
+      <path d="M0 8L8 0" stroke="#d5dfb4" stroke-opacity=".035"/>
+    </pattern>
+    <clipPath id="frame"><rect width="1280" height="440" rx="24"/></clipPath>
+  </defs>
+  <g clip-path="url(#frame)">
+    <rect width="1280" height="440" fill="url(#background)"/>
+    <rect width="1280" height="440" fill="url(#grain)"/>
+    <circle cx="1080" cy="168" r="235" fill="#9cad83" fill-opacity=".045"/>
+    <circle cx="1080" cy="168" r="190" stroke="#9cad83" stroke-opacity=".14"/>
+    <circle cx="1080" cy="168" r="150" stroke="#9cad83" stroke-opacity=".10"/>
+    <g stroke="#b3c59b" stroke-opacity=".18" stroke-width="1.5" stroke-linejoin="round">
+      <path d="M742 0L854 86L797 182L894 260L858 440M960 0L918 101L1013 198L956 305L1074 440M1175 0L1104 100L1229 200L1166 322L1280 394"/>
+      <path d="M711 95L918 101L1104 100L1280 142M740 280L894 260L1013 198L1229 200M858 440L956 305L1166 322L1280 284"/>
+      <path d="M850 119L825 167L901 229L960 214L976 197L915 132Z" fill="#9cad83" fill-opacity=".06"/>
+      <path d="M1007 72L963 104L1023 165L1082 119L1080 77Z" fill="#9cad83" fill-opacity=".06"/>
+    </g>
+    <g stroke="#9cad83" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M1095 440C1112 405 1148 379 1166 343C1183 310 1190 271 1194 231"/>
+      <path d="M1126 398C1101 399 1080 388 1073 368C1097 367 1117 379 1126 398Z" fill="#9cad83" fill-opacity=".40"/>
+      <path d="M1144 376C1146 350 1164 334 1188 333C1185 355 1168 372 1144 376Z" fill="#d5dfb4" fill-opacity=".60"/>
+      <path d="M1167 341C1143 341 1126 329 1122 309C1146 311 1160 322 1167 341Z" fill="#9cad83" fill-opacity=".45"/>
+      <path d="M1182 302C1185 280 1200 266 1222 264C1218 285 1203 299 1182 302Z" fill="#d5dfb4" fill-opacity=".60"/>
+    </g>
+    <rect x="16.5" y="16.5" width="1247" height="407" rx="15.5" stroke="#9cad83" stroke-opacity=".38"/>
+    <g font-family="'Segoe UI', Arial, sans-serif">
+      <text x="56" y="73" fill="#b7c79d" font-size="14" letter-spacing="3">ПРОМОТРЕЙЛЕР / V2</text>
+      <text x="49" y="215" fill="#f5f5ed" font-size="116" font-weight="700" letter-spacing="-3">ASTRA</text>
+      <text x="56" y="267" fill="#e4e9d9" font-size="27">Карта города. План озеленения. Смета.</text>
+      <path d="M56 321H665" stroke="#9cad83" stroke-opacity=".35"/>
+      <text x="56" y="374" fill="#b7c79d" font-size="16">30 секунд</text>
+      <circle cx="167" cy="368" r="2" fill="#9cad83"/>
+      <text x="187" y="374" fill="#b7c79d" font-size="16">Full HD</text>
+      <circle cx="266" cy="368" r="2" fill="#9cad83"/>
+      <text x="286" y="374" fill="#b7c79d" font-size="16">60 fps</text>
+      <circle cx="978" cy="200" r="65" fill="#1b3529" stroke="#d5dfb4" stroke-width="1.5"/>
+      <circle cx="978" cy="200" r="52" fill="#d5dfb4" fill-opacity=".08"/>
+      <path d="M964 177L1000 200L964 223Z" fill="#e4e9d9"/>
+      <text x="978" y="303" text-anchor="middle" fill="#e4e9d9" font-size="18">Смотреть трейлер</text>
+    </g>
+  </g>
+</svg>
