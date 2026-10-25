@@ -48,9 +48,6 @@ main{margin-left:230px;max-width:1900px;padding:0 40px}
 .breadcrumb strong{font-size:12px;letter-spacing:0;font-weight:500}
 .header-meta{display:flex;align-items:center;gap:18px;font-size:10px;font-variant-numeric:tabular-nums;color:var(--muted)}
 .connection{display:flex;align-items:center;gap:7px}
-.connection:before{content:'';width:6px;height:6px;background:var(--gold);border-radius:50%}
-.connection.live:before{background:var(--green)}
-.connection[data-state=offline]:before{background:var(--red)}
 .page-caption{display:flex;align-items:center;justify-content:space-between;gap:20px;font-size:10px;color:var(--muted);padding-top:13px}
 .page-caption p{margin:0}
 .page-caption #mode{font-size:9px}

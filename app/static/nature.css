@@ -1,4 +1,4 @@
-/* Decorative layer stays below the interface and never receives pointer input. */
+/* Decorative layer stays below the interface and never receives pointer input or covers text. */
 body { isolation: isolate; }
 .nature-canvas {
   position: fixed;
@@ -28,11 +28,10 @@ body { isolation: isolate; }
   .nature-control { gap: 5px; font-size: 10px; }
   #nature-mode { max-width: 125px; padding: 6px 18px 6px 8px; }
 }
-@media (prefers-reduced-motion: reduce) { .nature-canvas { display: none !important; } }
+body[data-nature-mode="off"] .holiday-lights i { animation: none !important; box-shadow: none !important; }
+body[data-nature-mode="off"] .holiday-lights { opacity: .45; }
+@media (prefers-reduced-motion: reduce) {
+  .nature-canvas { display: none !important; }
+  .holiday-lights i { animation: none !important; }
+}
 @media print { .nature-canvas, .nature-control { display: none !important; } }
-/* The occasional sleigh crosses a narrow strip and never intercepts controls. */
-.holiday-flight{position:fixed;inset:0;width:100%;height:100%;z-index:8;pointer-events:none;user-select:none;contain:strict}
-body[data-nature-mode="off"] .holiday-lights i{animation:none!important;box-shadow:none}
-body[data-nature-mode="off"] .holiday-lights{opacity:.45}
-@media(prefers-reduced-motion:reduce){.holiday-flight{display:none!important}.holiday-lights i{animation:none!important}}
-@media print{.holiday-flight{display:none!important}}

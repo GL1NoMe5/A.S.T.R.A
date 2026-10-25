@@ -9,3 +9,12 @@ artifacts/
 .wheelhouse/
 .cache/
 argon-delivery/
+tools/ffmpeg/
+node_modules/
+*.zip
+*.whl
+.DS_Store
+Thumbs.db
+.coverage
+htmlcov/
+coverage/

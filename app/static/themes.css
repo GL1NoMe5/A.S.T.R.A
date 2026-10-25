@@ -34,9 +34,7 @@
 
 :is([data-theme=dark],[data-theme=christmas]) .breadcrumb strong{color:var(--text)}
 
-:is([data-theme=dark],[data-theme=christmas]) .connection{background:#243b2b;color:#d2e6b9;border-color:#4b6440}
 
-:is([data-theme=dark],[data-theme=christmas]) .page-caption #mode{background:#2b432e;color:#bace9e}
 
 :is([data-theme=dark],[data-theme=christmas]) .overview-heading{background:linear-gradient(110deg,#213e2c,#274c38);border-color:#547443;box-shadow:0 5px 0 #091e1633}
 

@@ -24,6 +24,13 @@ METHODOLOGY = {
                 "https://research.fs.usda.gov/treesearch/46254",
                 "https://www.epa.gov/heatislands/benefits-trees-and-vegetation"],
     "note": "Источники обосновывают механизмы; численные коэффициенты пород — сценарные допущения, не измерения Астаны",
+    "baseline_kind": "same_sites_frozen_weather_no_new_planting",
+    "summary_domain": "area_weighted_planted_sites_only",
+    "allocation_policy": {
+        "kind": "heuristic_not_universal_ecological_optimum", "max_selected_sites": 10,
+        "marginal_weights": {"pm25_reduction": 1, "cooling_c": 2, "co2_tons_year": 0.1},
+        "tradeoff": "Higher heuristic score does not guarantee higher cooling or every individual benefit",
+    },
 }
 
 
@@ -52,7 +59,8 @@ def ecological_effect(zone, reading, trees, species, years):
             "co2_tons_year": surviving * p["annual_co2_kg"] * growth / 1000}
 
 
-def optimize(request: OptimizeRequest, zones: list[dict], latest: dict, background: dict) -> dict:
+def select_sites(request: OptimizeRequest, zones: list[dict], latest: dict):
+    """Return the fixed candidate pool and selection evidence before allocation."""
     candidates = [z for z in zones if (request.target_district == "all" or z["district"] == request.target_district)
                   and z["id"] in latest and z["planting_capacity"] > 0]
     scores = {}
@@ -64,14 +72,28 @@ def optimize(request: OptimizeRequest, zones: list[dict], latest: dict, backgrou
     # A proximity bonus encourages adjacent interventions without pretending to
     # establish a proven aerodynamic corridor.
     selected = []
+    selection_context = {}
     remaining = list(candidates)
     while remaining and len(selected) < 10:
         def priority(z):
             proximity = max((math.exp(-distance_m(z, s) / 1200) for s in selected), default=0)
             return scores[z["id"]] * (1 + 0.12 * proximity)
         choice = max(remaining, key=lambda z: (priority(z), z["id"]))
+        r = latest[choice["id"]]
+        selection_context[choice["id"]] = {
+            "predicted_pm25": r["predicted_pm25"], "predicted_esi": r["predicted_esi"],
+            "heat_above_25_c": max(0, r["surface_temp_c"] - 25),
+            "selection_rank": len(selected) + 1,
+            "proximity_bonus_pct": 12 * max(
+                (math.exp(-distance_m(choice, s) / 1200) for s in selected), default=0),
+        }
         selected.append(choice)
         remaining.remove(choice)
+    return selected, scores, selection_context
+
+
+def optimize(request: OptimizeRequest, zones: list[dict], latest: dict, background: dict) -> dict:
+    selected, scores, selection_context = select_sites(request, zones, latest)
     allocations = {z["id"]: 0 for z in selected}
     # Single-tree marginal allocation is bounded at 10,000 × 10 evaluations.
     for _ in range(request.budget_trees):
@@ -97,6 +119,7 @@ def optimize(request: OptimizeRequest, zones: list[dict], latest: dict, backgrou
         if n:
             effect = ecological_effect(z, latest[z["id"]], n, request.species, request.horizon_years)
             output.append({**z, **effect, "priority_score": scores[z["id"]],
+                           "priority_inputs": selection_context[z["id"]],
                            "population_covered": z["population"]})
     used = sum(z["trees"] for z in output)
     population = sum(z["population_covered"] for z in output)
@@ -125,7 +148,7 @@ def optimize(request: OptimizeRequest, zones: list[dict], latest: dict, backgrou
                   "annual_platform": request.annual_platform_cost_kzt, "first_year_total": first_year,
                   "horizon_total": planting + request.pilot_equipment_cost_kzt + request.horizon_years * (
                       yearly_care + request.annual_platform_cost_kzt)},
-        "methodology": {**deepcopy(METHODOLOGY), "species_parameters": SPECIES[request.species],
+        "methodology": {**deepcopy(METHODOLOGY), "species_parameters": deepcopy(SPECIES[request.species]),
                         "sensitivity_factors": [0.5, 1.5], "forecast_policy": deepcopy(FORECAST_POLICY)},
         "note": FORECAST_POLICY["note"] + " Эффект через заданное число лет при текущем погодном фоне; "
                 "зоны, население и коэффициенты сценарные.",

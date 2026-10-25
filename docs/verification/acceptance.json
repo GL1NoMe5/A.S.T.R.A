@@ -1,0 +1,55 @@
+{
+  "status": "passed",
+  "url": "http://127.0.0.1:49892",
+  "data_dir": "D:\\CodexProjects\\A.S.T.R.A\\artifacts\\acceptance\\498a94cf5886\\data",
+  "offline": true,
+  "cold_start_seconds": 3.86,
+  "explanations": [
+    {
+      "target": "pm25",
+      "method": "primary",
+      "kind": "persistence_rule",
+      "additivity_error": 0.0
+    },
+    {
+      "target": "pm25",
+      "method": "ml",
+      "kind": "tree_shap",
+      "additivity_error": 3.552713678800501e-14
+    },
+    {
+      "target": "esi",
+      "method": "primary",
+      "kind": "tree_shap",
+      "additivity_error": 0.0
+    }
+  ],
+  "stream": {
+    "elapsed_seconds": 31.76,
+    "websocket_updates": 16,
+    "new_readings": 640,
+    "mode": "local",
+    "health_failures": [],
+    "optimization_zones": 2,
+    "optimization_run_id": "64eb1295-aa16-48bb-a378-8fc2cbca54f8",
+    "forecast_policy": "passed",
+    "status": "passed"
+  },
+  "optimization_path": "D:\\CodexProjects\\A.S.T.R.A\\artifacts\\acceptance\\498a94cf5886\\optimization.json",
+  "restart": "passed",
+  "model_reused": true,
+  "optimization_restored": true,
+  "forecast_fields_restored": true,
+  "stored_before_restart": {
+    "sensors": 40,
+    "telemetry": 720,
+    "optimization_runs": 1
+  },
+  "stored_after_restart": {
+    "sensors": 40,
+    "telemetry": 800,
+    "optimization_runs": 1
+  },
+  "test_process_stopped": true,
+  "total_seconds": 39.58
+}

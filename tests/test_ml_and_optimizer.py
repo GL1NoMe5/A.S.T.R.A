@@ -137,3 +137,23 @@ def test_empty_optimizer_has_no_fabricated_population(zones):
     assert result["zones"] == []
     assert result["used_trees"] == 0 and result["unused_trees"] == 1000
     assert result["summary"]["population_covered"] == 0
+
+
+def test_priority_explanation_preserves_inputs_and_baseline(zones):
+    readings = {z["id"]: {"pm25": 30, "predicted_pm25": 31, "predicted_esi": 40,
+                "air_temp_c": 28, "surface_temp_c": 35, "wind_speed": 2} for z in zones}
+    result = optimize(OptimizeRequest(budget_trees=100), zones, readings, {})
+    for z in result["zones"]:
+        inputs = z["priority_inputs"]
+        expected = (31 + 2 * 10 + 40 / 5) * (1 - z["ndvi"]) * (z["population"] / 1000) ** .5
+        assert z["priority_score"] == pytest.approx(expected)
+        assert inputs["heat_above_25_c"] == 10
+        assert 0 <= inputs["proximity_bonus_pct"] <= 12
+        assert 1 <= inputs["selection_rank"] <= 10
+        readings[z["id"]]["predicted_pm25"] = 999
+        assert inputs["predicted_pm25"] == 31
+    s = result["summary"]
+    assert s["pm25_before"] == 30
+    assert s["surface_temp_before"] == 35
+    assert s["pm25_before"] - s["pm25_after"] == pytest.approx(s["pm25_reduction"])
+    assert s["surface_temp_before"] - s["surface_temp_after"] == pytest.approx(s["cooling_c"])

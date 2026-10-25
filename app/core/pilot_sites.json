@@ -1,0 +1,486 @@
+{
+  "version": "landmarks-v2",
+  "location_kind": "approximate_illustrative_reference",
+  "sites": [
+    {
+      "id": "AST-001",
+      "district": "yesil",
+      "latitude": 51.1062,
+      "longitude": 71.4166,
+      "site_type": "park",
+      "name_i18n": {
+        "ru": "Ботанический сад",
+        "en": "Botanical Garden",
+        "kk": "Ботаникалық бақ"
+      }
+    },
+    {
+      "id": "AST-002",
+      "district": "yesil",
+      "latitude": 51.109,
+      "longitude": 71.432,
+      "site_type": "arterial",
+      "name_i18n": {
+        "ru": "Мәңгілік Ел · южный участок",
+        "en": "Mangilik El · south",
+        "kk": "Мәңгілік Ел · оңтүстік"
+      }
+    },
+    {
+      "id": "AST-003",
+      "district": "yesil",
+      "latitude": 51.119,
+      "longitude": 71.421,
+      "site_type": "residential",
+      "name_i18n": {
+        "ru": "Кварталы у Туркестан",
+        "en": "Turkestan neighbourhood",
+        "kk": "Түркістан маңындағы орамдар"
+      }
+    },
+    {
+      "id": "AST-004",
+      "district": "yesil",
+      "latitude": 51.125,
+      "longitude": 71.439,
+      "site_type": "residential",
+      "name_i18n": {
+        "ru": "Административные кварталы левобережья",
+        "en": "Left-bank civic quarter",
+        "kk": "Сол жағалау әкімшілік орамдары"
+      }
+    },
+    {
+      "id": "AST-005",
+      "district": "yesil",
+      "latitude": 51.1283,
+      "longitude": 71.4297,
+      "site_type": "park",
+      "name_i18n": {
+        "ru": "Бульвар Нуржол",
+        "en": "Nurzhol Boulevard",
+        "kk": "Нұржол бульвары"
+      }
+    },
+    {
+      "id": "AST-006",
+      "district": "yesil",
+      "latitude": 51.1153,
+      "longitude": 71.409,
+      "site_type": "arterial",
+      "name_i18n": {
+        "ru": "Керей и Жанибек хандар · запад",
+        "en": "Kerey and Zhanibek Khandar · west",
+        "kk": "Керей және Жәнібек хандар · батыс"
+      }
+    },
+    {
+      "id": "AST-007",
+      "district": "yesil",
+      "latitude": 51.0897,
+      "longitude": 71.417,
+      "site_type": "residential",
+      "name_i18n": {
+        "ru": "Кварталы у EXPO",
+        "en": "EXPO neighbourhood",
+        "kk": "EXPO маңындағы орамдар"
+      }
+    },
+    {
+      "id": "AST-008",
+      "district": "yesil",
+      "latitude": 51.0985,
+      "longitude": 71.436,
+      "site_type": "arterial",
+      "name_i18n": {
+        "ru": "Улы Дала · восточный участок",
+        "en": "Uly Dala · east",
+        "kk": "Ұлы Дала · шығыс"
+      }
+    },
+    {
+      "id": "AST-009",
+      "district": "nura",
+      "latitude": 51.1313,
+      "longitude": 71.408,
+      "site_type": "park",
+      "name_i18n": {
+        "ru": "Парк Влюблённых",
+        "en": "Lovers Park",
+        "kk": "Ғашықтар саябағы"
+      }
+    },
+    {
+      "id": "AST-010",
+      "district": "nura",
+      "latitude": 51.136,
+      "longitude": 71.396,
+      "site_type": "arterial",
+      "name_i18n": {
+        "ru": "Туран · западный коридор",
+        "en": "Turan · western corridor",
+        "kk": "Тұран · батыс дәлізі"
+      }
+    },
+    {
+      "id": "AST-011",
+      "district": "nura",
+      "latitude": 51.1205,
+      "longitude": 71.393,
+      "site_type": "residential",
+      "name_i18n": {
+        "ru": "Юго-западные жилые кварталы",
+        "en": "Southwest residential quarter",
+        "kk": "Оңтүстік-батыс тұрғын орамдар"
+      }
+    },
+    {
+      "id": "AST-012",
+      "district": "nura",
+      "latitude": 51.1455,
+      "longitude": 71.385,
+      "site_type": "residential",
+      "name_i18n": {
+        "ru": "Западные жилые кварталы",
+        "en": "West residential quarter",
+        "kk": "Батыс тұрғын орамдар"
+      }
+    },
+    {
+      "id": "AST-013",
+      "district": "nura",
+      "latitude": 51.157,
+      "longitude": 71.4145,
+      "site_type": "park",
+      "name_i18n": {
+        "ru": "Центральный парк",
+        "en": "Central Park",
+        "kk": "Орталық саябақ"
+      }
+    },
+    {
+      "id": "AST-014",
+      "district": "nura",
+      "latitude": 51.1445,
+      "longitude": 71.415,
+      "site_type": "arterial",
+      "name_i18n": {
+        "ru": "Кабанбай батыра · северный участок",
+        "en": "Kabanbay Batyr · north",
+        "kk": "Қабанбай батыр · солтүстік"
+      }
+    },
+    {
+      "id": "AST-015",
+      "district": "nura",
+      "latitude": 51.136,
+      "longitude": 71.374,
+      "site_type": "residential",
+      "name_i18n": {
+        "ru": "Западная городская окраина",
+        "en": "Western urban edge",
+        "kk": "Қаланың батыс шеті"
+      }
+    },
+    {
+      "id": "AST-016",
+      "district": "nura",
+      "latitude": 51.149,
+      "longitude": 71.401,
+      "site_type": "residential",
+      "name_i18n": {
+        "ru": "Кварталы к западу от Турана",
+        "en": "Neighbourhood west of Turan",
+        "kk": "Тұраннан батыстағы орамдар"
+      }
+    },
+    {
+      "id": "AST-017",
+      "district": "almaty",
+      "latitude": 51.124,
+      "longitude": 71.458,
+      "site_type": "park",
+      "name_i18n": {
+        "ru": "Президентский парк",
+        "en": "Presidential Park",
+        "kk": "Президенттік саябақ"
+      }
+    },
+    {
+      "id": "AST-018",
+      "district": "almaty",
+      "latitude": 51.133,
+      "longitude": 71.4514,
+      "site_type": "park",
+      "name_i18n": {
+        "ru": "Триатлон-парк",
+        "en": "Triathlon Park",
+        "kk": "Триатлон саябағы"
+      }
+    },
+    {
+      "id": "AST-019",
+      "district": "almaty",
+      "latitude": 51.145,
+      "longitude": 71.464,
+      "site_type": "residential",
+      "name_i18n": {
+        "ru": "Правобережные жилые кварталы",
+        "en": "Right-bank residential quarter",
+        "kk": "Оң жағалау тұрғын орамдары"
+      }
+    },
+    {
+      "id": "AST-020",
+      "district": "almaty",
+      "latitude": 51.144,
+      "longitude": 71.484,
+      "site_type": "arterial",
+      "name_i18n": {
+        "ru": "Бауыржан Момышулы · коридор",
+        "en": "Bauyrzhan Momyshuly corridor",
+        "kk": "Бауыржан Момышұлы дәлізі"
+      }
+    },
+    {
+      "id": "AST-021",
+      "district": "almaty",
+      "latitude": 51.153,
+      "longitude": 71.491,
+      "site_type": "residential",
+      "name_i18n": {
+        "ru": "Кварталы у Жумабаева",
+        "en": "Zhumabayev neighbourhood",
+        "kk": "Жұмабаев маңындағы орамдар"
+      }
+    },
+    {
+      "id": "AST-022",
+      "district": "almaty",
+      "latitude": 51.161,
+      "longitude": 71.505,
+      "site_type": "residential",
+      "name_i18n": {
+        "ru": "Восточные жилые кварталы",
+        "en": "East residential quarter",
+        "kk": "Шығыс тұрғын орамдар"
+      }
+    },
+    {
+      "id": "AST-023",
+      "district": "almaty",
+      "latitude": 51.163,
+      "longitude": 71.484,
+      "site_type": "arterial",
+      "name_i18n": {
+        "ru": "Абылай хана · восточный участок",
+        "en": "Abylai Khan · east",
+        "kk": "Абылай хан · шығыс"
+      }
+    },
+    {
+      "id": "AST-024",
+      "district": "almaty",
+      "latitude": 51.143,
+      "longitude": 71.512,
+      "site_type": "residential",
+      "name_i18n": {
+        "ru": "Юго-восточные кварталы",
+        "en": "Southeast neighbourhood",
+        "kk": "Оңтүстік-шығыс орамдар"
+      }
+    },
+    {
+      "id": "AST-025",
+      "district": "saryarka",
+      "latitude": 51.195,
+      "longitude": 71.411,
+      "site_type": "arterial",
+      "name_i18n": {
+        "ru": "Привокзальный транспортный узел",
+        "en": "Station approach corridor",
+        "kk": "Вокзал маңындағы көлік торабы"
+      }
+    },
+    {
+      "id": "AST-026",
+      "district": "saryarka",
+      "latitude": 51.187,
+      "longitude": 71.399,
+      "site_type": "residential",
+      "name_i18n": {
+        "ru": "Северо-западные жилые кварталы",
+        "en": "Northwest residential quarter",
+        "kk": "Солтүстік-батыс тұрғын орамдар"
+      }
+    },
+    {
+      "id": "AST-027",
+      "district": "saryarka",
+      "latitude": 51.18,
+      "longitude": 71.411,
+      "site_type": "arterial",
+      "name_i18n": {
+        "ru": "Сарыарка · северный участок",
+        "en": "Saryarka · north",
+        "kk": "Сарыарқа · солтүстік"
+      }
+    },
+    {
+      "id": "AST-028",
+      "district": "saryarka",
+      "latitude": 51.17,
+      "longitude": 71.418,
+      "site_type": "residential",
+      "name_i18n": {
+        "ru": "Кварталы старого центра",
+        "en": "Old-centre neighbourhood",
+        "kk": "Ескі орталық орамдары"
+      }
+    },
+    {
+      "id": "AST-029",
+      "district": "saryarka",
+      "latitude": 51.182,
+      "longitude": 71.429,
+      "site_type": "arterial",
+      "name_i18n": {
+        "ru": "Бейбитшилик · коридор",
+        "en": "Beibitshilik corridor",
+        "kk": "Бейбітшілік дәлізі"
+      }
+    },
+    {
+      "id": "AST-030",
+      "district": "saryarka",
+      "latitude": 51.174,
+      "longitude": 71.396,
+      "site_type": "residential",
+      "name_i18n": {
+        "ru": "Западные кварталы правобережья",
+        "en": "Western right-bank quarter",
+        "kk": "Оң жағалаудың батыс орамдары"
+      }
+    },
+    {
+      "id": "AST-031",
+      "district": "saryarka",
+      "latitude": 51.185,
+      "longitude": 71.382,
+      "site_type": "residential",
+      "name_i18n": {
+        "ru": "Жилые кварталы западной окраины",
+        "en": "Western-edge residential quarter",
+        "kk": "Батыс шеттегі тұрғын орамдар"
+      }
+    },
+    {
+      "id": "AST-032",
+      "district": "saryarka",
+      "latitude": 51.1645,
+      "longitude": 71.405,
+      "site_type": "residential",
+      "name_i18n": {
+        "ru": "Кварталы у западной набережной",
+        "en": "Western embankment neighbourhood",
+        "kk": "Батыс жағалау маңындағы орамдар"
+      }
+    },
+    {
+      "id": "AST-033",
+      "district": "baikonyr",
+      "latitude": 51.169,
+      "longitude": 71.449,
+      "site_type": "arterial",
+      "name_i18n": {
+        "ru": "Республика · северный коридор",
+        "en": "Respublika · northern corridor",
+        "kk": "Республика · солтүстік дәлізі"
+      }
+    },
+    {
+      "id": "AST-034",
+      "district": "baikonyr",
+      "latitude": 51.178,
+      "longitude": 71.458,
+      "site_type": "residential",
+      "name_i18n": {
+        "ru": "Северные жилые кварталы",
+        "en": "North residential quarter",
+        "kk": "Солтүстік тұрғын орамдар"
+      }
+    },
+    {
+      "id": "AST-035",
+      "district": "baikonyr",
+      "latitude": 51.169,
+      "longitude": 71.466,
+      "site_type": "residential",
+      "name_i18n": {
+        "ru": "Кварталы севернее центра",
+        "en": "Neighbourhood north of centre",
+        "kk": "Орталықтан солтүстіктегі орамдар"
+      }
+    },
+    {
+      "id": "AST-036",
+      "district": "baikonyr",
+      "latitude": 51.181,
+      "longitude": 71.477,
+      "site_type": "arterial",
+      "name_i18n": {
+        "ru": "Северо-восточный дорожный коридор",
+        "en": "Northeast road corridor",
+        "kk": "Солтүстік-шығыс жол дәлізі"
+      }
+    },
+    {
+      "id": "AST-037",
+      "district": "baikonyr",
+      "latitude": 51.1877,
+      "longitude": 71.5104,
+      "site_type": "industrial",
+      "name_i18n": {
+        "ru": "Промышленная зона у ТЭЦ-2",
+        "en": "Industrial area near CHP-2",
+        "kk": "ЖЭО-2 маңындағы өнеркәсіп аумағы"
+      }
+    },
+    {
+      "id": "AST-038",
+      "district": "baikonyr",
+      "latitude": 51.196,
+      "longitude": 71.501,
+      "site_type": "industrial",
+      "name_i18n": {
+        "ru": "Северный промышленный пояс",
+        "en": "Northern industrial belt",
+        "kk": "Солтүстік өнеркәсіп белдеуі"
+      }
+    },
+    {
+      "id": "AST-039",
+      "district": "baikonyr",
+      "latitude": 51.191,
+      "longitude": 71.483,
+      "site_type": "industrial",
+      "name_i18n": {
+        "ru": "Переход к промышленному поясу",
+        "en": "Industrial-belt transition",
+        "kk": "Өнеркәсіп белдеуіне өтпелі аймақ"
+      }
+    },
+    {
+      "id": "AST-040",
+      "district": "baikonyr",
+      "latitude": 51.19,
+      "longitude": 71.452,
+      "site_type": "residential",
+      "name_i18n": {
+        "ru": "Северные кварталы правобережья",
+        "en": "Northern right-bank quarter",
+        "kk": "Оң жағалаудың солтүстік орамдары"
+      }
+    }
+  ]
+}

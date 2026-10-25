@@ -26,6 +26,7 @@ class Storage:
         self.mode = mode
         self.reason = reason
         self.sessions = async_sessionmaker(engine, expire_on_commit=False)
+        self.network_version = None
 
     @asynccontextmanager
     async def write_session(self):
@@ -37,6 +38,7 @@ class Storage:
             yield session
 
     async def initialize(self, zones):
+        self.network_version = zones[0].get("network_version") if zones else None
         async with self.engine.begin() as connection:
             await connection.run_sync(Base.metadata.create_all)
         async with self.write_session() as session:
@@ -57,14 +59,19 @@ class Storage:
                 minute = timestamp.replace(second=0, microsecond=0)
                 aggregate = await session.get(MinuteAggregate, (key[0], minute))
                 values = {k: float(reading[k]) for k in METRIC_KEYS}
-                if aggregate:
+                version = reading.get("network_version")
+                if aggregate and aggregate.payload.get("network_version") == version:
                     old = aggregate.payload
                     count = old["count"] + 1
-                    aggregate.payload = {"count": count, **{
+                    aggregate.payload = {"count": count, "network_version": version, **{
                         k: (old[k] * old["count"] + values[k]) / count for k in METRIC_KEYS}}
+                elif aggregate:
+                    # A site relocation starts a new series, including the
+                    # partial minute in which the layout changed.
+                    aggregate.payload = {"count": 1, "network_version": version, **values}
                 else:
                     session.add(MinuteAggregate(sensor_id=key[0], timestamp=minute,
-                                                payload={"count": 1, **values}))
+                                                payload={"count": 1, "network_version": version, **values}))
                 inserted.append(reading)
             await session.commit()
         return inserted
@@ -73,6 +80,8 @@ class Storage:
         cutoff = utcnow() - timedelta(minutes=minutes)
         model = Telemetry if minutes <= 60 else MinuteAggregate
         query = select(model).where(model.timestamp >= cutoff).order_by(model.timestamp)
+        if self.network_version:
+            query = query.where(model.payload["network_version"].as_string() == self.network_version)
         if sensor_id:
             query = query.where(model.sensor_id == sensor_id)
         async with self.sessions() as session:
@@ -90,8 +99,10 @@ class Storage:
     async def latest(self):
         # Load only one latest row per sensor; avoid scanning an unbounded result.
         from sqlalchemy import func
-        sub = select(Telemetry.sensor_id, func.max(Telemetry.timestamp).label("latest")).group_by(
-            Telemetry.sensor_id).subquery()
+        latest_query = select(Telemetry.sensor_id, func.max(Telemetry.timestamp).label("latest"))
+        if self.network_version:
+            latest_query = latest_query.where(Telemetry.payload["network_version"].as_string() == self.network_version)
+        sub = latest_query.group_by(Telemetry.sensor_id).subquery()
         query = select(Telemetry.payload).join(sub, (Telemetry.sensor_id == sub.c.sensor_id) &
                                                 (Telemetry.timestamp == sub.c.latest))
         async with self.sessions() as session:

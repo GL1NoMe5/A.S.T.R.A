@@ -9,7 +9,7 @@ for(const lang of ['en','kk']){
  assert.deepEqual(Object.keys(dict[lang]).sort(),Object.keys(dict.ru).sort());
  for(const key of Object.keys(dict.ru)){
   assert(dict[lang][key].trim(),lang+':'+key);
-  const slots=s=>[...s.matchAll(/\{(\d+)\}/g)].map(x=>x[1]).sort();
+  const slots=s=>[...s.matchAll(/\{(\w+)\}/g)].map(x=>x[1]).sort();
   assert.deepEqual(slots(dict[lang][key]),slots(dict.ru[key]),lang+':'+key);
  }
 }

@@ -2,6 +2,7 @@
 const i18n = window.AstraI18n;
 const t = (key, values) => i18n.t(key, values);
 const zoneName = value => i18n.zoneName(value);
+const siteName = zone => zone.name_i18n?.[i18n.language] || zoneName(zone.name);
 const $ = id => document.getElementById(id);
 const fmt = (v, digits = 1) => Number.isFinite(Number(v)) && v !== null ? Number(v).toLocaleString(i18n.locale, {maximumFractionDigits: digits, minimumFractionDigits: digits}) : '—';
 const localTime = value => value ? new Date(value).toLocaleString(i18n.locale, {timeZone: 'Asia/Qyzylorda', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'}) : t("d0");
@@ -51,7 +52,7 @@ function showView(name,{updateHash=true}={}) {
   setText('view-title',views[name][0]);setText('view-caption',views[name][1]);
   if(updateHash&&location.hash!==`#${name}`)history.pushState(null,'',`#${name}`);
   if(name!=='overview'&&state.selected)closeSensor();
-  requestAnimationFrame(()=>{if(name==='overview'&&map)map.invalidateSize();if(name==='analytics')renderTelemetry();for(const id of['telemetry-chart','comparison-chart','shap-chart']){const c=$(id);if(c&&c.offsetParent!==null&&c._fullLayout)Plotly.Plots.resize(c);}});
+  requestAnimationFrame(()=>{if(name==='overview'&&map){map.invalidateSize();if(!state.mapFramed&&state.sensors.size)resetMapView();}if(name==='analytics')renderTelemetry();for(const id of['telemetry-chart','comparison-chart','shap-chart']){const c=$(id);if(c&&c.offsetParent!==null&&c._fullLayout)Plotly.Plots.resize(c);}});
   if(name==='saved'&&!state.savedLoaded)loadSavedPlans();window.scrollTo({top:0,behavior:'instant'});
 }
 
@@ -87,7 +88,7 @@ function renderMapScale(scale) {
 function resetMapView() {
   if(!map)return;
   const coordinates=[...state.sensors.values()].filter(s=>Number.isFinite(s.latitude)&&Number.isFinite(s.longitude)).map(s=>[s.latitude,s.longitude]);
-  if(coordinates.length)map.fitBounds(coordinates,{padding:[40,40],maxZoom:13,animate:!window.matchMedia('(prefers-reduced-motion: reduce)').matches});
+  if(coordinates.length){state.mapFramed=true;map.fitBounds(coordinates,{padding:[40,40],maxZoom:13,animate:!window.matchMedia('(prefers-reduced-motion: reduce)').matches});}
   else map.setView([51.151,71.447],12);
 }
 function renderNetworkSummary() {
@@ -118,14 +119,14 @@ function updateHeat() {
 function updateMarkers() {
   if(!map)return;
   const scale=mapScale(),metric=mapMetrics[state.mapMetric];renderMapScale(scale);
-  const allocated = new Set((state.result?.zones || []).map(z => z.id));
+  const allocated = new Set((state.result?.zones || []).filter(z => z.network_version === state.sensors.get(z.id)?.network_version).map(z => z.id));
   for (const [id, s] of state.sensors) {
     const r = state.readings.get(id); if (!r) continue;
     const selected = allocated.has(id), c = colour(mapIntensity(r,scale)*100);
     let marker = state.markers.get(id);
     if (!marker) { marker = L.circleMarker([s.latitude, s.longitude], {radius: 7, weight: 2, fillOpacity: .7, className:'station-marker'}).addTo(map).on('click', () => openSensor(id)); state.markers.set(id, marker); }
     marker.setStyle({color: selected?'#264d35':c, fillColor: c, radius: selected ? 11 : state.selected === id ? 10 : 7, weight: selected ? 3 : 2});
-    marker.bindTooltip(element('span',null,`${zoneName(s.name)} · ${metric.label} ${fmt(r[state.mapMetric])} ${metric.unit}${selected?t("d31"):''}`), {direction: 'top'});
+    marker.bindTooltip(element('span',null,`${siteName(s)} · ${metric.label} ${fmt(r[state.mapMetric])} ${metric.unit}${selected?t("d31"):''}`), {direction: 'top'});
   }
   setText('map-count',fmt(state.markers.size,0));
 }
@@ -146,7 +147,6 @@ function updateDashboard(payload) {
   const s = payload.summary;if(s)state.summary=s;state.mode=payload.mode;
   if (s) { $('kpi-pm').textContent = fmt(s.pm25); $('kpi-temp').textContent = fmt(s.surface_temp_c); $('kpi-sensors').textContent = fmt(s.active_sensors, 0); $('kpi-hotspots').textContent = s.critical_hotspots; }
   if (payload.background) updateBackground(payload.background);
-  $('mode').textContent = payload.mode === 'docker' ? 'PostgreSQL + Redis' : t("d39");
   if(payload.type==='snapshot'&&payload.history?.length)state.liveHistory=mergeHistory(payload.history,state.liveHistory);
   if(s)state.liveHistory=mergeHistory(state.liveHistory,[{timestamp:payload.timestamp,...s}]);
   if(state.historyPeriod==='live'){state.history=selectedLiveHistory();if(state.view==='analytics')renderTelemetry();}
@@ -204,7 +204,10 @@ function sensorValue(label, value, unit) {
 }
 function renderSensorValues() {
   const s = state.sensors.get(state.selected), r = state.readings.get(state.selected); if (!s || !r) return;
-  $('sensor-name').textContent = zoneName(s.name);
+  $('sensor-name').textContent = siteName(s);
+  $('sensor-site-detail').textContent = s.site_type ? t('site.detail', {'0':t('site.'+s.site_type)}) + ' ' + t('site.reason.'+s.site_type) : '';
+  const source=$('sensor-site-source'); source.hidden=!s.location_source;
+  if(s.location_source){ source.href=s.location_source; source.textContent=t('site.source'); }
   $('sensor-coordinates').textContent = t("d64",{"0":(s.id),"1":(s.latitude.toFixed(4)),"2":(s.longitude.toFixed(4)),"3":(s.ndvi)});
   $('sensor-values').replaceChildren(...[
     ['PM2.5',r.pm25,t("d18")],['PM10',r.pm10,t("d18")],['NO₂',r.no2,t("d18")],['CO',r.co,t("d18")],[t("d65"),r.co2,'ppm'],[t("d66"),r.esi,'/100'],[t("d67"),r.air_temp_c,'°C'],[t("d68"),r.surface_temp_c,'°C'],[t("d69"),r.wind_speed,t("d70")],[t("d71"),r.humidity,'%']
@@ -235,6 +238,50 @@ async function loadExplanation() {
   } catch (error) { if (version === state.shapSequence) $('shap-status').textContent = error.message; }
 }
 function resultCard(label,value,unit,detail) { const d=document.createElement('div');d.className='result-kpi';const l=document.createElement('small');l.textContent=label;const v=document.createElement('strong');v.textContent=`${value} ${unit}`;const s=document.createElement('span');s.textContent=detail;d.append(l,v,s);return d; }
+function resultZoneCell(zone) {
+  const cell = element('td', 'result-zone');
+  cell.append(element('span', 'result-zone-name', siteName(zone)));
+  const details = element('details', 'zone-reason');
+  details.append(element('summary', null, t('result.why')));
+  const inputs = zone.priority_inputs;
+  if (inputs) {
+    details.append(element('p', null, t('result.priorityValues', {
+      pm: fmt(inputs.predicted_pm25, 1), esi: fmt(inputs.predicted_esi, 1),
+      heat: fmt(inputs.heat_above_25_c, 1), ndvi: fmt(zone.ndvi, 2),
+      population: fmt(zone.population, 0), bonus: fmt(inputs.proximity_bonus_pct, 1)
+    })));
+  } else {
+    details.append(element('p', null, t('result.legacyPriority')));
+  }
+  details.append(element('p', null, t('result.allocation', {capacity: fmt(zone.planting_capacity, 0)})));
+  cell.append(details);
+  return cell;
+}
+function renderResultContext(result) {
+  const s = result.summary, parameters = result.methodology?.species_parameters;
+  setText('result-scenario-note', t('result.scenario', {years: result.horizon_years}));
+  const rows = [
+    ['PM2.5', s.pm25_before, s.pm25_after, t('d18')],
+    [t('d19'), s.surface_temp_before, s.surface_temp_after, '°C']
+  ];
+  $('result-baseline').replaceChildren(...rows.map(([label, before, after, unit]) => {
+    const row = element('p', 'result-baseline-row');
+    row.append(element('span', null, label), element('strong', null, `${fmt(before, 2)} → ${fmt(after, 2)} ${unit}`));
+    return row;
+  }));
+  setText('result-assumptions', parameters ? t('result.assumptions', {
+    survival: fmt(parameters.survival * 100, 0), crown: fmt(parameters.crown_m2, 0),
+    maturity: result.methodology.maturity_years ?? 10
+  }) : t('result.legacyAssumptions'));
+  $('result-sources').replaceChildren(...['air', 'weather'].map(part => {
+    const block = result.background?.[part];
+    const statusKey = {live:'result.live', cached:'result.cached', default:'result.default'}[block?.status] || 'result.unknown';
+    return element('p', null, t('result.sourceLine', {
+      source: t(part === 'air' ? 'result.airSource' : 'result.weatherSource'),
+      status: t(statusKey), time: localTime(block?.source_time)
+    }));
+  }));
+}
 function renderResult(result,{activate=true,scroll=true}={}) {
   state.result = result;rememberPlan(result.run_id);if(activate)showView('planning');
   const s = result.summary, cost = result.costs;
@@ -245,7 +292,8 @@ function renderResult(result,{activate=true,scroll=true}={}) {
     resultCard(t("d88"),fmt(s.cooling_c,2),'°C',t("d89",{"0":(s.cooling_c_range.map(v=>fmt(v,2)).join('–'))})),
     resultCard(t("d90"),fmt(s.co2_tons_year,2),t("d91"),t("d92",{"0":(result.horizon_years)})),
     resultCard(t("d93"),fmt(s.population_covered,0),t("d94"), t("d95")));
-  $('zones-table').replaceChildren(...result.zones.map(z=>{const tr=document.createElement('tr');for(const v of [zoneName(z.name),fmt(z.trees,0),`−${fmt(z.pm25_reduction,2)}`,`−${fmt(z.cooling_c,2)}`]){const td=document.createElement('td');td.textContent=v;tr.append(td);}return tr;}));
+  renderResultContext(result);
+  $('zones-table').replaceChildren(...result.zones.map(z=>{const tr=document.createElement('tr');tr.append(resultZoneCell(z));for(const v of [fmt(z.trees,0),`−${fmt(z.pm25_reduction,2)}`,`−${fmt(z.cooling_c,2)}`]){const td=document.createElement('td');td.textContent=v;tr.append(td);}return tr;}));
   Plotly.react('comparison-chart',[
     {type:'bar',name:t("d96"),x:[t("d40")],y:[s.pm25_before],marker:{color:'#bcc7b6'}},
     {type:'bar',name:t("d97"),x:[t("d40")],y:[s.pm25_after],marker:{color:'#42745a'}}
@@ -337,8 +385,8 @@ async function restorePlan() {
 async function loadSensors() {
   const data=await api('/api/v1/sensors'),selected=$('sensor-picker').value,historySelected=$('history-sensor')?.value||'all';
   $('sensor-picker').replaceChildren(option('',t("d145")));if($('history-sensor'))$('history-sensor').replaceChildren(option('all',t("d146")));
-  for(const sensor of data.sensors){state.sensors.set(sensor.id,sensor);if(sensor.latest&&(!state.readings.has(sensor.id)||Date.parse(sensor.latest.timestamp)>Date.parse(state.readings.get(sensor.id).timestamp)))state.readings.set(sensor.id,sensor.latest);$('sensor-picker').append(option(sensor.id,`${sensor.id} · ${zoneName(sensor.name)}`));if($('history-sensor'))$('history-sensor').append(option(sensor.id,`${sensor.id} · ${zoneName(sensor.name)}`));}
-  $('sensor-picker').value=selected;if($('history-sensor'))$('history-sensor').value=historySelected;updateMarkers();updateHeat();state.loadErrors.delete('sensors');renderDataNotice();
+  for(const sensor of data.sensors){state.sensors.set(sensor.id,sensor);if(sensor.latest&&(!state.readings.has(sensor.id)||Date.parse(sensor.latest.timestamp)>Date.parse(state.readings.get(sensor.id).timestamp)))state.readings.set(sensor.id,sensor.latest);$('sensor-picker').append(option(sensor.id,`${sensor.id} · ${siteName(sensor)}`));if($('history-sensor'))$('history-sensor').append(option(sensor.id,`${sensor.id} · ${siteName(sensor)}`));}
+  $('sensor-picker').value=selected;if($('history-sensor'))$('history-sensor').value=historySelected;updateMarkers();updateHeat();if(state.view==='overview'&&!state.mapFramed)resetMapView();state.loadErrors.delete('sensors');renderDataNotice();
 }
 async function loadMetrics() {
   const metrics=await api('/api/v1/metrics'),m=metrics.ml;state.metrics=metrics;renderMetrics(m);
@@ -406,7 +454,7 @@ function refreshLanguage() {
   const selected=$('sensor-picker').value,historySelected=$('history-sensor').value;
   $('sensor-picker').replaceChildren(option('',t('d145')));$('history-sensor').replaceChildren(option('all',t('d146')));
   for(const sensor of state.sensors.values()){
-    const label=`${sensor.id} · ${zoneName(sensor.name)}`;
+    const label=`${sensor.id} · ${siteName(sensor)}`;
     $('sensor-picker').append(option(sensor.id,label));$('history-sensor').append(option(sensor.id,label));
   }
   $('sensor-picker').value=selected;$('history-sensor').value=historySelected;
@@ -416,7 +464,6 @@ function refreshLanguage() {
   if(tileErrors)setText('tile-status',t('d30'));
   if(state.background)updateBackground(state.background);
   if(state.summary){setText('kpi-pm',fmt(state.summary.pm25));setText('kpi-temp',fmt(state.summary.surface_temp_c));setText('kpi-sensors',fmt(state.summary.active_sensors,0));setText('kpi-hotspots',fmt(state.summary.critical_hotspots,0));}
-  setText('mode',state.mode==='docker'?'PostgreSQL + Redis':t('d39'));
   updateMarkers();renderNetworkSummary();refreshConnectionStatus();
   if(state.history.length||state.view==='analytics')renderTelemetry();
   if(state.metrics)renderMetrics(state.metrics.ml);

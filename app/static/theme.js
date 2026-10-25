@@ -34,7 +34,16 @@
       }
       document.dispatchEvent(new CustomEvent('astra:themechange', {detail:{theme}}));
     }
-    select.addEventListener('change', () => apply(select.value, true));
+    select.addEventListener('change', () => {
+      const go = () => apply(select.value, true);
+      const still = matchMedia('(prefers-reduced-motion: reduce)').matches || document.body.dataset.natureMode === 'off';
+      if (!document.startViewTransition || still) { go(); return; }
+      // The new theme spreads from the selector like a change of light over the landscape.
+      const box = select.getBoundingClientRect();
+      document.documentElement.style.setProperty('--vt-x', `${box.left + box.width / 2}px`);
+      document.documentElement.style.setProperty('--vt-y', `${box.top + box.height / 2}px`);
+      document.startViewTransition(go);
+    });
     apply(theme);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, {once:true}); else init();

@@ -929,7 +929,7 @@
         const th = doc.createElement("th");
         th.setAttribute("scope", "row");
         const nameSpan = doc.createElement("span");
-        nameSpan.textContent = reportI18n()?.zoneName(zone.name) ?? zone.name;
+        nameSpan.textContent = zone.name_i18n?.[reportI18n()?.lang] ?? reportI18n()?.zoneName(zone.name) ?? zone.name;
         nameSpan.setAttribute("data-original", "");
         const metaSpan = doc.createElement("span");
         metaSpan.className = "zone-meta";

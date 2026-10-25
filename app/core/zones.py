@@ -10,29 +10,40 @@ DISTRICTS = {
 }
 
 
+# These profiles are explicit scenario assumptions, not measured land-use data.
+# density, NDVI, traffic, area, capacity and population refer to a notional
+# non-overlapping catchment around the reference point, not the named property.
+PROFILES = {
+    "park": (.18, .68, .16, 180000, 180, 900),
+    "residential": (.62, .27, .40, 160000, 550, 3000),
+    "arterial": (.70, .14, .84, 120000, 260, 2200),
+    "industrial": (.48, .10, .65, 200000, 650, 700),
+}
+
+
 def make_zones() -> list[dict]:
-    # Pilot labels do not assert official administrative boundaries. The 40
-    # disjoint model cells define population accounting, not real census areas.
-    centres = [(51.128, 71.433), (51.143, 71.405), (51.145, 71.490),
-               (51.175, 71.415), (51.177, 71.470)]
+    from pathlib import Path
+    import json
+
+    catalog = json.loads(Path(__file__).with_name("pilot_sites.json").read_text(encoding="utf-8"))
     result = []
-    for district_index, (key, label) in enumerate(DISTRICTS.items()):
-        lat, lon = centres[district_index]
-        for j in range(8):
-            n = district_index * 8 + j
-            result.append({
-                "id": f"AST-{n + 1:03d}", "name": f"{label} · зона {j + 1}",
-                "district": key, "district_name": label,
-                "latitude": round(lat + (j // 4 - 0.5) * 0.006, 6),
-                "longitude": round(lon + (j % 4 - 1.5) * 0.008, 6),
-                "density": round(0.35 + (n * 7 % 12) / 20, 3),
-                "ndvi": round(0.12 + (n * 11 % 32) / 100, 3),
-                "traffic_base": round(0.25 + (n * 13 % 65) / 100, 3),
-                "area_m2": 120000 + (n % 5) * 20000,
-                "planting_capacity": 200 + (n % 7) * 100,
-                "population": 900 + (n * 379 % 3500),
-                "metadata_kind": "scenario", "population_kind": "scenario_disjoint_cells",
-            })
+    for n, site in enumerate(catalog["sites"]):
+        density, ndvi, traffic, area, capacity, population = PROFILES[site["site_type"]]
+        # Small deterministic within-type variation, never random coordinates.
+        delta = ((n * 7) % 5 - 2) * .015
+        result.append({
+            **site, "name": site["name_i18n"]["ru"],
+            "district_name": DISTRICTS[site["district"]],
+            "density": round(density + delta, 3),
+            "ndvi": round(ndvi - delta, 3),
+            "traffic_base": round(traffic + delta, 3),
+            "area_m2": area, "planting_capacity": capacity,
+            "population": population + ((n % 3) - 1) * 100,
+            "metadata_kind": "scenario", "population_kind": "scenario_disjoint_cells",
+            "network_version": catalog["version"],
+            "location_kind": catalog["location_kind"],
+            "location_source": f"https://www.openstreetmap.org/?mlat={site['latitude']}&mlon={site['longitude']}#map=16/{site['latitude']}/{site['longitude']}",
+        })
     return result
 
 

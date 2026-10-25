@@ -18,6 +18,7 @@ PACKAGES = {
     "lightgbm": "lightgbm", "shap": "shap", "joblib": "joblib",
 }
 ASSETS = (
+    "living.css", "living.js",
     "folio.css", "atlas.css", "atlas-motion.js", "assets/atlas-day.webp", "assets/atlas-night.webp", "assets/atlas-winter.webp",
     "index.html", "app.js", "i18n.js", "style.css", "workspace.css", "theme.js", "themes.css", "nature.js", "nature.css", "interactions.js", "report/report.html", "report/report.js", "report/report-i18n.js",
     "report/report.css", "vendor/leaflet.js", "vendor/leaflet.css",

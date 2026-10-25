@@ -33,9 +33,9 @@ main{padding:0 32px}
 .breadcrumb>span{font-size:11px;font-weight:750;letter-spacing:1.7px}
 .breadcrumb strong{font-weight:600;font-size:13px}
 .header-meta{font-size:11px}
-.connection{padding:7px 10px;background:#f7fbea;border:1px solid #c3d5b5;border-radius:5px}
+.connection{padding:0;background:none;border:0;border-radius:0;color:var(--muted);font-size:10px;white-space:nowrap}
+.connection[data-state=offline],.connection[data-state=stale]{color:var(--red)}
 .page-caption{padding-top:13px;font-size:11px}
-.page-caption #mode{padding:4px 7px;background:#d5e3c8;border-radius:3px;color:#46613e}
 
 .overview-heading{position:relative;overflow:hidden;background:#204c39;border:1px solid #456f49;border-radius:10px;margin:24px 0 23px;padding:27px 29px;box-shadow:0 5px 0 #14392a12;min-height:200px;color:#f0f7e6}
 .overview-heading>div:first-of-type:not(.hero-grid),.overview-heading>div:nth-child(2){position:relative;z-index:1;max-width:70%}
@@ -253,7 +253,7 @@ main{padding:68px 14px 0}
 .topbar{padding:13px 0;min-height:95px}
 .breadcrumb strong{font-size:12px}
 .header-meta{font-size:9px;gap:6px}
-.connection{padding:5px 6px}
+
 .page-caption{font-size:9px;line-height:1.6;padding-top:11px}
 .overview-heading{margin:19px 0 19px;padding:23px 20px;min-height:234px;border-radius:8px}
 .overview-heading>div:nth-child(2){max-width:100%}
@@ -346,3 +346,13 @@ footer{font-size:9px;gap:14px}
 @keyframes view-in{from{transform:translateY(5px)}
 to{transform:none}
 }
+
+.network-note{margin:12px 18px 0;line-height:1.55}#sensor-site-source{display:inline-block;margin-bottom:16px}#sensor-site-source[hidden]{display:none}
+
+/* Project identity and sidebar focus, shared across all themes. */
+.brand .brand-expansion{font-size:9px;line-height:1.5;letter-spacing:.12px;margin-top:8px;font-weight:400;max-width:150px}
+.brand-expansion b{font-weight:800;color:#dfedbe}
+.rail-focus{display:grid;gap:8px;margin-top:24px;border-top:1px solid #c9e29430;padding-top:18px;position:relative;z-index:1}
+.rail-focus-label{font-size:8px;letter-spacing:1.5px;color:#b0c29c}
+.rail-focus strong{font-size:12px;line-height:1.5;font-weight:550;color:#e2ebd4}
+.rail-focus-note{font-size:9px;line-height:1.6;color:#b5c6aa}

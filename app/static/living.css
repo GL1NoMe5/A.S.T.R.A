@@ -1,0 +1,318 @@
+/* Living natural world: depth, wind-reactive flora, theme transitions and tactile motion.
+   Optimized for GPU compositing — zero backdrop-filter over animated canvas and zero per-frame style thrashing. */
+:root {
+  --vt-x: 88vw;
+  --vt-y: 42px;
+  --spot-border: rgba(114, 158, 92, 0.55);
+  --pulse-ring: rgba(78, 146, 96, 0.36);
+}
+
+:root[data-theme="dark"] {
+  --spot-border: rgba(232, 82, 90, 0.52);
+  --pulse-ring: rgba(236, 72, 82, 0.42);
+}
+
+:root[data-theme="christmas"] {
+  --spot-border: rgba(232, 188, 108, 0.55);
+  --pulse-ring: rgba(236, 190, 102, 0.45);
+}
+
+/* Circular theme transition spreading from the theme selector */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-new(root) {
+  animation: astra-theme-spread 0.58s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes astra-theme-spread {
+  from { clip-path: circle(0px at var(--vt-x) var(--vt-y)); }
+  to { clip-path: circle(150vmax at var(--vt-x) var(--vt-y)); }
+}
+
+/* Rich multi-layered atmospheric backdrop per theme */
+body::before {
+  background:
+    radial-gradient(circle at 88% 9%, rgba(255, 224, 138, 0.42) 0%, rgba(244, 214, 134, 0.13) 24%, transparent 52%),
+    radial-gradient(ellipse at 14% 82%, rgba(116, 166, 98, 0.17) 0%, transparent 48%),
+    repeating-radial-gradient(ellipse at 115% 88%, transparent 0 46px, rgba(76, 118, 58, 0.05) 47px 48px, transparent 49px 74px) !important;
+  opacity: 1 !important;
+}
+
+[data-theme="dark"] body {
+  background-color: #0c1718 !important;
+}
+[data-theme="dark"] body::before {
+  background:
+    radial-gradient(circle at 88% 9%, rgba(196, 218, 255, 0.19) 0%, rgba(118, 152, 204, 0.06) 26%, transparent 50%),
+    radial-gradient(ellipse at 76% 94%, rgba(214, 34, 52, 0.15) 0%, rgba(156, 22, 38, 0.05) 34%, transparent 62%),
+    radial-gradient(ellipse at 16% 72%, rgba(38, 88, 76, 0.2) 0%, transparent 46%) !important;
+}
+
+[data-theme="christmas"] body {
+  background-color: #122824 !important;
+}
+[data-theme="christmas"] body::before {
+  background:
+    radial-gradient(circle at 88% 10%, rgba(255, 212, 126, 0.2) 0%, rgba(226, 156, 78, 0.07) 28%, transparent 52%),
+    radial-gradient(ellipse at 14% 78%, rgba(178, 62, 58, 0.16) 0%, transparent 46%),
+    radial-gradient(ellipse at 78% 88%, rgba(92, 158, 128, 0.15) 0%, transparent 50%) !important;
+}
+
+/* Enhanced panorama hero depth & theme atmosphere */
+.atlas-hero {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    0 6px 0 rgba(168, 192, 154, 0.42),
+    0 24px 56px -12px rgba(18, 54, 40, 0.22) !important;
+}
+[data-theme="dark"] .atlas-hero {
+  border-color: rgba(218, 68, 82, 0.34) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 190, 196, 0.14),
+    0 6px 0 rgba(8, 22, 20, 0.7),
+    0 26px 64px -10px rgba(4, 12, 14, 0.62),
+    0 0 44px -18px rgba(224, 42, 58, 0.2) !important;
+}
+[data-theme="christmas"] .atlas-hero {
+  border-color: rgba(228, 192, 118, 0.42) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 238, 198, 0.22),
+    0 6px 0 rgba(10, 28, 24, 0.65),
+    0 26px 64px -10px rgba(6, 18, 15, 0.58),
+    0 0 48px -18px rgba(244, 196, 104, 0.2) !important;
+}
+
+/* Dark theme Lycoris radiata accents on hero & seals */
+[data-theme="dark"] .folio-seal > i {
+  background: #ef3e4a !important;
+  box-shadow: 0 0 0 4px rgba(239, 62, 74, 0.22), 0 0 12px rgba(239, 62, 74, 0.65) !important;
+}
+[data-theme="dark"] .atlas-title strong {
+  background: linear-gradient(125deg, #cde6a8 15%, #ff858d 95%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+[data-theme="christmas"] .atlas-title strong {
+  background: linear-gradient(125deg, #fff1c8 10%, #e6b86a 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* State-driven gust sway (GPU-composited on outer HTML/SVG box; stop 240Hz inner SVG & 40x marker loops) */
+.station-marker,
+.radar-dot {
+  animation: none !important;
+}
+.atlas-bough {
+  animation: none !important;
+  transform: rotate(-0.8deg);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+body[data-gust="true"] .atlas-bough,
+.atlas-hero[data-gust="true"] .atlas-bough {
+  transform: rotate(-5.2deg);
+}
+/* Compass needle subtly responds to gusts & hover */
+.atlas-compass {
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+  transform: rotate(1deg);
+}
+body[data-gust="true"] .atlas-compass {
+  transform: rotate(7deg);
+}
+.atlas-compass:hover {
+  transform: scale(1.08) rotate(12deg);
+}
+
+/* Tactile surfaces with CSS containment & lightweight hover border polish */
+:is(.panel, #overview .kpi, .saved-card, .city-notes, .planning-guide, .source-banner) {
+  position: relative;
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.25s ease !important;
+}
+:is(#overview .kpi, .saved-card) {
+  contain: layout style;
+}
+:is(#overview .kpi, .saved-card):hover {
+  border-color: var(--spot-border) !important;
+}
+
+/* Magnetic pull & tactile press ripple */
+:is(.atlas-action, .primary-button, .folio-jump, .atlas-tool) {
+  --mag-x: 0px;
+  --mag-y: 0px;
+  translate: var(--mag-x) var(--mag-y);
+  transition:
+    translate 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.22s ease,
+    background 0.22s ease;
+}
+.has-ripple {
+  overflow: hidden;
+}
+.living-ripple {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255, 255, 240, 0.52) 0%, rgba(210, 238, 178, 0.2) 55%, transparent 72%);
+  transform: scale(0);
+  animation: astra-ripple 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+[data-theme="dark"] .living-ripple {
+  background: radial-gradient(circle, rgba(255, 130, 138, 0.45) 0%, rgba(230, 56, 70, 0.16) 55%, transparent 72%);
+}
+@keyframes astra-ripple {
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+/* Sliding pill on the map metric switch */
+.metric-switch.has-pill {
+  position: relative;
+  isolation: isolate;
+}
+.metric-switch.has-pill::before {
+  content: "";
+  position: absolute;
+  left: var(--pill-x, 3px);
+  top: var(--pill-y, 3px);
+  width: var(--pill-w, 54px);
+  height: var(--pill-h, 30px);
+  border-radius: 6px;
+  background: #2b5a3d;
+  box-shadow: 0 2px 8px rgba(20, 56, 36, 0.26);
+  z-index: -1;
+  transition:
+    left 0.26s cubic-bezier(0.22, 1, 0.36, 1),
+    top 0.26s cubic-bezier(0.22, 1, 0.36, 1),
+    width 0.26s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+}
+:is([data-theme="dark"], [data-theme="christmas"]) .metric-switch.has-pill::before {
+  background: #c5df9f;
+  box-shadow: 0 2px 10px rgba(185, 224, 138, 0.22);
+}
+[data-theme="christmas"] .metric-switch.has-pill::before {
+  background: #e6cc86;
+}
+.metric-switch.has-pill button.active {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Live data update pulse on KPI cards and network counters */
+@keyframes astra-value-pulse {
+  0% { box-shadow: 0 0 0 0 var(--pulse-ring); }
+  55% { box-shadow: 0 0 0 8px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+.kpi.is-updated {
+  animation: astra-value-pulse 0.8s ease-out;
+}
+.network-stat.is-updated strong {
+  color: var(--green);
+  transition: color 0.35s ease;
+}
+
+/* Staggered reveal on scroll and route changes */
+.living .reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 0.46s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms),
+    transform 0.46s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms);
+}
+.living .reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Celebratory glow when greening plan calculation finishes */
+.results-panel.is-fresh {
+  animation: astra-fresh-result 0.58s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes astra-fresh-result {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.992);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Warm holiday garland with pure GPU opacity shimmer (no filter/per-frame recalc) */
+@keyframes astra-garland-glow {
+  50% { opacity: 0.52; }
+}
+.holiday-lights {
+  height: 26px !important;
+  border-top: 1px solid rgba(164, 144, 88, 0.62) !important;
+  background: linear-gradient(180deg, rgba(16, 38, 30, 0.5), transparent) !important;
+}
+.holiday-lights i {
+  width: 7px !important;
+  height: 11px !important;
+  transform-origin: 50% -5px;
+  transform: rotate(0deg);
+  transition: transform 0.8s ease-out;
+  animation: astra-garland-glow 4.2s ease-in-out infinite !important;
+  animation-delay: calc(var(--n, 0) * -0.27s) !important;
+  box-shadow: 0 0 9px currentColor !important;
+  color: #ffd470;
+  background: #ffe294 !important;
+}
+body[data-gust="true"] .holiday-lights i {
+  transform: rotate(5deg);
+}
+.holiday-lights i:nth-child(3n) {
+  color: #f06458;
+  background: #ff8274 !important;
+}
+.holiday-lights i:nth-child(3n + 1) {
+  color: #a8e4a0;
+  background: #c6f2be !important;
+}
+
+/* Respect reduced motion, disabled effects, and print */
+body[data-nature-mode="off"] .living-ripple,
+body[data-ui-motion="off"] .living-ripple {
+  display: none !important;
+}
+body[data-ui-motion="off"] .reveal {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+body[data-ui-motion="off"] :is(.kpi.is-updated, .results-panel.is-fresh) {
+  animation: none !important;
+}
+body[data-ui-motion="off"] .metric-switch.has-pill::before {
+  transition: none !important;
+}
+body[data-ui-motion="off"] :is(.atlas-action, .primary-button, .folio-jump, .atlas-tool, .atlas-compass, .atlas-bough) {
+  translate: none !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-new(root) { animation: none !important; }
+  .living-ripple { display: none !important; }
+  .living .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
+
+@media print {
+  .living-ripple { display: none !important; }
+  .living .reveal { opacity: 1 !important; transform: none !important; }
+}
