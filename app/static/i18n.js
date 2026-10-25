@@ -343,7 +343,20 @@ const dictionaries = {
     "feature.density": "Плотность застройки",
     "feature.ndvi": "Условный NDVI",
     "feature.hour_sin": "Время суток (sin)",
-    "feature.hour_cos": "Время суток (cos)"
+    "feature.hour_cos": "Время суток (cos)",
+    "atlas.eyebrow": "ГОРОДСКОЙ ЭКОЛОГИЧЕСКИЙ АТЛАС",
+    "atlas.title": "Экология",
+    "atlas.city": "Астаны",
+    "atlas.description": "Исследуйте городскую среду и планируйте озеленение по данным виртуальной сети.",
+    "atlas.plan": "Планировать посадки",
+    "atlas.map": "Исследовать карту",
+    "atlas.sceneNote": "Художественная панорама городского парка",
+    "atlas.atmosphere": "Атмосфера",
+    "atlas.breeze": "Порыв ветра",
+    "atlas.breezeTitle": "Усилить ветер в сцене",
+    "atlas.pause": "Пауза анимации",
+    "atlas.metrics": "Сейчас в виртуальной сети",
+    "atlas.mapSection": "Городские зоны"
   },
   "en": {
     "s0": "ASTRA — Astana environmental analytics",
@@ -686,7 +699,20 @@ const dictionaries = {
     "feature.density": "Building density",
     "feature.ndvi": "Simulated NDVI",
     "feature.hour_sin": "Time of day (sin)",
-    "feature.hour_cos": "Time of day (cos)"
+    "feature.hour_cos": "Time of day (cos)",
+    "atlas.eyebrow": "URBAN ENVIRONMENTAL ATLAS",
+    "atlas.title": "Astana",
+    "atlas.city": "environment",
+    "atlas.description": "Explore the urban environment and plan green spaces using data from a virtual sensor network.",
+    "atlas.plan": "Plan green spaces",
+    "atlas.map": "Explore the map",
+    "atlas.sceneNote": "Illustrated city park panorama",
+    "atlas.atmosphere": "Atmosphere",
+    "atlas.breeze": "Wind gust",
+    "atlas.breezeTitle": "Create a gust of wind",
+    "atlas.pause": "Pause animation",
+    "atlas.metrics": "Virtual network · now",
+    "atlas.mapSection": "Urban zones"
   },
   "kk": {
     "s0": "ASTRA — Астананың экологиялық талдауы",
@@ -1029,7 +1055,20 @@ const dictionaries = {
     "feature.density": "Құрылыс тығыздығы",
     "feature.ndvi": "Шартты NDVI",
     "feature.hour_sin": "Тәулік уақыты (sin)",
-    "feature.hour_cos": "Тәулік уақыты (cos)"
+    "feature.hour_cos": "Тәулік уақыты (cos)",
+    "atlas.eyebrow": "ҚАЛАЛЫҚ ЭКОЛОГИЯЛЫҚ АТЛАС",
+    "atlas.title": "Астана",
+    "atlas.city": "экологиясы",
+    "atlas.description": "Қалалық ортаны зерттеп, виртуалды желі деректері бойынша көгалдандыруды жоспарлаңыз.",
+    "atlas.plan": "Көгалдандыру жоспары",
+    "atlas.map": "Картаны зерттеу",
+    "atlas.sceneNote": "Қалалық саябақтың көркем панорамасы",
+    "atlas.atmosphere": "Атмосфера",
+    "atlas.breeze": "Жел екпіні",
+    "atlas.breezeTitle": "Көріністегі желді күшейту",
+    "atlas.pause": "Анимацияны кідірту",
+    "atlas.metrics": "Виртуалды желі · қазір",
+    "atlas.mapSection": "Қала аймақтары"
   }
 };
 dictionaries.ru['nature.auto']='По теме';dictionaries.en['nature.auto']='Theme default';dictionaries.kk['nature.auto']='Тақырыпқа сай';

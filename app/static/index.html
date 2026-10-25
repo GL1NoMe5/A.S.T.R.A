@@ -10,7 +10,9 @@
   <script defer src="/static/vendor/leaflet-heat.js"></script>
   <script defer src="/static/vendor/plotly.min.js"></script>
   <script defer src="/static/vendor/plotly-locale-ru.js"></script>
-  <script defer src="/static/i18n.js?v=9ee82fa630"></script><script defer src="/static/theme.js?v=13f21ac77d"></script><script defer src="/static/app.js?v=3a04ad7fde"></script><script defer src="/static/nature.js?v=172187621e"></script><script defer src="/static/interactions.js?v=6754a61475"></script>
+  <script defer src="/static/i18n.js?v=f5608831a7"></script><script defer src="/static/theme.js?v=13f21ac77d"></script><script defer src="/static/app.js?v=3a04ad7fde"></script><script defer src="/static/nature.js?v=172187621e"></script><script defer src="/static/interactions.js?v=6754a61475"></script>
+  <link rel="stylesheet" href="/static/atlas.css?v=6c8b535a9f">
+  <script defer src="/static/atlas-motion.js?v=59595b1a80"></script>
 </head>
 <body>
 <svg class="icon-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
@@ -40,23 +42,45 @@
   <div class="connection-notice" id="data-notice" hidden><span id="data-notice-text"></span><button id="retry-data" type="button" data-i18n-text="s26">Повторить загрузку</button></div>
 
   <section id="overview" data-view="overview" class="view">
-    <div class="overview-heading"><div class="hero-grid" aria-hidden="true"></div><div><span class="eyebrow" data-i18n-text="s27"><i></i> ASTRA / МОНИТОРИНГ</span><h1 data-i18n-text="s28">Экология Астаны</h1><p data-i18n-text="s29">Карта виртуальных станций, состояние воздуха и планирование посадок.</p><div class="hero-actions"><a href="#planning" class="primary-button" data-i18n-text="s30"><svg><use href="#i-leaf"/></svg> Рассчитать озеленение <span>↗</span></a><a href="#analytics" class="secondary-button" data-i18n-text="s31">История показателей →</a></div></div><div class="garden-illustration" aria-hidden="true">
-      <svg viewBox="0 0 380 230"><defs><pattern id="grid" width="22" height="22" patternUnits="userSpaceOnUse" patternTransform="skewY(-15)"><path d="M22 0H0V22" fill="none" stroke="#d4dfcb" stroke-width=".6"/></pattern></defs>
-      <ellipse cx="190" cy="194" rx="169" ry="25" fill="#e4eadc"/><path d="m24 151 170-75 162 74-165 70Z" fill="url(#grid)" stroke="#c9d8c3"/>
-      <g class="garden-buildings" stroke="#a7bba5" stroke-width="1.2" stroke-linejoin="round"><path d="m76 125 31-14 31 14v51l-31 14-31-14Z" fill="#e0e9da"/><path d="m76 125 31 14 31-14m-31 14v51" fill="none"/><path d="m145 95 33-15 36 16v65l-36 16-33-15Z" fill="#f5f7ed"/><path d="m145 95 33 16 36-15m-36 15v66M153 111l17 8m-17 7 17 8m-17 7 17 8m-17 7 17 8m16-42 20-9m-20 24 20-9m-20 24 20-9" fill="none"/><path d="m251 142 23-10 24 11v34l-24 10-23-11Z" fill="#e0e9da"/><path d="m251 142 23 11 24-10m-24 10v34" fill="none"/></g>
-      <g class="garden-tree tree-one"><path d="M231 170V89" stroke="#536d43" stroke-width="2"/><path d="M231 139c-44-16-30-69 0-75 31 5 43 57 0 75Z" fill="#88a86c"/><path d="M231 144V88m0 34-13-15m13 3 14-16" fill="none" stroke="#547245" stroke-width="1.5"/></g>
-      <g class="garden-tree tree-two"><path d="M58 174v-50" stroke="#536d43" stroke-width="2"/><path d="M58 155c-30-9-24-44 0-50 25 6 30 41 0 50Z" fill="#adc38c"/><path d="M58 162v-37m0 21-10-11m10 1 8-9" fill="none" stroke="#668354"/></g>
-      <g class="garden-tree tree-three"><path d="M306 174v-53" stroke="#536d43" stroke-width="2"/><path d="M306 155c-29-9-23-45 0-52 24 6 31 43 0 52Z" fill="#688c59"/><path d="M306 163v-38m0 21-8-11m8 1 9-10" fill="none" stroke="#c1d6a5"/></g>
-      <path class="garden-flow" d="M43 191c36-25 47 29 93 7s41-13 76 2 68-18 119-17" fill="none" stroke="#9fb6b5" stroke-width="4" stroke-linecap="round"/>
-      <g fill="#b79e62"><circle class="garden-speck" cx="75" cy="80" r="2"/><circle class="garden-speck" cx="268" cy="54" r="2.5"/><circle class="garden-speck" cx="328" cy="83" r="1.6"/></g>
-      <text x="280" y="216" fill="#81927b" font-size="7" letter-spacing="2">51.17 N / 71.45 E</text>
-      </svg></div></div>
+    <div class="atlas-hero" data-scene-paused="true">
+      <div class="atlas-scene" aria-hidden="true">
+        <img class="atlas-landscape atlas-day" src="/static/assets/atlas-day.webp" width="1774" height="888" alt="" fetchpriority="high">
+        <img class="atlas-landscape atlas-night" src="/static/assets/atlas-night.webp" width="1774" height="888" alt="" decoding="async">
+        <img class="atlas-landscape atlas-winter" src="/static/assets/atlas-winter.webp" width="1774" height="888" alt="" decoding="async">
+        <div class="atlas-haze"></div><div class="atlas-light"></div><div class="atlas-water"></div>
+        <svg class="atlas-canopy" viewBox="0 0 260 300" fill="none">
+          <g class="atlas-bough">
+            <path d="M265 302C205 237 178 178 150 101M227 259C189 250 144 220 113 173M197 209C220 178 229 137 226 111M171 154C134 135 101 105 84 74" stroke="currentColor" stroke-width="3"/>
+            <g fill="currentColor"><path d="M149 107C118 93 122 53 122 53C152 60 168 83 149 107Z"/><path d="M162 134C158 96 195 80 195 80C202 112 184 135 162 134Z"/><path d="M185 182C148 181 135 145 135 145C170 139 193 156 185 182Z"/><path d="M202 221C199 186 234 173 234 173C241 203 225 222 202 221Z"/><path d="M224 257C185 264 164 239 164 239C190 219 217 228 224 257Z"/><path d="M113 175C82 174 69 141 69 141C101 137 123 151 113 175Z"/><path d="M135 205C136 174 162 166 162 166C171 190 154 209 135 205Z"/><path d="M85 76C60 68 58 39 58 39C86 43 98 59 85 76Z"/><path d="M107 103C106 73 134 61 134 61C145 87 127 107 107 103Z"/><path d="M225 117C203 96 215 67 215 67C239 82 243 103 225 117Z"/><path d="M224 149C241 120 266 126 266 126C259 155 241 165 224 149Z"/></g>
+            <path class="atlas-leaf-vein" d="m149 107-21-44m34 71 28-46m-5 94-41-31m58 70 27-40m-5 76-49-16m-62-66-34-28m56 58 23-31m-73-98-20-29m42 56 24-35m94 49-8-41m7 73 34-18"/>
+          </g>
+        </svg>
+        <canvas id="atlas-atmosphere"></canvas>
+      </div>
+      <div class="atlas-copy">
+        <span class="atlas-eyebrow"><i></i><span data-i18n="atlas.eyebrow">ГОРОДСКОЙ ЭКОЛОГИЧЕСКИЙ АТЛАС</span></span>
+        <h1 class="atlas-title"><span data-i18n="atlas.title">Экология</span><strong data-i18n="atlas.city">Астаны</strong></h1>
+        <p class="atlas-description" data-i18n="atlas.description">Исследуйте городскую среду и планируйте озеленение по данным виртуальной сети.</p>
+        <div class="atlas-actions">
+          <a class="atlas-action atlas-action-primary" href="#planning"><svg><use href="#i-leaf"/></svg><span data-i18n="atlas.plan">Планировать посадки</span><svg><use href="#i-arrow"/></svg></a>
+          <button class="atlas-action atlas-action-secondary" id="atlas-map-link" type="button"><svg><use href="#i-map"/></svg><span data-i18n="atlas.map">Исследовать карту</span></button>
+        </div>
+      </div>
+      <div class="atlas-compass" aria-hidden="true"><span>N</span></div>
+      <div class="atlas-caption">51°10′ N &nbsp; / &nbsp; 71°27′ E<small data-i18n="atlas.sceneNote">Художественная панорама городского парка</small></div>
+      <div class="atlas-tools"><span data-i18n="atlas.atmosphere">Атмосфера</span>
+        <button class="atlas-tool" id="atlas-breeze" type="button" aria-pressed="false" data-i18n-title="atlas.breezeTitle" title="Усилить ветер в сцене"><svg viewBox="0 0 24 24"><path d="M2 8h12a3 3 0 1 0-3-3M2 12h17a3 3 0 1 1-3 3M2 16h6a3 3 0 1 1-3 3"/></svg><span data-i18n="atlas.breeze">Порыв ветра</span></button>
+        <button class="atlas-tool" id="atlas-pause" type="button" aria-pressed="false" aria-label="Пауза анимации" data-i18n-aria-label="atlas.pause" data-i18n-title="atlas.pause" title="Пауза анимации"><svg class="pause-icon" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg><svg class="play-icon" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z"/></svg></button>
+      </div>
+    </div>
+    <div class="atlas-section-label"><span>01</span><span data-i18n="atlas.metrics">Сейчас в виртуальной сети</span></div>
     <section class="kpi-grid" aria-label="Городские показатели" data-i18n-aria-label="s32">
       <article class="kpi"><div class="kpi-label">PM2.5 <span data-i18n-text="s33">Виртуальные зоны</span></div><div class="kpi-value"><span id="kpi-pm">—</span><small data-i18n-text="s34">мкг/м³</small></div><p data-i18n-text="s35">Средняя расчётная концентрация</p></article>
       <article class="kpi"><div class="kpi-label" data-i18n-text="s36">Температура <span data-i18n-text="s37">Поверхность</span></div><div class="kpi-value"><span id="kpi-temp">—</span><small>°C</small></div><p data-i18n-text="s38">Сценарный микроклимат</p></article>
       <article class="kpi"><div class="kpi-label">European AQI <span data-i18n-text="s39">Городской фон</span></div><div class="kpi-value"><span id="kpi-aqi">—</span><small id="aqi-label" data-i18n-text="s40">индекс</small></div><p data-i18n-text="s41">Модель Open-Meteo / CAMS</p></article>
       <article class="kpi"><div class="kpi-label" data-i18n-text="s42">Узлы сети <span data-i18n-text="s43">Пилот</span></div><div class="kpi-value"><span id="kpi-sensors">—</span><small>/ 40</small></div><p data-i18n-text="s44"><i class="status-dot"></i> <span id="kpi-hotspots">—</span> зон с условным ESI ≥ 60</p></article>
     </section>
+    <div class="atlas-section-label"><span>02</span><span data-i18n="atlas.mapSection">Городские зоны</span></div>
     <div class="overview-grid"><section class="panel map-panel"><div class="panel-heading"><div><span class="eyebrow" data-i18n-text="s45">ПРОСТРАНСТВЕННЫЙ ОБЗОР</span><h2 data-i18n-text="s46">Город на карте</h2></div><label class="toggle" data-i18n-text="s47"><input type="checkbox" id="heat-toggle"><span></span> Тепловой слой</label></div><div class="map-controls"><div class="metric-switch" role="group" aria-label="Показатель карты" data-i18n-aria-label="s48"><button type="button" data-map-metric="esi" aria-pressed="true" class="active">ESI</button><button type="button" data-map-metric="pm25" aria-pressed="false">PM2.5</button><button type="button" data-map-metric="surface_temp_c" aria-pressed="false" data-i18n-text="s36">Температура</button></div><span id="map-scale" data-i18n-text="s49">Сценарный индекс ESI · шкала 0–100</span></div><div class="map-wrap"><div id="map" aria-label="Карта виртуальных станций Астаны" data-i18n-aria-label="s50"></div><div class="map-overlay" data-i18n-text="s51"><span class="dot"></span><span id="map-count">40</span> виртуальных станций</div><div class="map-legend"><span><i class="green"></i> <span id="map-low">ESI &lt; 30</span></span><span><i class="gold"></i> <span id="map-mid">30–60</span></span><span><i class="red"></i> <span id="map-high">≥ 60</span></span></div></div><div class="map-footer"><label for="sensor-picker" data-i18n-text="s52">Открыть станцию<select id="sensor-picker"><option value="" data-i18n-text="s53">Выберите узел на карте или из списка</option></select></label><small id="tile-status" data-i18n-text="s54">Картографическая подложка: OpenStreetMap</small></div></section>
       <aside class="city-notes"><div class="network-heading"><span class="radar-icon" aria-hidden="true"></span><div><span class="eyebrow" data-i18n-text="s55">СОСТОЯНИЕ СЕТИ</span><h2 data-i18n-text="s33">Виртуальные зоны</h2></div></div><div class="network-stat"><span data-i18n-text="s56">Активные станции</span><strong id="network-active">—</strong><small data-i18n-text="s57">из 40 узлов</small></div><div class="network-stat"><span data-i18n-text="s58">Средний ESI</span><strong id="network-esi">—</strong><small data-i18n-text="s59">сценарный индекс / 100</small></div><div class="network-stat"><span data-i18n-text="s60">Средний ветер</span><strong><span id="network-wind">—</span><em data-i18n-text="s61">м/с</em></strong><small data-i18n-text="s62">в виртуальных зонах</small></div><button id="reset-map" class="secondary-button" data-i18n-text="s63">⌖ Все станции на карте</button><div class="network-note"><svg><use href="#i-info"/></svg><p data-i18n-text="s64">Узлы моделируются. Городской фон — Open-Meteo / CAMS.</p></div><button class="text-button" type="button" onclick="document.getElementById('methodology-dialog').showModal()" data-i18n-text="s65">Методика и источники ↗</button></aside></div>
     <details class="source-banner"><summary data-i18n-text="s66"><span class="dot"></span>Источники и свежесть данных <span class="source-badge" id="source-badge">—</span></summary><p id="source-detail" data-i18n-text="s67">Ожидание фоновых данных…</p><small id="last-updated" data-i18n-text="s68">Ожидание первого пакета</small></details>
