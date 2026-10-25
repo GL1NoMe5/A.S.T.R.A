@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1b3529">
+  <meta name="description" content="Промотрейлер ASTRA v2: экологическая карта Астаны и планирование озеленения. 30 секунд, Full HD, 60 fps.">
+  <title>ASTRA — промотрейлер v2</title>
+  <style>
+    :root { color-scheme: dark; font-family: "Segoe UI", Arial, sans-serif; background: #152a21; color: #f5f5ed; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100svh; background: radial-gradient(ellipse at 85% 0%, #36523a66, transparent 55%); }
+    main { width: min(1120px, calc(100% - 48px)); margin: auto; padding: 32px 0 48px; }
+    header, footer, .actions { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; }
+    header { justify-content: space-between; padding-bottom: 28px; border-bottom: 1px solid #9cad8333; }
+    .brand { display: flex; align-items: center; gap: 12px; color: inherit; text-decoration: none; font-size: 25px; font-weight: 700; letter-spacing: 2px; }
+    .brand svg { width: 29px; height: 34px; color: #b7c79d; }
+    a { color: #c4d4aa; text-underline-offset: 4px; }
+    a:hover { color: #f5f5ed; }
+    a:focus-visible, video:focus-visible { outline: 3px solid #d5dfb4; outline-offset: 5px; }
+    .label { margin: 36px 0 12px; color: #b7c79d; font-size: 12px; letter-spacing: 3px; }
+    h1 { margin: 0 0 12px; font-size: clamp(30px, 5vw, 54px); line-height: 1.12; letter-spacing: -1px; }
+    .intro { margin: 0 0 26px; color: #c4cdbd; line-height: 1.6; }
+    .player { overflow: hidden; border: 1px solid #9cad8366; border-radius: 16px; background: #0c1711; box-shadow: 0 24px 70px #0004; }
+    video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #0c1711; }
+    .details { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin: 22px 0 32px; }
+    .meta { color: #b7c79d; font-size: 14px; }
+    .button { display: inline-block; padding: 12px 20px; border-radius: 8px; border: 1px solid #9cad8366; text-decoration: none; }
+    .primary { background: #d5dfb4; border-color: #d5dfb4; color: #1b3529; font-weight: 600; }
+    .primary:hover { background: #e4e9d9; color: #1b3529; }
+    footer { justify-content: space-between; padding-top: 22px; border-top: 1px solid #9cad8333; color: #a6b39e; font-size: 13px; line-height: 1.7; }
+    @media (max-width: 540px) { main { width: calc(100% - 28px); padding-top: 22px; } .details { gap: 20px; } .actions { width: 100%; } .button { flex: 1; text-align: center; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <a class="brand" href="https://github.com/GL1NoMe5/A.S.T.R.A" aria-label="ASTRA на GitHub">
+        <svg viewBox="0 0 30 36" fill="none" aria-hidden="true"><path d="M15 33V13M15 27C3 24 1 15 5 7C10-1 21 1 26 9C31 18 24 26 15 33ZM15 24L8 17M15 20L22 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        ASTRA
+      </a>
+      <a href="https://github.com/GL1NoMe5/A.S.T.R.A#trailer">← К README</a>
+    </header>
+    <p class="label">ПРОМОТРЕЙЛЕР / V2</p>
+    <h1>Карта города. План озеленения.</h1>
+    <p class="intro">Экологическая карта Астаны, сценарии посадок и смета — в коротком ролике ASTRA.</p>
+    <div class="player">
+      <video controls playsinline preload="metadata" poster="trailer-v2.svg" aria-label="Промотрейлер ASTRA v2">
+        <source src="ASTRA-v2.mp4" type="video/mp4">
+        Ваш браузер не поддерживает видео. <a href="ASTRA-v2.mp4">Скачайте MP4</a>.
+      </video>
+    </div>
+    <div class="details">
+      <p class="meta">30 секунд &nbsp;·&nbsp; 1920 × 1080 &nbsp;·&nbsp; 60 fps</p>
+      <div class="actions">
+        <a class="button primary" href="https://astra-n2xd.onrender.com/">Открыть приложение ↗</a>
+        <a class="button" href="ASTRA-v2.mp4" download="ASTRA-v2.mp4">Скачать MP4 ↓</a>
+      </div>
+    </div>
+    <footer>
+      <span>Air &amp; Surface Temperature Real-time Analytics</span>
+      <a href="https://github.com/GL1NoMe5/A.S.T.R.A/blob/main/media/CREDITS.md#astra-v2">Музыка и источники</a>
+    </footer>
+  </main>
+</body>
+</html>

@@ -35,11 +35,11 @@
 
 <div align="center">
 
-<a href="media/demos/ASTRA-v2.mp4" title="Открыть промотрейлер ASTRA v2">
+<a href="https://gl1nome5.github.io/A.S.T.R.A/" title="Открыть промотрейлер ASTRA v2">
   <img src="docs/readme/trailer-v2.svg" width="100%" alt="ASTRA v2 — открыть промотрейлер: 30 секунд, Full HD, 60 fps" />
 </a>
 
-**[▶ Смотреть ASTRA v2](media/demos/ASTRA-v2.mp4)** &nbsp;·&nbsp; **[↓ Скачать MP4](https://github.com/GL1NoMe5/A.S.T.R.A/raw/refs/heads/main/media/demos/ASTRA-v2.mp4)**
+**[▶ Смотреть ASTRA v2](https://gl1nome5.github.io/A.S.T.R.A/)** &nbsp;·&nbsp; **[↓ Скачать MP4](https://gl1nome5.github.io/A.S.T.R.A/ASTRA-v2.mp4)**
 
 <sub>Короткий ролик о городской среде Астаны и планировании озеленения · 30 секунд · 1920 × 1080 · 60 fps</sub>
 
