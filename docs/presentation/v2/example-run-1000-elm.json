@@ -1,0 +1,344 @@
+{
+  "run_id": "1a7885f7-c270-4e99-8eef-56ae5a5fda4f",
+  "created_at": "2026-10-25T19:36:19.310887+00:00",
+  "request": {
+    "budget_trees": 1000,
+    "species": "elm",
+    "target_district": "all",
+    "horizon_years": 10,
+    "sapling_cost_kzt": 15000.0,
+    "planting_cost_kzt": 10000.0,
+    "annual_care_cost_kzt": 3000.0,
+    "pilot_equipment_cost_kzt": 600000.0,
+    "annual_platform_cost_kzt": 1200000.0
+  },
+  "zones": [
+    {
+      "id": "AST-010",
+      "district": "nura",
+      "latitude": 51.136,
+      "longitude": 71.396,
+      "site_type": "arterial",
+      "name_i18n": {
+        "ru": "Туран · западный коридор",
+        "en": "Turan · western corridor",
+        "kk": "Тұран · батыс дәлізі"
+      },
+      "name": "Туран · западный коридор",
+      "district_name": "Нура",
+      "density": 0.715,
+      "ndvi": 0.125,
+      "traffic_base": 0.855,
+      "area_m2": 120000,
+      "planting_capacity": 260,
+      "population": 2100,
+      "metadata_kind": "scenario",
+      "population_kind": "scenario_disjoint_cells",
+      "network_version": "landmarks-v2",
+      "location_kind": "approximate_illustrative_reference",
+      "location_source": "https://www.openstreetmap.org/?mlat=51.136&mlon=71.396#map=16/51.136/71.396",
+      "trees": 260,
+      "surviving_trees": 221.0,
+      "canopy_m2": 5525.0,
+      "pm25_before": 14.903,
+      "pm25_after": 14.868492149553052,
+      "pm25_reduction": 0.03450785044694856,
+      "pm25_reduction_pct": 0.23154969098133638,
+      "surface_temp_before": 0.862,
+      "surface_temp_after": 0.862,
+      "cooling_c": 0.0,
+      "co2_tons_year": 4.862,
+      "priority_score": 22.423485407309286,
+      "priority_inputs": {
+        "predicted_pm25": 14.903,
+        "predicted_esi": 13.906,
+        "heat_above_25_c": 0,
+        "selection_rank": 1,
+        "proximity_bonus_pct": 0
+      },
+      "population_covered": 2100
+    },
+    {
+      "id": "AST-033",
+      "district": "baikonyr",
+      "latitude": 51.169,
+      "longitude": 71.449,
+      "site_type": "arterial",
+      "name_i18n": {
+        "ru": "Республика · северный коридор",
+        "en": "Respublika · northern corridor",
+        "kk": "Республика · солтүстік дәлізі"
+      },
+      "name": "Республика · северный коридор",
+      "district_name": "Байконыр",
+      "density": 0.73,
+      "ndvi": 0.11,
+      "traffic_base": 0.87,
+      "area_m2": 120000,
+      "planting_capacity": 260,
+      "population": 2300,
+      "metadata_kind": "scenario",
+      "population_kind": "scenario_disjoint_cells",
+      "network_version": "landmarks-v2",
+      "location_kind": "approximate_illustrative_reference",
+      "location_source": "https://www.openstreetmap.org/?mlat=51.169&mlon=71.449#map=16/51.169/71.449",
+      "trees": 260,
+      "surviving_trees": 221.0,
+      "canopy_m2": 5525.0,
+      "pm25_before": 13.911,
+      "pm25_after": 13.878651039240586,
+      "pm25_reduction": 0.032348960759413826,
+      "pm25_reduction_pct": 0.2325423101100843,
+      "surface_temp_before": 0.854,
+      "surface_temp_after": 0.854,
+      "cooling_c": 0.0,
+      "co2_tons_year": 4.862,
+      "priority_score": 22.35081048745864,
+      "priority_inputs": {
+        "predicted_pm25": 13.911,
+        "predicted_esi": 13.241,
+        "heat_above_25_c": 0,
+        "selection_rank": 2,
+        "proximity_bonus_pct": 0.15565397235121292
+      },
+      "population_covered": 2300
+    },
+    {
+      "id": "AST-023",
+      "district": "almaty",
+      "latitude": 51.163,
+      "longitude": 71.484,
+      "site_type": "arterial",
+      "name_i18n": {
+        "ru": "Абылай хана · восточный участок",
+        "en": "Abylai Khan · east",
+        "kk": "Абылай хан · шығыс"
+      },
+      "name": "Абылай хана · восточный участок",
+      "district_name": "Алматы",
+      "density": 0.73,
+      "ndvi": 0.11,
+      "traffic_base": 0.87,
+      "area_m2": 120000,
+      "planting_capacity": 260,
+      "population": 2200,
+      "metadata_kind": "scenario",
+      "population_kind": "scenario_disjoint_cells",
+      "network_version": "landmarks-v2",
+      "location_kind": "approximate_illustrative_reference",
+      "location_source": "https://www.openstreetmap.org/?mlat=51.163&mlon=71.484#map=16/51.163/71.484",
+      "trees": 260,
+      "surviving_trees": 221.0,
+      "canopy_m2": 5525.0,
+      "pm25_before": 14.15,
+      "pm25_after": 14.117095263119424,
+      "pm25_reduction": 0.03290473688057693,
+      "pm25_reduction_pct": 0.2325423101100843,
+      "surface_temp_before": 0.794,
+      "surface_temp_after": 0.794,
+      "cooling_c": 0.0,
+      "co2_tons_year": 4.862,
+      "priority_score": 22.296207455574145,
+      "priority_inputs": {
+        "predicted_pm25": 14.15,
+        "predicted_esi": 13.7,
+        "heat_above_25_c": 0,
+        "selection_rank": 3,
+        "proximity_bonus_pct": 1.4534796365826106
+      },
+      "population_covered": 2200
+    },
+    {
+      "id": "AST-008",
+      "district": "yesil",
+      "latitude": 51.0985,
+      "longitude": 71.436,
+      "site_type": "arterial",
+      "name_i18n": {
+        "ru": "Улы Дала · восточный участок",
+        "en": "Uly Dala · east",
+        "kk": "Ұлы Дала · шығыс"
+      },
+      "name": "Улы Дала · восточный участок",
+      "district_name": "Есиль",
+      "density": 0.73,
+      "ndvi": 0.11,
+      "traffic_base": 0.87,
+      "area_m2": 120000,
+      "planting_capacity": 260,
+      "population": 2200,
+      "metadata_kind": "scenario",
+      "population_kind": "scenario_disjoint_cells",
+      "network_version": "landmarks-v2",
+      "location_kind": "approximate_illustrative_reference",
+      "location_source": "https://www.openstreetmap.org/?mlat=51.0985&mlon=71.436#map=16/51.0985/71.436",
+      "trees": 220,
+      "surviving_trees": 187.0,
+      "canopy_m2": 4675.0,
+      "pm25_before": 13.644,
+      "pm25_after": 13.617148362549736,
+      "pm25_reduction": 0.02685163745026299,
+      "pm25_reduction_pct": 0.196801798961177,
+      "surface_temp_before": 1.019,
+      "surface_temp_after": 1.019,
+      "cooling_c": 0.0,
+      "co2_tons_year": 4.114,
+      "priority_score": 21.41571187399522,
+      "priority_inputs": {
+        "predicted_pm25": 13.644,
+        "predicted_esi": 12.895,
+        "heat_above_25_c": 0,
+        "selection_rank": 6,
+        "proximity_bonus_pct": 0.1826001521919773
+      },
+      "population_covered": 2200
+    }
+  ],
+  "used_trees": 1000,
+  "unused_trees": 0,
+  "horizon_years": 10,
+  "background": {
+    "kind": "model_background",
+    "provider": "Open-Meteo / CAMS + MET Norway",
+    "requested_latitude": 51.1694,
+    "requested_longitude": 71.4491,
+    "poll_interval_seconds": 300.0,
+    "units": {
+      "pm25": "µg/m³",
+      "pm10": "µg/m³",
+      "no2": "µg/m³",
+      "co": "µg/m³",
+      "european_aqi": "index",
+      "air_temp_c": "°C",
+      "humidity": "%",
+      "wind_speed": "m/s",
+      "wind_direction": "°"
+    },
+    "attribution_url": "https://open-meteo.com/en/docs/air-quality-api",
+    "air": {
+      "values": {
+        "pm10": 12.3,
+        "pm25": 12.1,
+        "no2": 12.8,
+        "co": 403.0,
+        "european_aqi": 34
+      },
+      "source_time": "2026-10-25T19:00:00+00:00",
+      "fetched_at": "2026-10-25T19:34:58.923633+00:00",
+      "interval_seconds": 3600,
+      "grid_latitude": 51.199997,
+      "grid_longitude": 71.40001,
+      "provider": "Open-Meteo / CAMS",
+      "attribution_url": "https://open-meteo.com/",
+      "status": "live",
+      "cache_age_seconds": 80.2,
+      "error": null
+    },
+    "weather": {
+      "values": {
+        "air_temp_c": 0.4,
+        "humidity": 83.5,
+        "wind_speed": 2.1,
+        "wind_direction": 243.1
+      },
+      "source_time": "2026-10-25T20:00:00+00:00",
+      "fetched_at": "2026-10-25T19:34:59.012741+00:00",
+      "interval_seconds": 3600,
+      "provider": "MET Norway Locationforecast",
+      "attribution_url": "https://api.met.no/doc/License",
+      "license": "CC BY 4.0",
+      "data_kind": "weather_model_forecast",
+      "primary_error": "HTTP 429",
+      "status": "live",
+      "cache_age_seconds": 80.1,
+      "error": null
+    }
+  },
+  "summary": {
+    "pm25_before": 14.152,
+    "pm25_after": 14.120346703615699,
+    "pm25_reduction": 0.031653296384300575,
+    "pm25_reduction_pct": 0.223666594010038,
+    "surface_temp_before": 0.88225,
+    "surface_temp_after": 0.88225,
+    "cooling_c": 0.0,
+    "co2_tons_year": 18.7,
+    "population_covered": 8800,
+    "population_kind": "scenario_disjoint_cells",
+    "range_kind": "sensitivity_band_not_confidence_interval",
+    "pm25_reduction_range": [
+      0.015826648192150287,
+      0.04747994457645086
+    ],
+    "cooling_c_range": [
+      0.0,
+      0.0
+    ],
+    "co2_tons_year_range": [
+      9.35,
+      28.049999999999997
+    ]
+  },
+  "costs": {
+    "currency": "KZT",
+    "kind": "editable_scenario_assumptions",
+    "planting": 25000000.0,
+    "annual_care": 3000000.0,
+    "equipment": 600000.0,
+    "annual_platform": 1200000.0,
+    "first_year_total": 29800000.0,
+    "horizon_total": 67600000.0
+  },
+  "methodology": {
+    "version": "scenario-v1",
+    "parameter_kind": "illustrative_assumptions_not_astana_calibration",
+    "mixing_height_m": 20,
+    "residence_seconds": 3600,
+    "maturity_years": 10,
+    "deposition_basis": "F = Vd × C × leaf area; scenario box-model concentration response",
+    "sources": [
+      "https://www.itreetools.org/eco/resources/iTree_Eco_Dry_Deposition_Model_Descriptions.pdf",
+      "https://research.fs.usda.gov/treesearch/46254",
+      "https://www.epa.gov/heatislands/benefits-trees-and-vegetation"
+    ],
+    "note": "Источники обосновывают механизмы; численные коэффициенты пород — сценарные допущения, не измерения Астаны",
+    "baseline_kind": "same_sites_frozen_weather_no_new_planting",
+    "summary_domain": "area_weighted_planted_sites_only",
+    "allocation_policy": {
+      "kind": "heuristic_not_universal_ecological_optimum",
+      "max_selected_sites": 10,
+      "marginal_weights": {
+        "pm25_reduction": 1,
+        "cooling_c": 2,
+        "co2_tons_year": 0.1
+      },
+      "tradeoff": "Higher heuristic score does not guarantee higher cooling or every individual benefit"
+    },
+    "species_parameters": {
+      "label": "Вяз",
+      "crown_m2": 25.0,
+      "lai": 3.0,
+      "deposition_m_s": 0.002,
+      "survival": 0.85,
+      "annual_co2_kg": 22.0,
+      "cooling_max_c": 4.0
+    },
+    "sensitivity_factors": [
+      0.5,
+      1.5
+    ],
+    "forecast_policy": {
+      "horizon_hours": 3,
+      "primary": {
+        "pm25": "persistence",
+        "esi": "lightgbm"
+      },
+      "experimental": {
+        "pm25": "lightgbm"
+      },
+      "data_kind": "synthetic",
+      "note": "PM2.5: сохранение текущего значения; ML доступен для сравнения. ESI: LightGBM. Выбор основан на синтетической проверке; точность для реальной Астаны не установлена."
+    }
+  },
+  "note": "PM2.5: сохранение текущего значения; ML доступен для сравнения. ESI: LightGBM. Выбор основан на синтетической проверке; точность для реальной Астаны не установлена. Эффект через заданное число лет при текущем погодном фоне; зоны, население и коэффициенты сценарные."
+}
