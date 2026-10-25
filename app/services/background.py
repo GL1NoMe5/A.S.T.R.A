@@ -106,8 +106,10 @@ class BackgroundService:
                 self.errors.pop(part, None)
                 self.loaded.discard(part)
             except (httpx.HTTPError, ValueError, KeyError, TypeError) as exc:
-                self.errors[part] = type(exc).__name__
-                log.warning("Open-Meteo %s unavailable (%s); keeping cache", part, type(exc).__name__)
+                error = (f"HTTP {exc.response.status_code}" if isinstance(exc, httpx.HTTPStatusError)
+                         else type(exc).__name__)
+                self.errors[part] = error
+                log.warning("Open-Meteo %s unavailable (%s); keeping cache", part, error)
         try:
             await asyncio.gather(*(fetch(part) for part in FIELDS))
             await self._persist_cache()

@@ -79,6 +79,8 @@ async def test_invalid_sources_remain_explicit_defaults(tmp_path, failure):
         service = BackgroundService(Settings(data_dir=tmp_path), client)
         await service.refresh()
         assert all(service.snapshot()[p]["status"] == "default" for p in FIELDS)
+        if failure == "http429":
+            assert all(service.snapshot()[p]["error"] == "HTTP 429" for p in FIELDS)
 
 
 def test_corrupt_cache_does_not_stop_startup(tmp_path):
