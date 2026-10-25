@@ -51,7 +51,7 @@ function showView(name,{updateHash=true}={}) {
   setText('view-title',views[name][0]);setText('view-caption',views[name][1]);
   if(updateHash&&location.hash!==`#${name}`)history.pushState(null,'',`#${name}`);
   if(name!=='overview'&&state.selected)closeSensor();
-  requestAnimationFrame(()=>{if(name==='overview'&&map)map.invalidateSize();if(name==='analytics')renderTelemetry();for(const id of['comparison-chart','shap-chart']){const c=$(id);if(c&&c.offsetParent!==null&&c._fullLayout)Plotly.Plots.resize(c);}});
+  requestAnimationFrame(()=>{if(name==='overview'&&map)map.invalidateSize();if(name==='analytics')renderTelemetry();for(const id of['telemetry-chart','comparison-chart','shap-chart']){const c=$(id);if(c&&c.offsetParent!==null&&c._fullLayout)Plotly.Plots.resize(c);}});
   if(name==='saved'&&!state.savedLoaded)loadSavedPlans();window.scrollTo({top:0,behavior:'instant'});
 }
 
@@ -154,10 +154,11 @@ function updateDashboard(payload) {
   if (state.selected) renderSensorValues();
 }
 function renderTelemetry() {
+  const palette=getComputedStyle(document.documentElement),pmColor=palette.getPropertyValue('--chart-pm').trim()||'#42745a',tempColor=palette.getPropertyValue('--chart-temp').trim()||'#b98b4d';
   const x = state.history.map(p => new Date(new Date(p.timestamp).getTime()+5*3600000).toISOString().slice(0,-1));
   Plotly.react('telemetry-chart', [
-    {x, y: state.history.map(p => p.pm25), type:'scatter', mode:'lines', name:t("d40"), line:{color:'#42745a',width:2.5}, fill:'tozeroy', fillcolor:'rgba(66,116,90,.06)', hovertemplate:t("d41")},
-    {x, y: state.history.map(p => p.surface_temp_c), type:'scatter', mode:'lines', name:t("d42"), yaxis:'y2', line:{color:'#b98b4d',width:2}, hovertemplate:t("d43")}
+    {x, y: state.history.map(p => p.pm25), type:'scatter', mode:'lines', name:t("d40"), line:{color:pmColor,width:2.5}, fill:'tozeroy', fillcolor:'rgba(66,116,90,.06)', hovertemplate:t("d41")},
+    {x, y: state.history.map(p => p.surface_temp_c), type:'scatter', mode:'lines', name:t("d42"), yaxis:'y2', line:{color:tempColor,width:2}, hovertemplate:t("d43")}
   ], {...layout, uirevision:`${state.historyPeriod}:${state.historySensor}`, xaxis:{...layout.xaxis,type:'date',tickformat:state.historyPeriod==='1440'?'%H:%M':'%H:%M:%S',hoverformat:'%d.%m %H:%M:%S',title:{text:t("d44"),font:{size:10}}}, yaxis:{...layout.yaxis,title:t("d18")}, yaxis2:{overlaying:'y',side:'right',showgrid:false,zeroline:false,title:'°C'}, hovermode:'x unified'}, plotConfig);
   if(!state.historyError)setText('history-status',state.history.length?t("d48",{"0":(state.historyPeriod==='live'?t("d45"):t("d46")),"1":(state.historySensor==='all'?t("d47"):state.historySensor),"2":(state.history.length)}):t("d49"));
 }
@@ -394,6 +395,7 @@ function syncChartTheme() {
   layout.font.color=text;layout.xaxis.gridcolor=grid;layout.yaxis.gridcolor=grid;
   if(!window.Plotly)return;
   for(const id of ['telemetry-chart','comparison-chart','shap-chart'])if($(id)?._fullLayout)Plotly.relayout(id,{'font.color':text,'xaxis.gridcolor':grid,'yaxis.gridcolor':grid});
+  if($('telemetry-chart')?._fullLayout)Plotly.restyle('telemetry-chart',{'line.color':[css.getPropertyValue('--chart-pm').trim()||'#42745a',css.getPropertyValue('--chart-temp').trim()||'#b98b4d']});
 }
 function refreshLanguage() {
   refreshLanguageLabels();i18n.apply();

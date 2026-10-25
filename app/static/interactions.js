@@ -1,7 +1,8 @@
-/* A small visual response to pointer movement; data and controls are unaffected. */
+/* Presentation only: pointer depth, range feedback and an illustrative grove. */
 (() => {
   'use strict';
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  const enabled = () => !reduce.matches && !document.hidden && document.body.dataset.natureMode !== 'off';
   let active = null, frame = 0, x = 0, y = 0;
   function clear() {
     if (frame) cancelAnimationFrame(frame); frame = 0;
@@ -9,8 +10,8 @@
     active = null;
   }
   document.addEventListener('pointermove', event => {
-    if (reduce.matches || event.pointerType === 'touch' || document.hidden) return;
-    const target = event.target.closest('.saved-card,.kpi,.overview-heading');
+    if (!enabled() || event.pointerType === 'touch') return;
+    const target = event.target.closest('.saved-card,.kpi,.folio-heading');
     if (target !== active) { clear(); active = target; }
     if (!active) return;
     x = event.clientX; y = event.clientY;
@@ -21,6 +22,41 @@
       active.style.setProperty('--scene-x', `${dx * 10}px`); active.style.setProperty('--scene-y', `${dy * 7}px`);
     });
   }, {passive:true});
-  document.addEventListener('pointerleave', clear); document.addEventListener('visibilitychange', clear);
-  window.addEventListener('pagehide', clear); reduce.addEventListener('change', clear);
+  function syncMotion() {
+    document.body.dataset.uiMotion = enabled() ? 'on' : 'off';
+    if (!enabled()) clear();
+  }
+  document.addEventListener('pointerleave', clear); document.addEventListener('visibilitychange', syncMotion);
+  window.addEventListener('pagehide', clear); reduce.addEventListener('change', syncMotion);
+  new MutationObserver(syncMotion).observe(document.body, {attributes:true,attributeFilter:['data-nature-mode']});
+  syncMotion();
+
+  function updateGrove() {
+    const grove = document.querySelector('.grove-preview');
+    const trees = document.getElementById('trees'), horizon = document.getElementById('horizon');
+    if (!grove || !trees || !horizon) return;
+    for (const range of [trees, horizon]) {
+      const fraction = Math.max(0, Math.min(1, (Number(range.value) - Number(range.min)) / (Number(range.max) - Number(range.min))));
+      range.style.setProperty('--range-fill', `${fraction * 100}%`);
+    }
+    const years = Math.max(1, Math.min(30, Number(horizon.value)));
+    grove.style.setProperty('--grove-growth', String(.5 + years / 60));
+    grove.dataset.species = document.getElementById('species').value;
+    const count = Math.max(3, Math.min(9, Math.round(3 + Number(trees.value) / 10000 * 6)));
+    grove.querySelectorAll('.grove-tree').forEach((tree, index) => { tree.dataset.dormant = String(index >= count); });
+  }
+  document.getElementById('optimize-form')?.addEventListener('input', updateGrove);
+  document.getElementById('optimize-form')?.addEventListener('change', updateGrove);
+  // Saved scenarios update the existing outputs programmatically as well.
+  const outputs = new MutationObserver(updateGrove);
+  for (const id of ['trees-output', 'horizon-output']) {
+    const output = document.getElementById(id);
+    if (output) outputs.observe(output, {childList:true,subtree:true,characterData:true});
+  }
+  document.querySelectorAll('[data-scroll-target]').forEach(button => {
+    button.addEventListener('click', () => {
+      document.querySelector(button.dataset.scrollTarget)?.scrollIntoView({behavior:enabled()?'smooth':'instant',block:'start'});
+    });
+  });
+  updateGrove();
 })();

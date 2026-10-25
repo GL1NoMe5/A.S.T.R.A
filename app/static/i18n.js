@@ -356,7 +356,11 @@ const dictionaries = {
     "atlas.breezeTitle": "Усилить ветер в сцене",
     "atlas.pause": "Пауза анимации",
     "atlas.metrics": "Сейчас в виртуальной сети",
-    "atlas.mapSection": "Городские зоны"
+    "atlas.mapSection": "Городские зоны",
+    "folio.parameters": "К параметрам посадки",
+    "folio.chart": "Исследовать динамику",
+    "folio.compare": "К сравнению планов",
+    "folio.preview": "Условный вид посадок"
   },
   "en": {
     "s0": "ASTRA — Astana environmental analytics",
@@ -712,7 +716,11 @@ const dictionaries = {
     "atlas.breezeTitle": "Create a gust of wind",
     "atlas.pause": "Pause animation",
     "atlas.metrics": "Virtual network · now",
-    "atlas.mapSection": "Urban zones"
+    "atlas.mapSection": "Urban zones",
+    "folio.parameters": "Planting parameters",
+    "folio.chart": "Explore the trends",
+    "folio.compare": "Compare plans",
+    "folio.preview": "Illustrative planting preview"
   },
   "kk": {
     "s0": "ASTRA — Астананың экологиялық талдауы",
@@ -1068,7 +1076,11 @@ const dictionaries = {
     "atlas.breezeTitle": "Көріністегі желді күшейту",
     "atlas.pause": "Анимацияны кідірту",
     "atlas.metrics": "Виртуалды желі · қазір",
-    "atlas.mapSection": "Қала аймақтары"
+    "atlas.mapSection": "Қала аймақтары",
+    "folio.parameters": "Отырғызу параметрлері",
+    "folio.chart": "Динамиканы зерттеу",
+    "folio.compare": "Жоспарларды салыстыру",
+    "folio.preview": "Отырғызудың шартты көрінісі"
   }
 };
 dictionaries.ru['nature.auto']='По теме';dictionaries.en['nature.auto']='Theme default';dictionaries.kk['nature.auto']='Тақырыпқа сай';
