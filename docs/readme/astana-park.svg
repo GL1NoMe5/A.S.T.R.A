@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 260" width="100%" role="img" aria-label="Зелёная аллея Астаны">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1b3529"/>
+      <stop offset="65%" stop-color="#294c3a"/>
+      <stop offset="100%" stop-color="#38624b"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="78%" cy="34%" r="38%">
+      <stop offset="0%" stop-color="#f3d088" stop-opacity="0.55"/>
+      <stop offset="55%" stop-color="#d49b4b" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#d49b4b" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1280" height="260" rx="20" fill="url(#sky)"/>
+  <rect width="1280" height="260" rx="20" fill="url(#sun)"/>
+  <rect x="14" y="14" width="1252" height="232" rx="14" fill="none" stroke="#9cad83" stroke-opacity="0.32"/>
+
+  <!-- Warm sun / moon glow -->
+  <circle cx="998" cy="84" r="34" fill="#f2d594" opacity="0.85"/>
+  <circle cx="998" cy="84" r="48" fill="none" stroke="#f2d594" stroke-opacity="0.25" stroke-width="1.5"/>
+
+  <!-- Distant city skyline silhouette -->
+  <g fill="#213d2f" opacity="0.85">
+    <rect x="420" y="118" width="38" height="82" rx="2"/>
+    <rect x="468" y="102" width="44" height="98" rx="2"/>
+    <rect x="524" y="128" width="34" height="72" rx="2"/>
+    <rect x="640" y="112" width="46" height="88" rx="2"/>
+    <rect x="698" y="96" width="38" height="104" rx="2"/>
+    <rect x="748" y="124" width="52" height="76" rx="2"/>
+    <!-- Spire silhouette -->
+    <path d="M594 198L600 92L606 198Z"/>
+    <circle cx="600" cy="86" r="11" fill="#d49b4b" opacity="0.8"/>
+  </g>
+
+  <!-- Soft rolling park hills -->
+  <path d="M0 198Q220 162 470 188T960 178T1280 192V260H0Z" fill="#254636"/>
+  <path d="M0 212Q340 184 680 206T1280 198V260H0Z" fill="#172d22"/>
+
+  <!-- Boulevard trees (elms, pines, poplars) -->
+  <g>
+    <!-- Left grove -->
+    <rect x="108" y="168" width="6" height="36" fill="#8b6b4f"/>
+    <circle cx="111" cy="152" r="24" fill="#5e8262"/>
+    <circle cx="98" cy="160" r="16" fill="#486b4d"/>
+    <circle cx="124" cy="160" r="16" fill="#7c9c77"/>
+
+    <rect x="176" y="162" width="6" height="42" fill="#8b6b4f"/>
+    <path d="M179 112L157 166H201Z" fill="#3d6649"/>
+    <path d="M179 128L161 174H197Z" fill="#527b58"/>
+
+    <rect x="244" y="170" width="6" height="34" fill="#8b6b4f"/>
+    <circle cx="247" cy="154" r="22" fill="#6b8c6e"/>
+    <circle cx="235" cy="162" r="15" fill="#527650"/>
+    <circle cx="260" cy="160" r="15" fill="#9cad83"/>
+
+    <rect x="318" y="172" width="5" height="32" fill="#8b6b4f"/>
+    <ellipse cx="320.5" cy="148" rx="14" ry="28" fill="#5e8262"/>
+    <ellipse cx="325" cy="148" rx="9" ry="24" fill="#7c9c77"/>
+
+    <!-- Right grove -->
+    <rect x="858" y="168" width="6" height="34" fill="#8b6b4f"/>
+    <circle cx="861" cy="150" r="23" fill="#5e8262"/>
+    <circle cx="848" cy="158" r="16" fill="#486b4d"/>
+    <circle cx="875" cy="157" r="16" fill="#9cad83"/>
+
+    <rect x="932" y="164" width="5" height="38" fill="#8b6b4f"/>
+    <path d="M934.5 116L914 168H955Z" fill="#3d6649"/>
+    <path d="M934.5 132L918 175H951Z" fill="#5e8262"/>
+
+    <rect x="1068" y="166" width="6" height="38" fill="#8b6b4f"/>
+    <circle cx="1071" cy="148" r="25" fill="#6b8c6e"/>
+    <circle cx="1056" cy="156" r="17" fill="#527650"/>
+    <circle cx="1086" cy="156" r="17" fill="#9cad83"/>
+
+    <rect x="1146" y="170" width="5" height="34" fill="#8b6b4f"/>
+    <ellipse cx="1148.5" cy="146" rx="14" ry="27" fill="#527650"/>
+    <ellipse cx="1153" cy="146" rx="9" ry="23" fill="#7c9c77"/>
+  </g>
+
+  <!-- Warm park lamps -->
+  <g stroke="#d49b4b" stroke-width="1.5">
+    <line x1="382" y1="176" x2="382" y2="204"/>
+    <circle cx="382" cy="173" r="4" fill="#f6dfa4" stroke="none"/>
+    <circle cx="382" cy="173" r="10" fill="#f6dfa4" opacity="0.22" stroke="none"/>
+
+    <line x1="796" y1="174" x2="796" y2="202"/>
+    <circle cx="796" cy="171" r="4" fill="#f6dfa4" stroke="none"/>
+    <circle cx="796" cy="171" r="10" fill="#f6dfa4" opacity="0.22" stroke="none"/>
+  </g>
+
+  <!-- Caption bar -->
+  <text x="640" y="236" text-anchor="middle" fill="#e4e9d9" font-family="'Segoe UI', Arial, sans-serif" font-size="13" letter-spacing="2" opacity="0.88">ASTRA · ГОРОДСКАЯ СРЕДА, ДЕРЕВЬЯ И ТЕНЬ ДЛЯ АСТАНЫ</text>
+</svg>
