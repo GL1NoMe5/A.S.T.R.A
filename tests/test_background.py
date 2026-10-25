@@ -1,6 +1,7 @@
 from datetime import timedelta
 import json
 from pathlib import Path
+from email.utils import format_datetime
 
 import httpx
 import pytest
@@ -96,6 +97,58 @@ async def test_disabled_network_never_calls_transport(tmp_path):
         service = BackgroundService(Settings(data_dir=tmp_path, background_enabled=False), client)
         await service.refresh()
         assert service.snapshot()["weather"]["status"] == "default"
+
+
+async def test_weather_fallback_attributes_forecast_and_honors_met_cache(monkeypatch, tmp_path):
+    now = utcnow().replace(minute=0, second=0, microsecond=0)
+    start = now
+    monkeypatch.setattr("app.services.background.utcnow", lambda: now)
+    seen = []
+    fail_met = False
+    units = {"air_temperature": "celsius", "relative_humidity": "%",
+             "wind_speed": "m/s", "wind_from_direction": "degrees"}
+    details = {"air_temperature": -1.0, "relative_humidity": 80.0,
+               "wind_speed": 2.5, "wind_from_direction": 245.0}
+    body = {"properties": {"meta": {"units": units}, "timeseries": [
+        {"time": (start + timedelta(hours=hour)).isoformat(),
+         "data": {"instant": {"details": details}}} for hour in range(5)]}}
+
+    def transport(request):
+        if request.url.host == "api.met.no":
+            seen.append(request)
+            assert "github.com/GL1NoMe5/A.S.T.R.A" in request.headers["User-Agent"]
+            if fail_met:
+                return httpx.Response(503)
+            headers = {"Expires": format_datetime(now + timedelta(hours=1)),
+                       "Last-Modified": format_datetime(start)}
+            if "If-Modified-Since" in request.headers:
+                return httpx.Response(304, headers=headers)
+            return httpx.Response(200, json=body, headers=headers)
+        if "air-quality" in request.url.host:
+            return httpx.Response(200, json=response_body("air"))
+        return httpx.Response(429)
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(transport)) as client:
+        service = BackgroundService(Settings(data_dir=tmp_path), client)
+        await service.refresh()
+        weather = service.snapshot()["weather"]
+        assert weather["status"] == "live" and weather["values"]["air_temp_c"] == -1
+        assert weather["provider"] == "MET Norway Locationforecast"
+        assert weather["primary_error"] == "HTTP 429"
+        assert weather["error"] is None and weather["data_kind"] == "weather_model_forecast"
+        await service.refresh()
+        assert len(seen) == 1  # No extra MET request before Expires.
+        now += timedelta(hours=2)
+        await service.refresh()
+        assert len(seen) == 2 and "If-Modified-Since" in seen[-1].headers
+        assert service.snapshot()["weather"]["source_time"] == now.isoformat()
+        assert service.snapshot()["weather"]["status"] == "live"
+        fail_met = True
+        now += timedelta(hours=2)
+        await service.refresh()
+        assert service.snapshot()["weather"]["status"] == "cached"
+        restarted = BackgroundService(Settings(data_dir=tmp_path), client)
+        assert restarted.snapshot()["weather"]["provider"] == "MET Norway Locationforecast"
 
 
 @pytest.mark.parametrize("blocked_attempts", [1, 4])

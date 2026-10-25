@@ -6,12 +6,14 @@
 
 Карта городской среды, сценарии озеленения и понятная смета для Астаны.
 
+**[Открыть ASTRA ↗](https://astra-n2xd.onrender.com/)** · Бесплатный сервер может запускаться около минуты после простоя.
+
 <a href="#"><img src="https://readme-typing-svg.demolab.com?font=Segoe+UI&weight=600&size=19&duration=3200&pause=1000&color=6B8C6E&center=true&vCenter=true&width=680&lines=40+%D1%80%D0%B0%D1%81%D1%87%D1%91%D1%82%D0%BD%D1%8B%D1%85+%D1%83%D1%87%D0%B0%D1%81%D1%82%D0%BA%D0%BE%D0%B2+%D0%90%D1%81%D1%82%D0%B0%D0%BD%D1%8B+%D0%BD%D0%B0+%D0%B6%D0%B8%D0%B2%D0%BE%D0%B9+%D0%BA%D0%B0%D1%80%D1%82%D0%B5;%D0%93%D0%B4%D0%B5+%D1%81%D0%B0%D0%B6%D0%B0%D1%82%D1%8C+%D0%B4%D0%B5%D1%80%D0%B5%D0%B2%D1%8C%D1%8F+%D0%B2+%D0%BF%D0%B5%D1%80%D0%B2%D1%83%D1%8E+%D0%BE%D1%87%D0%B5%D1%80%D0%B5%D0%B4%D1%8C+%D0%B8+%D0%BA%D0%B0%D0%BA%D0%BE%D0%B9+%D0%BF%D0%BE%D1%80%D0%BE%D0%B4%D1%8B;%D0%9E%D1%82%D0%BA%D1%80%D1%8B%D1%82%D0%B0%D1%8F+%D1%81%D0%BC%D0%B5%D1%82%D0%B0+%D0%B2+%D1%82%D0%B5%D0%BD%D0%B3%D0%B5%2C+%D1%81%D1%80%D0%B0%D0%B2%D0%BD%D0%B5%D0%BD%D0%B8%D0%B5+%D0%BF%D0%BB%D0%B0%D0%BD%D0%BE%D0%B2+%D0%B8+%D0%BF%D0%B5%D1%87%D0%B0%D1%82%D0%BD%D1%8B%D0%B9+%D0%BE%D1%82%D1%87%D1%91%D1%82" alt="ASTRA: планирование городского озеленения" /></a>
 
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
 ![Languages](https://img.shields.io/badge/RU%20%2F%20EN%20%2F%20ҚАЗ-527650?style=flat-square)
-[![Tests](https://img.shields.io/badge/Tests-80%20passed-2D5A43?style=flat-square)](VERIFICATION.md)
+[![Tests](https://img.shields.io/badge/Tests-81%20passed-2D5A43?style=flat-square)](VERIFICATION.md)
 ![License](https://img.shields.io/badge/Code-MIT-91A87A?style=flat-square)
 
 **[✨ Возможности](#features)** &nbsp;·&nbsp; **[🧭 Как это работает](#workflow)** &nbsp;·&nbsp; **[🚀 Быстрый запуск](#quick-start)** &nbsp;·&nbsp; **[🖼️ Скриншоты](#screenshots)** &nbsp;·&nbsp; **[🌿 Расчёты и данные](#model-and-data)**
@@ -121,6 +123,8 @@ py -3.12 -m venv .venv
 
 **Размещение в интернете:** [инструкция для Render + Neon](docs/HOSTING.md). Конфигурация бесплатного веб-сервиса — [`render.yaml`](render.yaml); база подключается отдельной секретной переменной.
 
+Если погодный API Open-Meteo временно недоступен, приложение использует открытый модельный прогноз **MET Norway Locationforecast** (CC BY 4.0). Фактический источник и время данных сохраняются в расчёте и показываются в сведениях об источниках и отчёте.
+
 <details>
 <summary><b>🐧 Запуск на Linux / macOS и в Docker</b></summary>
 
@@ -159,7 +163,7 @@ docker compose up --build
 .\.venv\Scripts\python.exe scripts/acceptance.py --seconds 30
 ```
 
-Для JavaScript-проверок нужен **Node.js** в `PATH` (либо ключ `--node` с путём к нему). Зафиксированный прогон от 26.10.2026: **53 Python-теста и 27 JavaScript-тестов**, всего **80**. Они проверяют логику приложения, отчёт, переводы и управление анимациями; это не замер плавности в браузере. Вторая команда запускает отдельную приёмку с 30 секундами потока, перезапуском сервера и проверкой сохранности данных в SQLite WAL. Рабочая база не затрагивается. Подробный отчёт: [`VERIFICATION.md`](VERIFICATION.md).
+Для JavaScript-проверок нужен **Node.js** в `PATH` (либо ключ `--node` с путём к нему). Зафиксированный прогон от 26.10.2026: **54 Python-теста и 27 JavaScript-тестов**, всего **81**. Они проверяют логику приложения, отчёт, переводы и управление анимациями; это не замер плавности в браузере. Вторая команда запускает отдельную приёмку с 30 секундами потока, перезапуском сервера и проверкой сохранности данных в SQLite WAL. Рабочая база не затрагивается. Подробный отчёт: [`VERIFICATION.md`](VERIFICATION.md).
 
 </details>
 

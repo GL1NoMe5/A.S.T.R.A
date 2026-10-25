@@ -134,7 +134,7 @@ function updateBackground(bg) {
   state.background=bg;
   const labels = {live: t("d32"), cached: t("d33"), default: t("d34")};
   const a = bg.air, w = bg.weather;
-  $('source-detail').textContent = t("d35",{"0":(labels[a.status]),"1":(localTime(a.source_time)),"2":(localTime(a.fetched_at)),"3":(labels[w.status]),"4":(localTime(w.source_time)),"5":(localTime(w.fetched_at))});
+  $('source-detail').textContent = t("d35",{"0":(labels[a.status]),"1":(localTime(a.source_time)),"2":(localTime(a.fetched_at)),"3":(labels[w.status]),"4":(localTime(w.source_time)),"5":(localTime(w.fetched_at))}) + ` ${bg.provider || 'Open-Meteo / CAMS'}.`;
   $('source-badge').textContent = a.status === 'live' && w.status === 'live' ? t("d36") : t("d37");
   $('source-badge').style.color = a.status === 'live' && w.status === 'live' ? '#42745a' : '#966c37';
   $('kpi-aqi').textContent = fmt(a.values.european_aqi, 0);

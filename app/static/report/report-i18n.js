@@ -463,9 +463,9 @@ const rows = [
     "Сұрау уақыты (UTC+5)"
   ],
   [
-    "Метеорологический фон (Open-Meteo)",
-    "Weather background (Open-Meteo)",
-    "Ауа райы фоны (Open-Meteo)"
+    "Метеорологический фон",
+    "Weather background",
+    "Ауа райы фоны"
   ],
   [
     "Параметры инженерной модели и породы",
@@ -483,14 +483,14 @@ const rows = [
     "Әдістемелік шектеулер"
   ],
   [
-    "Модельный городской фон Open-Meteo / CAMS:",
-    "Open-Meteo / CAMS city background:",
-    "Open-Meteo / CAMS қалалық фоны:"
+    "Модельный городской фон:",
+    "City model background:",
+    "Қалалық модельдік фон:"
   ],
   [
-    "показатели качества воздуха для Астаны поступают из CAMS Global с сеткой около 45 км; разрешение погодных данных Open-Meteo зависит от используемой модели. Эти фоновые показатели не являются прямыми измерениями локальных станций мониторинга Астаны.",
-    "Astana air-quality data comes from CAMS Global on an approximately 45 km grid; Open-Meteo weather resolution depends on the model. These are not direct measurements from local monitoring stations in Astana.",
-    "Астананың ауа сапасы көрсеткіштері шамамен 45 км торы бар CAMS Global моделінен алынады; Open-Meteo ауа райы деректерінің ажыратымдылығы модельге байланысты. Бұл көрсеткіштер Астанадағы жергілікті мониторинг станцияларының тікелей өлшемдері емес."
+    "показатели качества воздуха для Астаны поступают из CAMS Global с сеткой около 45 км; погодный фон поступает из Open-Meteo, а при его недоступности — из прогноза MET Norway Locationforecast; разрешение зависит от модели. Эти фоновые показатели не являются прямыми измерениями локальных станций мониторинга Астаны.",
+    "Astana air-quality data comes from CAMS Global on an approximately 45 km grid; weather comes from Open-Meteo, with MET Norway Locationforecast as a fallback; resolution depends on the model. These are not direct measurements from local monitoring stations in Astana.",
+    "Астананың ауа сапасы көрсеткіштері шамамен 45 км торы бар CAMS Global моделінен алынады; ауа райы Open-Meteo деректерінен, ал ол қолжетімсіз болса MET Norway Locationforecast болжамынан алынады; ажыратымдылық модельге байланысты. Бұл көрсеткіштер Астанадағы жергілікті мониторинг станцияларының тікелей өлшемдері емес."
   ],
   [
     "40 расчётных участков и синтетическое обучение:",

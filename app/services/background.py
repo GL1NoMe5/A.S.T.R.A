@@ -1,7 +1,8 @@
 """One cached city-scale model background, never presented as station measurements."""
 import asyncio
 from copy import deepcopy
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
+from email.utils import parsedate_to_datetime
 import json
 import logging
 import math
@@ -14,6 +15,8 @@ from app.core.config import Settings
 log = logging.getLogger(__name__)
 AIR_URL = "https://air-quality-api.open-meteo.com/v1/air-quality"
 WEATHER_URL = "https://api.open-meteo.com/v1/forecast"
+MET_URL = "https://api.met.no/weatherapi/locationforecast/2.0/compact"
+MET_ATTRIBUTION = "https://api.met.no/doc/License"
 FIELDS = {
     "air": {"pm10": "pm10", "pm25": "pm2_5", "no2": "nitrogen_dioxide",
             "co": "carbon_monoxide", "european_aqi": "european_aqi"},
@@ -46,6 +49,10 @@ class BackgroundService:
         self.cache: dict = {}
         self.errors: dict = {}
         self.loaded = set()
+        self.met_data = None
+        self.met_expires = datetime.min.replace(tzinfo=UTC)
+        self.met_last_modified = None
+        self.met_fetched_at = None
         try:
             value = json.loads(self.path.read_text(encoding="utf-8"))
             if value.get("version") == 1:
@@ -102,12 +109,23 @@ class BackgroundService:
                     "values": values, "source_time": parse_time(current["time"]).isoformat(),
                     "fetched_at": utcnow().isoformat(), "interval_seconds": current.get("interval"),
                     "grid_latitude": body.get("latitude"), "grid_longitude": body.get("longitude"),
+                    "provider": "Open-Meteo / CAMS" if part == "air" else "Open-Meteo",
+                    "attribution_url": "https://open-meteo.com/",
                 }
                 self.errors.pop(part, None)
                 self.loaded.discard(part)
             except (httpx.HTTPError, ValueError, KeyError, TypeError) as exc:
                 error = (f"HTTP {exc.response.status_code}" if isinstance(exc, httpx.HTTPStatusError)
                          else type(exc).__name__)
+                if part == "weather":
+                    try:
+                        self.cache[part] = await self._met_weather(client)
+                        self.cache[part]["primary_error"] = error
+                        self.errors.pop(part, None)
+                        self.loaded.discard(part)
+                        return
+                    except (httpx.HTTPError, ValueError, KeyError, TypeError, IndexError) as fallback_error:
+                        log.warning("MET Norway unavailable (%s); keeping cache", type(fallback_error).__name__)
                 self.errors[part] = error
                 log.warning("Open-Meteo %s unavailable (%s); keeping cache", part, error)
         try:
@@ -116,6 +134,43 @@ class BackgroundService:
         finally:
             if owned:
                 await client.aclose()
+
+    async def _met_weather(self, client):
+        """A separately attributed forecast fallback; honor MET cache headers."""
+        now = utcnow()
+        if self.met_data is None or now >= self.met_expires:
+            headers = {"User-Agent": "ASTRA/1.0 https://github.com/GL1NoMe5/A.S.T.R.A"}
+            if self.met_last_modified:
+                headers["If-Modified-Since"] = self.met_last_modified
+            response = await client.get(MET_URL, params={"lat": "51.1694", "lon": "71.4491"},
+                                        headers=headers)
+            if response.status_code != 304:
+                response.raise_for_status()
+                self.met_data = response.json()["properties"]
+                self.met_last_modified = response.headers.get("last-modified")
+            if self.met_data is None:
+                raise ValueError("MET returned no forecast")
+            self.met_fetched_at = now.isoformat()
+            expires = response.headers.get("expires")
+            self.met_expires = (parsedate_to_datetime(expires).astimezone(UTC) if expires
+                                else now + timedelta(minutes=30))
+        units = self.met_data["meta"]["units"]
+        fields = {"air_temp_c": "air_temperature", "humidity": "relative_humidity",
+                  "wind_speed": "wind_speed", "wind_direction": "wind_from_direction"}
+        expected_units = {"air_temperature": "celsius", "relative_humidity": "%",
+                          "wind_speed": "m/s", "wind_from_direction": "degrees"}
+        if any(units.get(key) != value for key, value in expected_units.items()):
+            raise ValueError("Unexpected MET units")
+        row = min(self.met_data["timeseries"], key=lambda item: abs((parse_time(item["time"]) - now).total_seconds()))
+        if abs((parse_time(row["time"]) - now).total_seconds()) > 3600:
+            raise ValueError("MET has no forecast near the current time")
+        details = row["data"]["instant"]["details"]
+        values = {key: details[field] for key, field in fields.items()}
+        self._validate_values("weather", values)
+        return {"values": values, "source_time": parse_time(row["time"]).isoformat(),
+                "fetched_at": self.met_fetched_at, "interval_seconds": 3600,
+                "provider": "MET Norway Locationforecast", "attribution_url": MET_ATTRIBUTION,
+                "license": "CC BY 4.0", "data_kind": "weather_model_forecast"}
 
     async def _persist_cache(self):
         self.path.parent.mkdir(parents=True, exist_ok=True)
@@ -144,6 +199,8 @@ class BackgroundService:
                   "requested_latitude": 51.1694, "requested_longitude": 71.4491,
                   "poll_interval_seconds": self.settings.background_interval_seconds,
                   "units": UNITS, "attribution_url": "https://open-meteo.com/en/docs/air-quality-api"}
+        if self.cache.get("weather", {}).get("provider") == "MET Norway Locationforecast":
+            result["provider"] += " + MET Norway"
         now = utcnow()
         for part in FIELDS:
             cached = self.cache.get(part)

@@ -756,6 +756,9 @@
     const fetchedAtText = formatUtcPlus5(channel.fetched_at, emptyTimeLabel);
 
     const parts = [];
+    if (typeof channel.provider === "string") {
+      parts.push(channel.provider + (typeof channel.attribution_url === "string" ? ` · ${channel.attribution_url}` : ""));
+    }
     if (isPlainObject(channel.values)) {
       for (const [key, val] of Object.entries(channel.values)) {
         if (!isFiniteNum(val)) continue;
