@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from app.core.config import Settings
 from app.db.models import Base, MinuteAggregate, OptimizationRun, Sensor, Telemetry
+from app.db.cloud import cloud_database_options
 from app.services.background import parse_time, utcnow
 
 log = logging.getLogger(__name__)
@@ -145,6 +146,21 @@ class Storage:
 
 async def create_storage(settings: Settings) -> Storage:
     settings.data_dir.mkdir(parents=True, exist_ok=True)
+    if settings.mode == "cloud":
+        if not settings.database_url:
+            raise RuntimeError("Cloud mode requires ASTRA_DATABASE_URL")
+        url, connect_args = cloud_database_options(settings.database_url)
+        engine = create_async_engine(url, pool_pre_ping=True, pool_size=3,
+                                     max_overflow=2, connect_args=connect_args)
+        try:
+            async with asyncio.timeout(40):
+                async with engine.connect() as connection:
+                    await connection.execute(text("SELECT 1"))
+        except Exception:
+            await engine.dispose()
+            # Never silently switch to ephemeral SQLite or log a connection URL.
+            raise RuntimeError("Cloud PostgreSQL unavailable; check connection settings") from None
+        return Storage(engine, None, "cloud", "PostgreSQL + очередь в памяти")
     reason = "Локальный режим: SQLite и очередь в памяти"
     if settings.mode != "local" and settings.database_url and settings.redis_url:
         engine = create_async_engine(settings.database_url, pool_pre_ping=True)

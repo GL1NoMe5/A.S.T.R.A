@@ -1,0 +1,29 @@
+# A single free web service. PostgreSQL is supplied separately via Neon Free.
+services:
+  - type: web
+    name: astra
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    autoDeployTrigger: "off"
+    envVars:
+      - key: PORT
+        value: "8000"
+      - key: ASTRA_MODE
+        value: cloud
+      - key: ASTRA_DATABASE_URL
+        sync: false
+      - key: ASTRA_DATA_DIR
+        value: /app/data
+      - key: ASTRA_TICK_SECONDS
+        value: "10"
+      - key: ASTRA_BACKGROUND_ENABLED
+        value: "true"
+      - key: OMP_NUM_THREADS
+        value: "1"
+      - key: OPENBLAS_NUM_THREADS
+        value: "1"
+      - key: MKL_NUM_THREADS
+        value: "1"

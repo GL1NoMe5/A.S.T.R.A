@@ -11,7 +11,7 @@
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
 ![Languages](https://img.shields.io/badge/RU%20%2F%20EN%20%2F%20ҚАЗ-527650?style=flat-square)
-[![Tests](https://img.shields.io/badge/Tests-78%20passed-2D5A43?style=flat-square)](VERIFICATION.md)
+[![Tests](https://img.shields.io/badge/Tests-80%20passed-2D5A43?style=flat-square)](VERIFICATION.md)
 ![License](https://img.shields.io/badge/Code-MIT-91A87A?style=flat-square)
 
 **[✨ Возможности](#features)** &nbsp;·&nbsp; **[🧭 Как это работает](#workflow)** &nbsp;·&nbsp; **[🚀 Быстрый запуск](#quick-start)** &nbsp;·&nbsp; **[🖼️ Скриншоты](#screenshots)** &nbsp;·&nbsp; **[🌿 Расчёты и данные](#model-and-data)**
@@ -119,6 +119,8 @@ py -3.12 -m venv .venv
 
 **3.** Откройте **[http://127.0.0.1:8010/](http://127.0.0.1:8010/)** в браузере 🌿
 
+**Размещение в интернете:** [инструкция для Render + Neon](docs/HOSTING.md). Конфигурация бесплатного веб-сервиса — [`render.yaml`](render.yaml); база подключается отдельной секретной переменной.
+
 <details>
 <summary><b>🐧 Запуск на Linux / macOS и в Docker</b></summary>
 
@@ -157,7 +159,7 @@ docker compose up --build
 .\.venv\Scripts\python.exe scripts/acceptance.py --seconds 30
 ```
 
-Для JavaScript-проверок нужен **Node.js** в `PATH` (либо ключ `--node` с путём к нему). Зафиксированный прогон от 25.10.2026: **51 Python-тест и 27 JavaScript-тестов**, всего **78**. Они проверяют логику приложения, отчёт, переводы и управление анимациями; это не замер плавности в браузере. Вторая команда запускает отдельную приёмку с 30 секундами потока, перезапуском сервера и проверкой сохранности данных в SQLite WAL. Рабочая база не затрагивается. Подробный отчёт: [`VERIFICATION.md`](VERIFICATION.md).
+Для JavaScript-проверок нужен **Node.js** в `PATH` (либо ключ `--node` с путём к нему). Зафиксированный прогон от 26.10.2026: **53 Python-теста и 27 JavaScript-тестов**, всего **80**. Они проверяют логику приложения, отчёт, переводы и управление анимациями; это не замер плавности в браузере. Вторая команда запускает отдельную приёмку с 30 секундами потока, перезапуском сервера и проверкой сохранности данных в SQLite WAL. Рабочая база не затрагивается. Подробный отчёт: [`VERIFICATION.md`](VERIFICATION.md).
 
 </details>
 

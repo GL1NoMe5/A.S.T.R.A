@@ -8,7 +8,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="ASTRA_", env_file=".env", extra="ignore")
 
-    mode: Literal["auto", "local", "docker"] = "auto"
+    mode: Literal["auto", "local", "docker", "cloud"] = "auto"
     data_dir: Path = Path("data")
     database_url: str | None = None
     redis_url: str | None = None
