@@ -389,7 +389,7 @@ function renderSavedCard(item) {
   const card=element('article','saved-card'),head=element('div','saved-card-heading');
   head.append(element('h3',null,t("d103",{"0":(speciesLabels[item.request.species]||item.request.species),"1":(fmt(item.used_trees,0))})),element('time',null,localTime(item.created_at)));
   const meta=element('p','saved-card-meta',t("d104",{"0":(districtLabels[item.request.target_district]||item.request.target_district),"1":(item.horizon_years),"2":(plural(item.horizon_years,[t("d82"),t("d83"),t("d84")])),"3":(fmt(item.costs.first_year_total,0))}));
-  const effect=element('p','saved-card-effect',t("d105",{"0":(fmt(item.summary.pm25_reduction,2)),"1":(fmt(item.summary.cooling_c,2))})),actions=element('div','saved-card-actions');
+  const effect=element('p','saved-card-effect',t("d105",{"0":(effectAmount(item.summary.pm25_reduction)),"1":(effectAmount(item.summary.cooling_c))})),actions=element('div','saved-card-actions');
   for(const[action,label]of[['open',t("d106")],['repeat',t("d107")],['json','JSON'],['report',t("d108")]]){const b=element('button',action==='open'?'primary-button':'secondary-button',label);b.type='button';b.onclick=()=>planAction(item.run_id,action,b);actions.append(b);}
   card.append(head,meta,effect,actions);return card;
 }
