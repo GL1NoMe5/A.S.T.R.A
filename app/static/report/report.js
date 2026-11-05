@@ -875,12 +875,14 @@
       sum.pm25_reduction_range[0]
     )} … ${formatMetric(sum.pm25_reduction_range[1])} мкг/м³`;
 
-    // Zero cooling is valid and explicitly formatted as 0,00 °C
     doc.getElementById("eco-cooling-main").textContent = `${formatMetric(sum.cooling_c)} °C`;
-    doc.getElementById("eco-cooling-note").textContent =
-      normalizeZero(sum.cooling_c) === 0
-        ? "Нулевое расчётное охлаждение (прохладный фон или 0 посадок)"
-        : "Расчётное снижение температуры поверхности";
+    const thermalNotes = {
+      summer_day: "Летний день: воздух +28 °C, поверхность без новых посадок +38 °C. Для пыли использован фон на момент расчёта.",
+      current_weather: "Охлаждение рассчитано при погоде на момент создания плана.",
+    };
+    doc.getElementById("eco-cooling-note").textContent = Object.hasOwn(thermalNotes, req.thermal_scenario)
+      ? thermalNotes[req.thermal_scenario]
+      : "Архивная модель охлаждения. При температуре воздуха до +10 °C модель задавала 0 °C.";
     doc.getElementById("eco-temp-before").textContent = `${formatMetric(sum.surface_temp_before)} °C`;
     doc.getElementById("eco-temp-after").textContent = `${formatMetric(sum.surface_temp_after)} °C`;
     doc.getElementById("eco-cooling-range").textContent = `Чувствительность (${factorLabel}): ${formatMetric(

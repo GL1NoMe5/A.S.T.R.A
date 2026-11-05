@@ -1,3 +1,5 @@
+import json
+from pathlib import Path
 from uuid import uuid4
 
 from fastapi.testclient import TestClient
@@ -12,9 +14,11 @@ def test_saved_plan_list_pagination_and_validation(tmp_path):
         empty = client.get("/api/v1/optimizations").json()
         assert empty == {"items": [], "total": 0, "limit": 20, "offset": 0, "retention_days": 30}
         originals = []
-        for trees in (100, 200):
-            response = client.post("/api/v1/optimize/greening", json={"budget_trees": trees})
+        for parameters, scenario in [({"budget_trees": 100}, "current_weather"),
+                                     ({"budget_trees": 200, "thermal_scenario": "summer_day"}, "summer_day")]:
+            response = client.post("/api/v1/optimize/greening", json=parameters)
             assert response.status_code == 200
+            assert response.json()["request"]["thermal_scenario"] == scenario
             originals.append(response.json())
 
         expected_keys = {"run_id", "created_at", "request", "used_trees", "unused_trees",
@@ -25,7 +29,10 @@ def test_saved_plan_list_pagination_and_validation(tmp_path):
             page = response.json()
             assert page["total"] == 2 and page["retention_days"] == 30
             assert page["limit"] == 1 and page["offset"] == offset
-            assert page["items"] == [{key: original[key] for key in expected_keys}]
+            item = {key: original[key] for key in expected_keys}
+            item["methodology_version"] = original["methodology"]["version"]
+            assert page["items"] == [item]
+        assert client.post("/api/v1/optimize/greening", json={"thermal_scenario": "invalid"}).status_code == 422
         assert client.get("/api/v1/optimizations?offset=2").json()["items"] == []
         for query in ("limit=0", "limit=101", "offset=-1", "offset=bad"):
             assert client.get(f"/api/v1/optimizations?{query}").status_code == 422
@@ -55,3 +62,12 @@ def test_original_plan_survives_restart_without_recalculation(tmp_path, monkeypa
         assert response.status_code == 200
         assert response.json() == original
         assert client.get("/api/v1/optimizations").json()["total"] == 1
+
+        fixture = Path(__file__).resolve().parents[1] / "examples" / "optimization.sample.json"
+        legacy = json.loads(fixture.read_text(encoding="utf-8"))
+        client.portal.call(client.app.state.runtime.storage.save_optimization, legacy)
+        archived = next(item for item in client.get("/api/v1/optimizations").json()["items"]
+                        if item["run_id"] == legacy["run_id"])
+        assert archived["methodology_version"] == "scenario-v1"
+        assert "thermal_scenario" not in archived["request"]
+        assert client.get(f"/api/v1/optimizations/{legacy['run_id']}").json() == legacy

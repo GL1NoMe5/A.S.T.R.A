@@ -9,6 +9,7 @@ class OptimizeRequest(BaseModel):
     species: Literal["elm", "pine", "poplar"] = "elm"
     target_district: Literal["all", "yesil", "nura", "almaty", "saryarka", "baikonyr"] = "all"
     horizon_years: int = Field(10, ge=1, le=30)
+    thermal_scenario: Literal["current_weather", "summer_day"] = "current_weather"
     sapling_cost_kzt: float = Field(15000, ge=0, le=10000000)
     planting_cost_kzt: float = Field(10000, ge=0, le=10000000)
     annual_care_cost_kzt: float = Field(3000, ge=0, le=10000000)

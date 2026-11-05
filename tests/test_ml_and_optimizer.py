@@ -127,9 +127,36 @@ def test_effect_dimensions_monotonicity_and_zero_case(zones):
     assert 0 < b["pm25_reduction"] < c["pm25_reduction"]
     assert c["pm25_reduction"] - b["pm25_reduction"] <= b["pm25_reduction"]
     assert b["co2_tons_year"] == pytest.approx(100 * .85 * 22 / 1000)
-    cold = ecological_effect(z, {**r, "air_temp_c": -10}, 100, "elm", 10)
-    assert cold["cooling_c"] == 0
+    cold = ecological_effect(z, {**r, "air_temp_c": -10, "surface_temp_c": -5}, 100, "elm", 10)
+    assert 0 < cold["cooling_c"] < b["cooling_c"]
     assert cold["pm25_reduction"] < b["pm25_reduction"]
+
+
+@pytest.mark.parametrize("species", list(SPECIES))
+def test_surface_heat_and_summer_reference(zones, species):
+    site = zones[0]
+    reading = {"air_temp_c": 1.6, "surface_temp_c": 1.2, "wind_speed": 2, "pm25": 20}
+    night = ecological_effect(site, reading, 260, species, 30)
+    assert night["cooling_c"] == 0
+    sunny = ecological_effect(site, {**reading, "surface_temp_c": 1.61}, 260, species, 30)
+    assert 0 < sunny["cooling_c"] < 0.01
+    summer = ecological_effect(site, reading, 260, species, 30, "summer_day")
+    assert summer["surface_temp_before"] == 38
+    assert 28 < summer["surface_temp_after"] < 38
+    assert summer["surface_temp_before"] - summer["surface_temp_after"] == pytest.approx(summer["cooling_c"])
+    assert summer["pm25_after"] == night["pm25_after"]
+
+
+def test_summer_plan_uses_thermal_scenario_in_allocation_and_summary(zones):
+    readings = {z["id"]: {"pm25": 30, "predicted_pm25": 31, "predicted_esi": 40,
+                "air_temp_c": 1.6, "surface_temp_c": 1.2, "wind_speed": 2} for z in zones}
+    req = OptimizeRequest(budget_trees=10000, horizon_years=30, thermal_scenario="summer_day")
+    plan = optimize(req, zones, readings, {})
+    assert plan["request"]["thermal_scenario"] == "summer_day"
+    assert all(z["priority_inputs"]["heat_above_25_c"] == 13 for z in plan["zones"])
+    assert all(z["cooling_c"] > 0 for z in plan["zones"])
+    assert plan["summary"]["surface_temp_before"] == pytest.approx(38)
+    assert plan["summary"]["surface_temp_after"] < 38
 
 
 def test_empty_optimizer_has_no_fabricated_population(zones):

@@ -59,7 +59,7 @@ def test_api_websocket_validation_and_restart(tmp_path):
         assert client.get("/api/v1/telemetry/history?sensor_id=missing").status_code == 404
         assert client.get("/api/v1/telemetry/history?minutes=0").status_code == 422
         assert client.get("/api/v1/metrics").json()["ml"]["rows"] == 5000
-        assert client.get("/api/v1/methodology").json()["version"] == "scenario-v1"
+        assert client.get("/api/v1/methodology").json()["version"] == optimization["methodology"]["version"] == "scenario-v2"
         with client.websocket_connect("/ws/telemetry") as ws:
             initial = ws.receive_json()
             assert initial["type"] == "snapshot" and len(initial["readings"]) == 40

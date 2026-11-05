@@ -274,9 +274,25 @@ test("sample rendering preserves supplied costs, zero cooling and UTC+5 date", (
   assert.equal(digits("cost-horizon"), "72600000");
   assert.equal(digits("rate-sapling"), "20000");
   assert.equal(report.nodes.get("eco-cooling-main").textContent, "0,00 °C");
-  assert.match(report.nodes.get("eco-cooling-note").textContent, /Нулевое/);
+  assert.match(report.nodes.get("eco-cooling-note").textContent, /Архивная модель охлаждения/);
   assert.match(report.nodes.get("meta-created-at").textContent, /25\.10\.2026.*01:03.*UTC\+5/);
   assert.equal(report.nodes.get("zones-tbody").children.length, sample.zones.length);
+});
+
+test("report distinguishes summer surface temperatures from snapshot weather", () => {
+  const report = bootReport();
+  const plan = cloneSample();
+  plan.request.thermal_scenario = "summer_day";
+  plan.summary.surface_temp_before = 38;
+  plan.summary.surface_temp_after = 37.48;
+  plan.summary.cooling_c = 0.52;
+  report.renderReportDom(plan, report.docMock);
+  assert.match(report.nodes.get("eco-cooling-note").textContent, /Летний день.*28.*38/);
+  assert.match(report.nodes.get("eco-temp-before").textContent, /38,00/);
+  assert.match(report.nodes.get("eco-temp-after").textContent, /37,48/);
+  plan.request.thermal_scenario = "current_weather";
+  report.renderReportDom(plan, report.docMock);
+  assert.match(report.nodes.get("eco-cooling-note").textContent, /на момент создания/);
 });
 
 test("an empty allocation with zero costs remains a valid readable report", () => {

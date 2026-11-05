@@ -1,17 +1,19 @@
 {
   "protocol": "greening-audit-v1",
+  "model_version": "scenario-v2",
+  "thermal_scenario": "current_weather",
   "data_kind": "synthetic_fixed_scenarios",
   "forecast_kind": "fixed_pm25_and_esi_inputs_not_ml_validation",
   "primary_comparator": "equal allocation on the same selected sites with capacity limits",
   "secondary_comparator": "equal allocation across all 40 sites; relaxed site-count constraint",
   "averaging_domain": "all eligible zones; zero planting included",
   "source_sha256": {
-    "app/ml/optimizer.py": "e5e44e3b134fefdf2e3960dab01ffc89d866a7c9cf6397755d5eaa33c914e30d",
+    "app/ml/optimizer.py": "8d4857821f29e14f81d138967b865cafd5ff52071ac6fbde4754856cccdcc6d0",
     "app/core/zones.py": "b31b06f7714bb14759103e2cad2afabda53cabac024331a61f1d4fee82b413c0",
     "app/core/pilot_sites.json": "3224ae4a506186dc9c2f9cf869e8e16fe625837f5250ea68d7db9f47007cc9ad",
-    "app/schemas/telemetry.py": "03c2e3252979a025e8dcd3a071377d5d5e3035fba07308d289228090bcd8b8e3",
+    "app/schemas/telemetry.py": "ac156cf7bf99824b9508e4f89cb6c1fa7955662304f2d5c1c20b4a5f0266866e",
     "app/services/simulator.py": "ca806d5721750bc0b60d106743fca3972a63a6e25655b27ca396ca9328238c7d",
-    "benchmarks/greening/benchmark.py": "d1bc362ba08cf0f97aff22bf708da1fec0a8d9003a7c395a7fa6735033bb73fb"
+    "benchmarks/greening/benchmark.py": "bb99b93a54ebc20f1373b3f7380a7c4df0a4ed8754af99f434107ad89fa0994e"
   },
   "totals": {
     "equal_same_sites": {
@@ -27,8 +29,8 @@
       },
       "cooling_c_area_mean": {
         "better": 0,
-        "equal": 12,
-        "worse": 24
+        "equal": 36,
+        "worse": 0
       },
       "co2_tons_year": {
         "better": 0,
@@ -48,9 +50,9 @@
         "worse": 0
       },
       "cooling_c_area_mean": {
-        "better": 0,
-        "equal": 12,
-        "worse": 24
+        "better": 36,
+        "equal": 0,
+        "worse": 0
       },
       "co2_tons_year": {
         "better": 0,
@@ -122,26 +124,26 @@
       "astra": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 4.390204438842028e-05,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 2.273057147734071e-05,
         "pm25_reduction_population_mean": 5.70855511100531e-05,
         "co2_tons_year": 0.187,
-        "heuristic_objective": 1.5558044596547453
+        "heuristic_objective": 1.7290792515780364
       },
       "equal_same_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 4.320551123276188e-05,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 2.273057147734071e-05,
         "pm25_reduction_population_mean": 5.3737251122098834e-05,
         "co2_tons_year": 0.18699999999999997,
-        "heuristic_objective": 1.462844568285552
+        "heuristic_objective": 1.6260369608645886
       },
       "equal_all_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 3.166651363888331e-05,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 1.83697113394129e-05,
         "pm25_reduction_population_mean": 3.4431263419425334e-05,
         "co2_tons_year": 0.1869999999999999,
-        "heuristic_objective": 0.9135676217939508
+        "heuristic_objective": 1.0005945129094687
       },
       "allocations": {
         "astra": {
@@ -265,26 +267,26 @@
       "astra": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.00043892977739039995,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.00022730571477340707,
         "pm25_reduction_population_mean": 0.0005707376180311295,
         "co2_tons_year": 1.87,
-        "heuristic_objective": 15.557699021913226
+        "heuristic_objective": 17.290446941146136
       },
       "equal_same_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.0004320461883601767,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.00022730571477340707,
         "pm25_reduction_population_mean": 0.000537361411954581,
         "co2_tons_year": 1.8700000000000003,
-        "heuristic_objective": 14.628413634219799
+        "heuristic_objective": 16.26033756001017
       },
       "equal_all_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.0003166637340076322,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.000183697113394129,
         "pm25_reduction_population_mean": 0.0003443110591714602,
         "co2_tons_year": 1.8700000000000023,
-        "heuristic_objective": 9.135672773559115
+        "heuristic_objective": 10.005941684714285
       },
       "allocations": {
         "astra": {
@@ -408,26 +410,26 @@
       "astra": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.00043782498404871953,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.00022730571477340715,
         "pm25_reduction_population_mean": 0.0005510017544320356,
         "co2_tons_year": 1.87,
-        "heuristic_objective": 15.2047460685271
+        "heuristic_objective": 16.898628314441765
       },
       "equal_same_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.0004320461883601767,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.00022730571477340707,
         "pm25_reduction_population_mean": 0.000537361411954581,
         "co2_tons_year": 1.8700000000000003,
-        "heuristic_objective": 14.628413634219799
+        "heuristic_objective": 16.26033756001017
       },
       "equal_all_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.00032058687377125764,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.00019011992049719506,
         "pm25_reduction_population_mean": 0.0003493036575317121,
         "co2_tons_year": 1.870000000000001,
-        "heuristic_objective": 9.333993319067138
+        "heuristic_objective": 10.223157782412803
       },
       "allocations": {
         "astra": {
@@ -554,26 +556,26 @@
       "astra": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.004375978243127654,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.002273057147734071,
         "pm25_reduction_population_mean": 0.005507157583273909,
         "co2_tons_year": 18.7,
-        "heuristic_objective": 152.0389877708535
+        "heuristic_objective": 168.97781023000016
       },
       "equal_same_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.0043195696218949345,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.0022730571477340713,
         "pm25_reduction_population_mean": 0.005372504360859043,
         "co2_tons_year": 18.700000000000006,
-        "heuristic_objective": 146.28093196358563
+        "heuristic_objective": 162.6001712214893
       },
       "equal_all_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.0032057312938866666,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.0019011992049719506,
         "pm25_reduction_population_mean": 0.0034928813764266925,
         "co2_tons_year": 18.7,
-        "heuristic_objective": 93.33959331126239
+        "heuristic_objective": 102.23123794471903
       },
       "allocations": {
         "astra": {
@@ -700,26 +702,26 @@
       "astra": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.00021690812896111629,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 4.558878123116572e-05,
         "pm25_reduction_population_mean": 0.00028204427047733986,
         "co2_tons_year": 0.144,
-        "heuristic_objective": 1.8959414552241223
+        "heuristic_objective": 2.2434640236620207
       },
       "equal_same_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.00021348412453578387,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 4.5588781231165714e-05,
         "pm25_reduction_population_mean": 0.00026552283918033614,
         "co2_tons_year": 0.144,
-        "heuristic_objective": 1.773669367294564
+        "heuristic_objective": 2.1009705216580885
       },
       "equal_all_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.00015646952865270246,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 3.738280060955588e-05,
         "pm25_reduction_population_mean": 0.0001701306078596352,
         "co2_tons_year": 0.14399999999999988,
-        "heuristic_objective": 1.0033692908319796
+        "heuristic_objective": 1.1793485839703495
       },
       "allocations": {
         "astra": {
@@ -843,26 +845,26 @@
       "astra": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.0021668691143189767,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.00045588781231165726,
         "pm25_reduction_population_mean": 0.0028175662272091834,
         "co2_tons_year": 1.44,
-        "heuristic_objective": 18.950982863362796
+        "heuristic_objective": 22.426208547741783
       },
       "equal_same_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.0021346233791041014,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.00045588781231165737,
         "pm25_reduction_population_mean": 0.0026549574186507685,
         "co2_tons_year": 1.4399999999999997,
-        "heuristic_objective": 17.735911250077447
+        "heuristic_objective": 21.00892279371269
       },
       "equal_all_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.0015646610476313225,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.0003738280060955591,
         "pm25_reduction_population_mean": 0.0017012676246941244,
         "co2_tons_year": 1.4399999999999995,
-        "heuristic_objective": 10.03360881440329
+        "heuristic_objective": 11.793401745786992
       },
       "allocations": {
         "astra": {
@@ -986,26 +988,26 @@
       "astra": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.0021628788889984283,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.0004558878123116574,
         "pm25_reduction_population_mean": 0.002721977949778815,
         "co2_tons_year": 1.4400000000000002,
-        "heuristic_objective": 18.511653659713716
+        "heuristic_objective": 21.908929756240337
       },
       "equal_same_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.0021346233791041014,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.00045588781231165737,
         "pm25_reduction_population_mean": 0.0026549574186507685,
         "co2_tons_year": 1.4399999999999997,
-        "heuristic_objective": 17.735911250077447
+        "heuristic_objective": 21.00892279371269
       },
       "equal_all_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.001584046577100788,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.0003875046404649085,
         "pm25_reduction_population_mean": 0.0017259374314379573,
         "co2_tons_year": 1.4400000000000006,
-        "heuristic_objective": 10.238163064241851
+        "heuristic_objective": 12.037641167045045
       },
       "allocations": {
         "astra": {
@@ -1132,26 +1134,26 @@
       "astra": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.02157342004798304,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.004558878123116573,
         "pm25_reduction_population_mean": 0.02715006968163696,
         "co2_tons_year": 14.4,
-        "heuristic_objective": 184.9100146251922
+        "heuristic_objective": 218.88277559045838
       },
       "equal_same_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.021324463463114656,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.004558878123116573,
         "pm25_reduction_population_mean": 0.026522497141348182,
         "co2_tons_year": 14.399999999999997,
-        "heuristic_objective": 177.2809287429622
+        "heuristic_objective": 210.01104417931467
       },
       "equal_all_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.01583711052544784,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.00387504640464909,
         "pm25_reduction_population_mean": 0.017255585652012528,
         "co2_tons_year": 14.399999999999993,
-        "heuristic_objective": 102.37333367567865
+        "heuristic_objective": 120.36811470371062
       },
       "allocations": {
         "astra": {
@@ -1278,26 +1280,26 @@
       "astra": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 5.206243760127453e-05,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 3.743858831562e-05,
         "pm25_reduction_population_mean": 6.769645887801557e-05,
         "co2_tons_year": 0.224,
-        "heuristic_objective": 1.8616321727886713
+        "heuristic_objective": 2.147025947721151
       },
       "equal_same_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 5.123663146326576e-05,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 3.743858831561999e-05,
         "pm25_reduction_population_mean": 6.37260306158386e-05,
         "co2_tons_year": 0.22400000000000003,
-        "heuristic_objective": 1.7504256762367818
+        "heuristic_objective": 2.0192131463669596
       },
       "equal_all_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 3.755275626810826e-05,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 2.6899251318889816e-05,
         "pm25_reduction_population_mean": 4.0831423820149144e-05,
         "co2_tons_year": 0.22400000000000028,
-        "heuristic_objective": 1.0934658054334618
+        "heuristic_objective": 1.2255767549553764
       },
       "allocations": {
         "astra": {
@@ -1421,26 +1423,26 @@
       "astra": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.0005204968741740583,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.0003743858831562,
         "pm25_reduction_population_mean": 0.0006767987989443886,
         "co2_tons_year": 2.24,
-        "heuristic_objective": 18.615835755622655
+        "heuristic_objective": 21.46977350494745
       },
       "equal_same_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.000512353764744111,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.0003743858831562,
         "pm25_reduction_population_mean": 0.0006372446971193275,
         "co2_tons_year": 2.24,
-        "heuristic_objective": 17.50421169196511
+        "heuristic_objective": 20.19208639326689
       },
       "equal_all_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.00037552559049618014,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.000268992513188898,
         "pm25_reduction_population_mean": 0.00040831202322983004,
         "co2_tons_year": 2.2399999999999993,
-        "heuristic_objective": 10.934653210458665
+        "heuristic_objective": 12.255762705677816
       },
       "allocations": {
         "astra": {
@@ -1564,26 +1566,26 @@
       "astra": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.0005192033566036786,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.00037438588315619984,
         "pm25_reduction_population_mean": 0.0006534162498093041,
         "co2_tons_year": 2.24,
-        "heuristic_objective": 18.193608380678274
+        "heuristic_objective": 20.98353207983184
       },
       "equal_same_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.000512353764744111,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.0003743858831562,
         "pm25_reduction_population_mean": 0.0006372446971193275,
         "co2_tons_year": 2.24,
-        "heuristic_objective": 17.50421169196511
+        "heuristic_objective": 20.19208639326689
       },
       "equal_all_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.0003801779795423904,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.0002776913691840324,
         "pm25_reduction_population_mean": 0.000414232663148461,
         "co2_tons_year": 2.2400000000000015,
-        "heuristic_objective": 11.172064799231318
+        "heuristic_objective": 12.519106807900718
       },
       "allocations": {
         "astra": {
@@ -1710,26 +1712,26 @@
       "astra": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.005188839232315391,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.0037438588315619995,
         "pm25_reduction_population_mean": 0.006530140803971028,
         "co2_tons_year": 22.4,
-        "heuristic_objective": 181.9241691449521
+        "heuristic_objective": 209.82340613648773
       },
       "equal_same_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.005122282883928819,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.0037438588315619995,
         "pm25_reduction_population_mean": 0.006370886347559044,
         "co2_tons_year": 22.400000000000006,
-        "heuristic_objective": 175.03761068865225
+        "heuristic_objective": 201.91635770167008
       },
       "equal_all_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.003801586507140189,
-        "cooling_c_area_mean": 0.0,
+        "cooling_c_area_mean": 0.0027769136918403253,
         "pm25_reduction_population_mean": 0.004142108374163285,
         "co2_tons_year": 22.399999999999995,
-        "heuristic_objective": 111.72017001758557
+        "heuristic_objective": 125.19059010427962
       },
       "allocations": {
         "astra": {
@@ -1856,26 +1858,26 @@
       "astra": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.0009142097393889136,
-        "cooling_c_area_mean": 0.00037157705959316303,
+        "cooling_c_area_mean": 0.0001071979486808173,
         "pm25_reduction_population_mean": 0.0011887411515842628,
         "co2_tons_year": 0.187,
-        "heuristic_objective": 10.447180961483783
+        "heuristic_objective": 7.71474260894697
       },
       "equal_same_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.0009000738476502524,
-        "cooling_c_area_mean": 0.0003724659900263713,
+        "cooling_c_area_mean": 0.00010719794868081732,
         "pm25_reduction_population_mean": 0.0011194751086046457,
         "co2_tons_year": 0.18699999999999997,
-        "heuristic_objective": 9.756557864778605
+        "heuristic_objective": 7.180967915866038
       },
       "equal_all_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.0006597125957698637,
-        "cooling_c_area_mean": 0.00037254433186867007,
+        "cooling_c_area_mean": 8.663202222640247e-05,
         "pm25_reduction_population_mean": 0.0007173107569291776,
         "co2_tons_year": 0.1869999999999999,
-        "heuristic_objective": 5.287530351186248
+        "heuristic_objective": 3.8131051171109993
       },
       "allocations": {
         "astra": {
@@ -1998,33 +2000,31 @@
       ],
       "astra": {
         "used_trees": 100,
-        "pm25_reduction_area_mean": 0.009106254215809708,
-        "cooling_c_area_mean": 0.003635897210254602,
-        "pm25_reduction_population_mean": 0.011820123190081565,
-        "co2_tons_year": 1.8699999999999999,
-        "heuristic_objective": 103.36912662410228
+        "pm25_reduction_area_mean": 0.00910287666192312,
+        "cooling_c_area_mean": 0.0010719794868081732,
+        "pm25_reduction_population_mean": 0.011836413045716478,
+        "co2_tons_year": 1.87,
+        "heuristic_objective": 76.94474700512623
       },
       "equal_same_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.008996866518792728,
-        "cooling_c_area_mean": 0.003715770595931631,
+        "cooling_c_area_mean": 0.0010719794868081728,
         "pm25_reduction_population_mean": 0.011189935303109314,
         "co2_tons_year": 1.8700000000000003,
-        "heuristic_objective": 97.46046291111274
+        "heuristic_objective": 71.7908731137781
       },
       "equal_all_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.006596517332698007,
-        "cooling_c_area_mean": 0.003723589758886308,
+        "cooling_c_area_mean": 0.0008663202222640253,
         "pm25_reduction_population_mean": 0.0071724240201120944,
         "co2_tons_year": 1.8700000000000023,
-        "heuristic_objective": 52.86228584370224
+        "heuristic_objective": 38.12899460953957
       },
       "allocations": {
         "astra": {
-          "AST-033": 96,
-          "AST-023": 2,
-          "AST-008": 2
+          "AST-033": 100
         },
         "equal_same_sites": {
           "AST-002": 10,
@@ -2144,26 +2144,26 @@
       "astra": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.009110929178985781,
-        "cooling_c_area_mean": 0.003700900646791719,
+        "cooling_c_area_mean": 0.0010719794868081732,
         "pm25_reduction_population_mean": 0.011466078486593862,
         "co2_tons_year": 1.87,
-        "heuristic_objective": 101.78140770019326
+        "heuristic_objective": 75.2315658104659
       },
       "equal_same_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.008996866518792728,
-        "cooling_c_area_mean": 0.003715770595931631,
+        "cooling_c_area_mean": 0.0010719794868081728,
         "pm25_reduction_population_mean": 0.011189935303109314,
         "co2_tons_year": 1.8700000000000003,
-        "heuristic_objective": 97.46046291111274
+        "heuristic_objective": 71.7908731137781
       },
       "equal_all_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.006678262214572303,
-        "cooling_c_area_mean": 0.003723667730473858,
+        "cooling_c_area_mean": 0.0008966103426381485,
         "pm25_reduction_population_mean": 0.0072764470321616615,
         "co2_tons_year": 1.870000000000001,
-        "heuristic_objective": 53.883096014095436
+        "heuristic_objective": 38.89100583309653
       },
       "allocations": {
         "astra": {
@@ -2289,37 +2289,34 @@
       ],
       "astra": {
         "used_trees": 1000,
-        "pm25_reduction_area_mean": 0.09019572303810175,
-        "cooling_c_area_mean": 0.035158356357969184,
-        "pm25_reduction_population_mean": 0.1135769698056334,
+        "pm25_reduction_area_mean": 0.09013161148925537,
+        "cooling_c_area_mean": 0.010719794868081734,
+        "pm25_reduction_population_mean": 0.11342988055894462,
         "co2_tons_year": 18.7,
-        "heuristic_objective": 992.9036645390387
+        "heuristic_objective": 747.3732899739027
       },
       "equal_same_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.08958268845297863,
-        "cooling_c_area_mean": 0.0362841622202468,
+        "cooling_c_area_mean": 0.01071979486808173,
         "pm25_reduction_population_mean": 0.11141929092462982,
         "co2_tons_year": 18.700000000000006,
-        "heuristic_objective": 964.2483716457834
+        "heuristic_objective": 716.0340474906417
       },
       "equal_all_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.06672301029274179,
-        "cooling_c_area_mean": 0.037058980917281874,
+        "cooling_c_area_mean": 0.008966103426381484,
         "pm25_reduction_population_mean": 0.07269715916819078,
         "co2_tons_year": 18.7,
-        "heuristic_objective": 537.5467236790822
+        "heuristic_objective": 388.70706743005184
       },
       "allocations": {
         "astra": {
           "AST-033": 260,
           "AST-023": 260,
           "AST-008": 260,
-          "AST-020": 120,
-          "AST-027": 57,
-          "AST-025": 22,
-          "AST-010": 21
+          "AST-020": 220
         },
         "equal_same_sites": {
           "AST-002": 100,
@@ -2439,26 +2436,26 @@
       "astra": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.0009034594118299247,
-        "cooling_c_area_mean": 0.00018901022681139015,
+        "cooling_c_area_mean": 5.794312604373501e-05,
         "pm25_reduction_population_mean": 0.0011747625685394982,
         "co2_tons_year": 0.144,
-        "heuristic_objective": 8.071868660203801
+        "heuristic_objective": 6.717250393815554
       },
       "equal_same_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.0008894852438872447,
-        "cooling_c_area_mean": 0.00018931657032338807,
+        "cooling_c_area_mean": 5.794312604373501e-05,
         "pm25_reduction_population_mean": 0.0011063054354955892,
         "co2_tons_year": 0.144,
-        "heuristic_objective": 7.520201282437211
+        "heuristic_objective": 6.244645731439168
       },
       "equal_all_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.0006519513497425246,
-        "cooling_c_area_mean": 0.0001893435534345329,
+        "cooling_c_area_mean": 4.75133633558627e-05,
         "pm25_reduction_population_mean": 0.0007088718951558564,
         "co2_tons_year": 0.14399999999999988,
-        "heuristic_objective": 3.987422511295228
+        "heuristic_objective": 3.2590607653604438
       },
       "allocations": {
         "astra": {
@@ -2582,26 +2579,26 @@
       "astra": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.008996289220635978,
-        "cooling_c_area_mean": 0.001859828719394176,
+        "cooling_c_area_mean": 0.0005794312604373502,
         "pm25_reduction_population_mean": 0.011697818068829895,
         "co2_tons_year": 1.44,
-        "heuristic_objective": 80.20785391614362
+        "heuristic_objective": 66.97455756655319
       },
       "equal_same_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.008891071034546222,
-        "cooling_c_area_mean": 0.0018901022681139018,
+        "cooling_c_area_mean": 0.0005794312604373501,
         "pm25_reduction_population_mean": 0.011058351198620635,
         "co2_tons_year": 1.4399999999999997,
-        "heuristic_objective": 75.15390252031159
+        "heuristic_objective": 62.42809108603716
       },
       "equal_all_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.00651891910820255,
-        "cooling_c_area_mean": 0.0018927970717826706,
+        "cooling_c_area_mean": 0.0004751336335586276,
         "pm25_reduction_population_mean": 0.007088051390624374,
         "co2_tons_year": 1.4399999999999995,
-        "heuristic_objective": 39.86844103654784
+        "heuristic_objective": 32.58859919500282
       },
       "allocations": {
         "astra": {
@@ -2725,26 +2722,26 @@
       "astra": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.00900386899170281,
-        "cooling_c_area_mean": 0.0018849706761863631,
+        "cooling_c_area_mean": 0.0005794312604373502,
         "pm25_reduction_population_mean": 0.011331343610086456,
         "co2_tons_year": 1.4400000000000002,
-        "heuristic_objective": 78.67153715614535
+        "heuristic_objective": 65.48667311180394
       },
       "equal_same_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.008891071034546222,
-        "cooling_c_area_mean": 0.0018901022681139018,
+        "cooling_c_area_mean": 0.0005794312604373501,
         "pm25_reduction_population_mean": 0.011058351198620635,
         "co2_tons_year": 1.4399999999999997,
-        "heuristic_objective": 75.15390252031159
+        "heuristic_objective": 62.42809108603716
       },
       "equal_all_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.0065997021292699826,
-        "cooling_c_area_mean": 0.0018928239349688552,
+        "cooling_c_area_mean": 0.0004925165713717473,
         "pm25_reduction_population_mean": 0.0071908504737870135,
         "co2_tons_year": 1.4400000000000006,
-        "heuristic_objective": 40.63419179245717
+        "heuristic_objective": 33.22997365649923
       },
       "allocations": {
         "astra": {
@@ -2870,37 +2867,34 @@
       ],
       "astra": {
         "used_trees": 1000,
-        "pm25_reduction_area_mean": 0.08910537271687956,
-        "cooling_c_area_mean": 0.018163589091973308,
-        "pm25_reduction_population_mean": 0.11236157677429875,
+        "pm25_reduction_area_mean": 0.08908377946946133,
+        "cooling_c_area_mean": 0.005794312604373501,
+        "pm25_reduction_population_mean": 0.11211119910524285,
         "co2_tons_year": 14.4,
-        "heuristic_objective": 774.6280389145468
+        "heuristic_objective": 650.0394686522775
       },
       "equal_same_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.08853374646458868,
-        "cooling_c_area_mean": 0.01859828719394176,
+        "cooling_c_area_mean": 0.005794312604373501,
         "pm25_reduction_population_mean": 0.11011465969971601,
         "co2_tons_year": 14.399999999999997,
-        "heuristic_objective": 746.7687410000067
+        "heuristic_objective": 622.4500025204434
       },
       "equal_all_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.06593880330711674,
-        "cooling_c_area_mean": 0.018866960799157423,
+        "cooling_c_area_mean": 0.00492516571371748,
         "pm25_reduction_population_mean": 0.07184276746309678,
         "co2_tons_year": 14.399999999999993,
-        "heuristic_objective": 405.770766385595
+        "heuristic_objective": 332.1014919518136
       },
       "allocations": {
         "astra": {
           "AST-033": 260,
           "AST-023": 260,
           "AST-008": 260,
-          "AST-020": 167,
-          "AST-027": 49,
-          "AST-025": 2,
-          "AST-010": 2
+          "AST-020": 220
         },
         "equal_same_sites": {
           "AST-002": 100,
@@ -3020,26 +3014,26 @@
       "astra": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.0010840488644875154,
-        "cooling_c_area_mean": 0.0006114936389696497,
+        "cooling_c_area_mean": 0.00017656132723899322,
         "pm25_reduction_population_mean": 0.001409581893544339,
         "co2_tons_year": 0.224,
-        "heuristic_objective": 14.176934679217856
+        "heuristic_objective": 9.681777231909692
       },
       "equal_same_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.001067372206124704,
-        "cooling_c_area_mean": 0.0006134216410139835,
+        "cooling_c_area_mean": 0.00017656132723899322,
         "pm25_reduction_population_mean": 0.0013275539773680237,
         "co2_tons_year": 0.22400000000000003,
-        "heuristic_objective": 13.258571427412656
+        "heuristic_objective": 9.016925778994956
       },
       "equal_all_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.0007823400345534998,
-        "cooling_c_area_mean": 0.0006135916502678756,
+        "cooling_c_area_mean": 0.00012685754800794433,
         "pm25_reduction_population_mean": 0.0008506444939100251,
         "co2_tons_year": 0.22400000000000028,
-        "heuristic_objective": 7.227905655009268
+        "heuristic_objective": 4.723300045937754
       },
       "allocations": {
         "astra": {
@@ -3162,33 +3156,31 @@
       ],
       "astra": {
         "used_trees": 100,
-        "pm25_reduction_area_mean": 0.010810216187296764,
-        "cooling_c_area_mean": 0.006010937926748528,
-        "pm25_reduction_population_mean": 0.013903262312518948,
+        "pm25_reduction_area_mean": 0.010785367749507927,
+        "cooling_c_area_mean": 0.0017656132723899323,
+        "pm25_reduction_population_mean": 0.014024145583244156,
         "co2_tons_year": 2.24,
-        "heuristic_objective": 139.75935574771265
+        "heuristic_objective": 96.53292672746181
       },
       "equal_same_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.010668277216300762,
-        "cooling_c_area_mean": 0.006114936389696497,
+        "cooling_c_area_mean": 0.0017656132723899319,
         "pm25_reduction_population_mean": 0.013268767697807264,
         "co2_tons_year": 2.24,
-        "heuristic_objective": 132.3720715668619
+        "heuristic_objective": 90.14281225357973
       },
       "equal_all_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.00782254443867201,
-        "cooling_c_area_mean": 0.006131894380677405,
+        "cooling_c_area_mean": 0.0012685754800794426,
         "pm25_reduction_population_mean": 0.00850548366704086,
         "co2_tons_year": 2.2399999999999993,
-        "heuristic_objective": 72.25237968382224
+        "heuristic_objective": 47.23010832825857
       },
       "allocations": {
         "astra": {
-          "AST-033": 75,
-          "AST-023": 13,
-          "AST-008": 12
+          "AST-033": 100
         },
         "equal_same_sites": {
           "AST-002": 10,
@@ -3308,26 +3300,26 @@
       "astra": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.010802078522579514,
-        "cooling_c_area_mean": 0.006082728924720653,
+        "cooling_c_area_mean": 0.0017656132723899323,
         "pm25_reduction_population_mean": 0.013594383898388464,
         "co2_tons_year": 2.24,
-        "heuristic_objective": 138.0157382760243
+        "heuristic_objective": 94.41671975653303
       },
       "equal_same_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.010668277216300762,
-        "cooling_c_area_mean": 0.006114936389696497,
+        "cooling_c_area_mean": 0.0017656132723899319,
         "pm25_reduction_population_mean": 0.013268767697807264,
         "co2_tons_year": 2.24,
-        "heuristic_objective": 132.3720715668619
+        "heuristic_objective": 90.14281225357973
       },
       "equal_all_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.007919487215075191,
-        "cooling_c_area_mean": 0.006132063539264708,
+        "cooling_c_area_mean": 0.0013095995044634223,
         "pm25_reduction_population_mean": 0.008628845162156932,
         "co2_tons_year": 2.2400000000000015,
-        "heuristic_objective": 73.64352803122256
+        "heuristic_objective": 48.160579362138606
       },
       "allocations": {
         "astra": {
@@ -3453,38 +3445,34 @@
       ],
       "astra": {
         "used_trees": 1000,
-        "pm25_reduction_area_mean": 0.10680855763701322,
-        "cooling_c_area_mean": 0.05751372635305898,
-        "pm25_reduction_population_mean": 0.1342640703564681,
+        "pm25_reduction_area_mean": 0.10664810817519835,
+        "cooling_c_area_mean": 0.017656132723899324,
+        "pm25_reduction_population_mean": 0.1342156328608022,
         "co2_tons_year": 22.4,
-        "heuristic_objective": 1332.6463788254928
+        "heuristic_objective": 937.228052959714
       },
       "equal_same_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.10614031968558515,
-        "cooling_c_area_mean": 0.059265157874655736,
+        "cooling_c_area_mean": 0.01765613272389932,
         "pm25_reduction_population_mean": 0.13201299673082323,
         "co2_tons_year": 22.400000000000006,
-        "heuristic_objective": 1302.7915469280827
+        "heuristic_objective": 898.7934383781906
       },
       "equal_all_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.07911105067671276,
-        "cooling_c_area_mean": 0.06093548194274355,
+        "cooling_c_area_mean": 0.013095995044634224,
         "pm25_reduction_population_mean": 0.08619380438143599,
         "co2_tons_year": 22.399999999999995,
-        "heuristic_objective": 733.8065203105825
+        "heuristic_objective": 481.3203666886687
       },
       "allocations": {
         "astra": {
           "AST-033": 260,
-          "AST-023": 221,
-          "AST-008": 220,
-          "AST-020": 115,
-          "AST-002": 12,
-          "AST-027": 74,
-          "AST-025": 49,
-          "AST-010": 49
+          "AST-023": 260,
+          "AST-008": 260,
+          "AST-020": 220
         },
         "equal_same_sites": {
           "AST-002": 100,
@@ -3604,26 +3592,26 @@
       "astra": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.00022863439885176124,
-        "cooling_c_area_mean": 0.00041286339954795887,
+        "cooling_c_area_mean": 0.0001071979486808173,
         "pm25_reduction_population_mean": 0.00029729186517361904,
         "co2_tons_year": 0.187,
-        "heuristic_objective": 8.91360915230661
+        "heuristic_objective": 5.0725091056375815
       },
       "equal_same_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.0002250265309978401,
-        "cooling_c_area_mean": 0.0004138511000293013,
+        "cooling_c_area_mean": 0.00010719794868081732,
         "pm25_reduction_population_mean": 0.0002798788131500302,
         "co2_tons_year": 0.18699999999999997,
-        "heuristic_objective": 8.391688923364184
+        "heuristic_objective": 4.759883282403296
       },
       "equal_all_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.00016492941700211667,
-        "cooling_c_area_mean": 0.0004139381465207447,
+        "cooling_c_area_mean": 8.663202222640249e-05,
         "pm25_reduction_population_mean": 0.00017932911339765044,
         "co2_tons_year": 0.1869999999999999,
-        "heuristic_objective": 5.018012749182912
+        "heuristic_objective": 2.861274138135718
       },
       "allocations": {
         "astra": {
@@ -3746,33 +3734,31 @@
       ],
       "astra": {
         "used_trees": 100,
-        "pm25_reduction_area_mean": 0.0022847757112381866,
-        "cooling_c_area_mean": 0.004066503572183627,
-        "pm25_reduction_population_mean": 0.002946320398434061,
-        "co2_tons_year": 1.8699999999999997,
-        "heuristic_objective": 87.97319522233734
+        "pm25_reduction_area_mean": 0.002283886243468223,
+        "cooling_c_area_mean": 0.0010719794868081732,
+        "pm25_reduction_population_mean": 0.002969722861367271,
+        "co2_tons_year": 1.87,
+        "heuristic_objective": 50.70964861007198
       },
       "equal_same_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.002250023248985153,
-        "cooling_c_area_mean": 0.004128633995479588,
+        "cooling_c_area_mean": 0.0010719794868081728,
         "pm25_reduction_population_mean": 0.002798487065918392,
         "co2_tons_year": 1.8700000000000003,
-        "heuristic_objective": 83.79847821576409
+        "heuristic_objective": 47.597398793476074
       },
       "equal_all_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.001649256128657797,
-        "cooling_c_area_mean": 0.004137321954318114,
+        "cooling_c_area_mean": 0.0008663202222640256,
         "pm25_reduction_population_mean": 0.0017932484095035818,
         "co2_tons_year": 1.8700000000000023,
-        "heuristic_objective": 50.164641000045975
+        "heuristic_objective": 28.61258091319395
       },
       "allocations": {
         "astra": {
-          "AST-033": 81,
-          "AST-023": 10,
-          "AST-008": 9
+          "AST-033": 100
         },
         "equal_same_sites": {
           "AST-002": 10,
@@ -3892,26 +3878,26 @@
       "astra": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.0022797851363932655,
-        "cooling_c_area_mean": 0.0041121118297685775,
+        "cooling_c_area_mean": 0.0010719794868081732,
         "pm25_reduction_population_mean": 0.002869104166779769,
         "co2_tons_year": 1.87,
-        "heuristic_objective": 86.90426226649899
+        "heuristic_objective": 49.55380439991811
       },
       "equal_same_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.002250023248985153,
-        "cooling_c_area_mean": 0.004128633995479588,
+        "cooling_c_area_mean": 0.0010719794868081728,
         "pm25_reduction_population_mean": 0.002798487065918392,
         "co2_tons_year": 1.8700000000000003,
-        "heuristic_objective": 83.79847821576409
+        "heuristic_objective": 47.597398793476074
       },
       "equal_all_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.001669689827595367,
-        "cooling_c_area_mean": 0.004137408589415398,
+        "cooling_c_area_mean": 0.0008966103426381487,
         "pm25_reduction_population_mean": 0.0018192520855659915,
         "co2_tons_year": 1.870000000000001,
-        "heuristic_objective": 51.143780425375
+        "heuristic_objective": 29.222571451553225
       },
       "allocations": {
         "astra": {
@@ -4037,38 +4023,34 @@
       ],
       "astra": {
         "used_trees": 1000,
-        "pm25_reduction_area_mean": 0.022700776369011987,
-        "cooling_c_area_mean": 0.0394087703057183,
-        "pm25_reduction_population_mean": 0.028575571867942524,
+        "pm25_reduction_area_mean": 0.022736340331808276,
+        "cooling_c_area_mean": 0.010719794868081734,
+        "pm25_reduction_population_mean": 0.028613598788233705,
         "co2_tons_year": 18.7,
-        "heuristic_objective": 842.7583309328697
+        "heuristic_objective": 495.1597917802261
       },
       "equal_same_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.022476045475434733,
-        "cooling_c_area_mean": 0.04031573580027421,
+        "cooling_c_area_mean": 0.01071979486808173,
         "pm25_reduction_population_mean": 0.027954787838022344,
         "co2_tons_year": 18.700000000000006,
-        "heuristic_objective": 826.3462714969808
+        "heuristic_objective": 475.8306979428944
       },
       "equal_all_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.01669317043870855,
-        "cooling_c_area_mean": 0.041176645463646494,
+        "cooling_c_area_mean": 0.008966103426381487,
         "pm25_reduction_population_mean": 0.01818831147291846,
         "co2_tons_year": 18.7,
-        "heuristic_objective": 509.9105209230215
+        "heuristic_objective": 292.2098634463639
       },
       "allocations": {
         "astra": {
           "AST-033": 260,
-          "AST-023": 218,
-          "AST-008": 218,
-          "AST-020": 117,
-          "AST-002": 17,
-          "AST-027": 88,
-          "AST-025": 41,
-          "AST-010": 41
+          "AST-023": 260,
+          "AST-008": 260,
+          "AST-020": 220
         },
         "equal_same_sites": {
           "AST-002": 100,
@@ -4188,26 +4170,26 @@
       "astra": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.00022594490011683022,
-        "cooling_c_area_mean": 0.00021001136312376683,
+        "cooling_c_area_mean": 5.794312604373501e-05,
         "pm25_reduction_population_mean": 0.00029379472695073886,
         "co2_tons_year": 0.144,
-        "heuristic_objective": 5.8212821556934795
+        "heuristic_objective": 3.910338963101944
       },
       "equal_same_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.00022237919131713125,
-        "cooling_c_area_mean": 0.00021035174480376454,
+        "cooling_c_area_mean": 5.794312604373501e-05,
         "pm25_reduction_population_mean": 0.0002765861601257124,
         "co2_tons_year": 0.144,
-        "heuristic_objective": 5.469850878628344
+        "heuristic_objective": 3.6648197582577344
       },
       "equal_all_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.00016298907583425762,
-        "cooling_c_area_mean": 0.00021038172603836985,
+        "cooling_c_area_mean": 4.75133633558627e-05,
         "pm25_reduction_population_mean": 0.0001772193646420184,
         "co2_tons_year": 0.14399999999999988,
-        "heuristic_objective": 3.252626206122209
+        "heuristic_objective": 2.183032537262905
       },
       "allocations": {
         "astra": {
@@ -4331,26 +4313,26 @@
       "astra": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.0022570487204977576,
-        "cooling_c_area_mean": 0.0020664763548824175,
+        "cooling_c_area_mean": 0.0005794312604373502,
         "pm25_reduction_population_mean": 0.002934826199707437,
         "co2_tons_year": 1.44,
-        "heuristic_objective": 57.77504227080292
+        "heuristic_objective": 39.088308243558906
       },
       "equal_same_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.0022235555139807,
-        "cooling_c_area_mean": 0.0021001136312376683,
+        "cooling_c_area_mean": 0.0005794312604373501,
         "pm25_reduction_population_mean": 0.0027655675775942034,
         "co2_tons_year": 1.4399999999999997,
-        "heuristic_objective": 54.656795648025735
+        "heuristic_objective": 36.6467970939715
       },
       "equal_all_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.00162985360679383,
-        "cooling_c_area_mean": 0.002103107857536301,
+        "cooling_c_area_mean": 0.0004751336335586276,
         "pm25_reduction_population_mean": 0.0017721519213014833,
         "co2_tons_year": 1.4399999999999995,
-        "heuristic_objective": 32.52082621154589
+        "heuristic_objective": 21.830168657918417
       },
       "allocations": {
         "astra": {
@@ -4474,26 +4456,26 @@
       "astra": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.002252972095256858,
-        "cooling_c_area_mean": 0.002094411862429292,
+        "cooling_c_area_mean": 0.0005794312604373502,
         "pm25_reduction_population_mean": 0.002835360022411333,
         "co2_tons_year": 1.4400000000000002,
-        "heuristic_objective": 56.804756482697364
+        "heuristic_objective": 38.19195772542681
       },
       "equal_same_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.0022235555139807,
-        "cooling_c_area_mean": 0.0021001136312376683,
+        "cooling_c_area_mean": 0.0005794312604373501,
         "pm25_reduction_population_mean": 0.0027655675775942034,
         "co2_tons_year": 1.4399999999999997,
-        "heuristic_objective": 54.656795648025735
+        "heuristic_objective": 36.6467970939715
       },
       "equal_all_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.0016500468994984619,
-        "cooling_c_area_mean": 0.002103137705520952,
+        "cooling_c_area_mean": 0.0004925165713717473,
         "pm25_reduction_population_mean": 0.001797849663711623,
         "co2_tons_year": 1.4400000000000006,
-        "heuristic_objective": 33.16102465625329
+        "heuristic_objective": 22.291942970859527
       },
       "allocations": {
         "astra": {
@@ -4619,35 +4601,34 @@
       ],
       "astra": {
         "used_trees": 1000,
-        "pm25_reduction_area_mean": 0.022453223354539625,
-        "cooling_c_area_mean": 0.020197795857402286,
-        "pm25_reduction_population_mean": 0.028358393093776628,
+        "pm25_reduction_area_mean": 0.022469647163087598,
+        "cooling_c_area_mean": 0.005794312604373501,
+        "pm25_reduction_population_mean": 0.02827796684376941,
         "co2_tons_year": 14.4,
-        "heuristic_objective": 558.0762479566613
+        "heuristic_objective": 381.55016311989675
       },
       "equal_same_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.022211933640417854,
-        "cooling_c_area_mean": 0.020664763548824173,
+        "cooling_c_area_mean": 0.005794312604373501,
         "pm25_reduction_population_mean": 0.027626296319286228,
         "co2_tons_year": 14.399999999999997,
-        "heuristic_objective": 542.4442308437649
+        "heuristic_objective": 366.32803120192773
       },
       "equal_all_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.016496828347566328,
-        "cooling_c_area_mean": 0.020963289776841604,
+        "cooling_c_area_mean": 0.00492516571371748,
         "pm25_reduction_population_mean": 0.017974385706733216,
         "co2_tons_year": 14.399999999999993,
-        "heuristic_objective": 331.0734974924805
+        "heuristic_objective": 222.90394937543633
       },
       "allocations": {
         "astra": {
           "AST-033": 260,
           "AST-023": 260,
           "AST-008": 260,
-          "AST-020": 139,
-          "AST-027": 81
+          "AST-020": 220
         },
         "equal_same_sites": {
           "AST-002": 100,
@@ -4767,26 +4748,26 @@
       "astra": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.00027112747495539275,
-        "cooling_c_area_mean": 0.0006794373766329441,
+        "cooling_c_area_mean": 0.00017656132723899322,
         "pm25_reduction_population_mean": 0.00035254534371953044,
         "co2_tons_year": 0.224,
-        "heuristic_objective": 12.98334174892128
+        "heuristic_objective": 6.664023647002672
       },
       "equal_same_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.00026685439913945073,
-        "cooling_c_area_mean": 0.0006815796011266483,
+        "cooling_c_area_mean": 0.00017656132723899322,
         "pm25_reduction_population_mean": 0.00033190260803394234,
         "co2_tons_year": 0.22400000000000003,
-        "heuristic_objective": 12.23711716140316
+        "heuristic_objective": 6.256000685579979
       },
       "equal_all_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.0001955867919289343,
-        "cooling_c_area_mean": 0.0006817685002976397,
+        "cooling_c_area_mean": 0.00012685754800794433,
         "pm25_reduction_population_mean": 0.00021266312630179138,
         "co2_tons_year": 0.22400000000000028,
-        "heuristic_objective": 7.295139231281147
+        "heuristic_objective": 3.6436743255616095
       },
       "allocations": {
         "astra": {
@@ -4909,33 +4890,31 @@
       ],
       "astra": {
         "used_trees": 100,
-        "pm25_reduction_area_mean": 0.0027097636509457,
-        "cooling_c_area_mean": 0.006702075696884179,
-        "pm25_reduction_population_mean": 0.0034713783371437307,
+        "pm25_reduction_area_mean": 0.0027078189439437594,
+        "cooling_c_area_mean": 0.0017656132723899323,
+        "pm25_reduction_population_mean": 0.0035209598749812027,
         "co2_tons_year": 2.24,
-        "heuristic_objective": 127.695342145014
+        "heuristic_objective": 66.61852303291298
       },
       "equal_same_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.0026682035824530702,
-        "cooling_c_area_mean": 0.006794373766329439,
+        "cooling_c_area_mean": 0.0017656132723899319,
         "pm25_reduction_population_mean": 0.0033186026935943477,
         "co2_tons_year": 2.24,
-        "heuristic_objective": 122.11544344862496
+        "heuristic_objective": 62.55799018711927
       },
       "equal_all_sites": {
         "used_trees": 100,
         "pm25_reduction_area_mean": 0.0019558144212725834,
-        "cooling_c_area_mean": 0.0068132159785304425,
+        "cooling_c_area_mean": 0.0012685754800794429,
         "pm25_reduction_population_mean": 0.0021265711790934574,
         "co2_tons_year": 2.2399999999999993,
-        "heuristic_objective": 72.91791035802339
+        "heuristic_objective": 36.43651758738763
       },
       "allocations": {
         "astra": {
-          "AST-033": 66,
-          "AST-023": 17,
-          "AST-008": 17
+          "AST-033": 100
         },
         "equal_same_sites": {
           "AST-002": 10,
@@ -5054,35 +5033,34 @@
       ],
       "astra": {
         "used_trees": 1000,
-        "pm25_reduction_area_mean": 0.002702773693757019,
-        "cooling_c_area_mean": 0.006760482157119247,
-        "pm25_reduction_population_mean": 0.0034044345293831307,
+        "pm25_reduction_area_mean": 0.0027034060372644643,
+        "cooling_c_area_mean": 0.0017656132723899323,
+        "pm25_reduction_population_mean": 0.003402229984885592,
         "co2_tons_year": 2.24,
-        "heuristic_objective": 126.45075319935236
+        "heuristic_objective": 65.1059155303988
       },
       "equal_same_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.0026682035824530702,
-        "cooling_c_area_mean": 0.006794373766329439,
+        "cooling_c_area_mean": 0.0017656132723899319,
         "pm25_reduction_population_mean": 0.0033186026935943477,
         "co2_tons_year": 2.24,
-        "heuristic_objective": 122.11544344862496
+        "heuristic_objective": 62.55799018711927
       },
       "equal_all_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.001980046569567516,
-        "cooling_c_area_mean": 0.006813403932516339,
+        "cooling_c_area_mean": 0.0013095995044634227,
         "pm25_reduction_population_mean": 0.0021574086323024487,
         "co2_tons_year": 2.2400000000000015,
-        "heuristic_objective": 74.32802428452112
+        "heuristic_objective": 37.19419193319367
       },
       "allocations": {
         "astra": {
           "AST-033": 260,
           "AST-023": 260,
           "AST-008": 260,
-          "AST-020": 200,
-          "AST-027": 20
+          "AST-020": 220
         },
         "equal_same_sites": {
           "AST-002": 100,
@@ -5201,38 +5179,34 @@
       ],
       "astra": {
         "used_trees": 1000,
-        "pm25_reduction_area_mean": 0.02687580330171778,
-        "cooling_c_area_mean": 0.06457900804272725,
-        "pm25_reduction_population_mean": 0.03373275178339247,
-        "co2_tons_year": 22.400000000000002,
-        "heuristic_objective": 1213.2395465471484
+        "pm25_reduction_area_mean": 0.026947591895964254,
+        "cooling_c_area_mean": 0.017656132723899324,
+        "pm25_reduction_population_mean": 0.03391343536410583,
+        "co2_tons_year": 22.4,
+        "heuristic_objective": 650.5274314757678
       },
       "equal_same_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.0266480267558783,
-        "cooling_c_area_mean": 0.06585017541628416,
+        "cooling_c_area_mean": 0.01765613272389932,
         "pm25_reduction_population_mean": 0.033143727844682704,
         "co2_tons_year": 22.400000000000006,
-        "heuristic_objective": 1196.1581313071702
+        "heuristic_objective": 625.3784235454016
       },
       "equal_all_sites": {
         "used_trees": 1000,
         "pm25_reduction_area_mean": 0.019795223357680497,
-        "cooling_c_area_mean": 0.06770609104749291,
+        "cooling_c_area_mean": 0.013095995044634228,
         "pm25_reduction_population_mean": 0.021568166809003433,
         "co2_tons_year": 22.399999999999995,
-        "heuristic_objective": 739.9822722328713
+        "heuristic_objective": 371.9196285331046
       },
       "allocations": {
         "astra": {
-          "AST-033": 235,
-          "AST-023": 184,
-          "AST-008": 184,
-          "AST-020": 117,
-          "AST-002": 50,
-          "AST-027": 98,
-          "AST-025": 66,
-          "AST-010": 66
+          "AST-033": 260,
+          "AST-023": 260,
+          "AST-008": 260,
+          "AST-020": 220
         },
         "equal_same_sites": {
           "AST-002": 100,
@@ -5299,20 +5273,17 @@
       "actual_factor": 0.8,
       "metrics": {
         "used_trees": 1000,
-        "pm25_reduction_area_mean": 0.07229939154100114,
-        "cooling_c_area_mean": 0.02842913047865533,
-        "pm25_reduction_population_mean": 0.09110721575118345,
+        "pm25_reduction_area_mean": 0.07227812290396593,
+        "cooling_c_area_mean": 0.008575835894465386,
+        "pm25_reduction_population_mean": 0.09096150249188588,
         "co2_tons_year": 14.96,
-        "heuristic_objective": 798.4153270733019
+        "heuristic_objective": 598.7723361423522
       },
       "allocation": {
         "AST-033": 260,
         "AST-023": 260,
         "AST-008": 260,
-        "AST-020": 136,
-        "AST-027": 57,
-        "AST-025": 14,
-        "AST-010": 13
+        "AST-020": 220
       }
     },
     {
@@ -5322,20 +5293,17 @@
       "actual_factor": 1.1764705882352942,
       "metrics": {
         "used_trees": 1000,
-        "pm25_reduction_area_mean": 0.10593947607427287,
-        "cooling_c_area_mean": 0.04106098959707646,
-        "pm25_reduction_population_mean": 0.13331084363239806,
-        "co2_tons_year": 22.0,
-        "heuristic_objective": 1162.9751107758732
+        "pm25_reduction_area_mean": 0.10581360155473106,
+        "cooling_c_area_mean": 0.012611523374213804,
+        "pm25_reduction_population_mean": 0.13316542026124198,
+        "co2_tons_year": 21.999999999999996,
+        "heuristic_objective": 878.1324192575862
       },
       "allocation": {
         "AST-033": 260,
-        "AST-023": 251,
-        "AST-008": 251,
-        "AST-020": 115,
-        "AST-027": 61,
-        "AST-025": 31,
-        "AST-010": 31
+        "AST-023": 260,
+        "AST-008": 260,
+        "AST-020": 220
       }
     },
     {
@@ -5345,20 +5313,17 @@
       "actual_factor": 0.8,
       "metrics": {
         "used_trees": 1000,
-        "pm25_reduction_area_mean": 0.0722954878811622,
-        "cooling_c_area_mean": 0.0284223967474662,
-        "pm25_reduction_population_mean": 0.09112679013015726,
-        "co2_tons_year": 18.700000000000003,
-        "heuristic_objective": 835.1663799418101
+        "pm25_reduction_area_mean": 0.07227812290396593,
+        "cooling_c_area_mean": 0.008575835894465386,
+        "pm25_reduction_population_mean": 0.09096150249188588,
+        "co2_tons_year": 18.7,
+        "heuristic_objective": 635.562418062818
       },
       "allocation": {
         "AST-033": 260,
         "AST-023": 260,
         "AST-008": 260,
-        "AST-020": 140,
-        "AST-027": 58,
-        "AST-025": 11,
-        "AST-010": 11
+        "AST-020": 220
       }
     },
     {
@@ -5368,20 +5333,17 @@
       "actual_factor": 1.2,
       "metrics": {
         "used_trees": 1000,
-        "pm25_reduction_area_mean": 0.1080425009575111,
-        "cooling_c_area_mean": 0.041883088911275006,
-        "pm25_reduction_population_mean": 0.13592015062634422,
-        "co2_tons_year": 18.700000000000003,
-        "heuristic_objective": 1148.8753543040161
+        "pm25_reduction_area_mean": 0.10789951433709527,
+        "cooling_c_area_mean": 0.012863753841698076,
+        "pm25_reduction_population_mean": 0.13579050636672002,
+        "co2_tons_year": 18.7,
+        "heuristic_objective": 858.7515151558466
       },
       "allocation": {
         "AST-033": 260,
-        "AST-023": 246,
-        "AST-008": 246,
-        "AST-020": 115,
-        "AST-027": 63,
-        "AST-025": 35,
-        "AST-010": 35
+        "AST-023": 260,
+        "AST-008": 260,
+        "AST-020": 220
       }
     },
     {
@@ -5391,20 +5353,17 @@
       "actual_factor": 0.8000000000000002,
       "metrics": {
         "used_trees": 1000,
-        "pm25_reduction_area_mean": 0.07230909669395982,
-        "cooling_c_area_mean": 0.03516137718165087,
-        "pm25_reduction_population_mean": 0.09105393368775956,
-        "co2_tons_year": 18.700000000000003,
-        "heuristic_objective": 902.7169737802496
+        "pm25_reduction_area_mean": 0.07227812290396593,
+        "cooling_c_area_mean": 0.009642612335627083,
+        "pm25_reduction_population_mean": 0.09096150249188588,
+        "co2_tons_year": 18.7,
+        "heuristic_objective": 646.336047420784
       },
       "allocation": {
         "AST-033": 260,
         "AST-023": 260,
         "AST-008": 260,
-        "AST-020": 118,
-        "AST-027": 58,
-        "AST-025": 22,
-        "AST-010": 22
+        "AST-020": 220
       }
     },
     {
@@ -5414,20 +5373,17 @@
       "actual_factor": 1.2,
       "metrics": {
         "used_trees": 1000,
-        "pm25_reduction_area_mean": 0.10800908199133623,
-        "cooling_c_area_mean": 0.03515780708664436,
-        "pm25_reduction_population_mean": 0.13598932535893074,
+        "pm25_reduction_area_mean": 0.10789951433709527,
+        "cooling_c_area_mean": 0.011517791315124213,
+        "pm25_reduction_population_mean": 0.13579050636672002,
         "co2_tons_year": 18.7,
-        "heuristic_objective": 1082.7086149710708
+        "heuristic_objective": 845.1583190263677
       },
       "allocation": {
         "AST-033": 260,
         "AST-023": 260,
         "AST-008": 260,
-        "AST-020": 121,
-        "AST-027": 55,
-        "AST-025": 22,
-        "AST-010": 22
+        "AST-020": 220
       }
     },
     {
@@ -5437,20 +5393,17 @@
       "actual_factor": 0.8,
       "metrics": {
         "used_trees": 1000,
-        "pm25_reduction_area_mean": 0.07230909669395982,
-        "cooling_c_area_mean": 0.03516137718165087,
-        "pm25_reduction_population_mean": 0.09105393368775956,
-        "co2_tons_year": 18.700000000000003,
-        "heuristic_objective": 902.7169737802496
+        "pm25_reduction_area_mean": 0.07227812290396593,
+        "cooling_c_area_mean": 0.010719794868081734,
+        "pm25_reduction_population_mean": 0.09096150249188588,
+        "co2_tons_year": 18.7,
+        "heuristic_objective": 657.2147703731804
       },
       "allocation": {
         "AST-033": 260,
         "AST-023": 260,
         "AST-008": 260,
-        "AST-020": 118,
-        "AST-027": 58,
-        "AST-025": 22,
-        "AST-010": 22
+        "AST-020": 220
       }
     },
     {
@@ -5460,20 +5413,17 @@
       "actual_factor": 1.2,
       "metrics": {
         "used_trees": 1000,
-        "pm25_reduction_area_mean": 0.10800908199133623,
-        "cooling_c_area_mean": 0.03515780708664436,
-        "pm25_reduction_population_mean": 0.13598932535893074,
+        "pm25_reduction_area_mean": 0.10789951433709527,
+        "cooling_c_area_mean": 0.010719794868081734,
+        "pm25_reduction_population_mean": 0.13579050636672002,
         "co2_tons_year": 18.7,
-        "heuristic_objective": 1082.7086149710708
+        "heuristic_objective": 837.0991628454842
       },
       "allocation": {
         "AST-033": 260,
         "AST-023": 260,
         "AST-008": 260,
-        "AST-020": 121,
-        "AST-027": 55,
-        "AST-025": 22,
-        "AST-010": 22
+        "AST-020": 220
       }
     },
     {
@@ -5483,20 +5433,17 @@
       "actual_factor": 0.8,
       "metrics": {
         "used_trees": 1000,
-        "pm25_reduction_area_mean": 0.09019879213837875,
-        "cooling_c_area_mean": 0.03516271434415219,
-        "pm25_reduction_population_mean": 0.11356047895061407,
-        "co2_tons_year": 14.959999999999999,
-        "heuristic_objective": 956.168873637743
+        "pm25_reduction_area_mean": 0.09013161148925537,
+        "cooling_c_area_mean": 0.010719794868081734,
+        "pm25_reduction_population_mean": 0.11342988055894462,
+        "co2_tons_year": 14.96,
+        "heuristic_objective": 710.5832080534369
       },
       "allocation": {
         "AST-033": 260,
         "AST-023": 260,
         "AST-008": 260,
-        "AST-020": 118,
-        "AST-027": 56,
-        "AST-025": 23,
-        "AST-010": 23
+        "AST-020": 220
       }
     },
     {
@@ -5506,20 +5453,17 @@
       "actual_factor": 1.2,
       "metrics": {
         "used_trees": 1000,
-        "pm25_reduction_area_mean": 0.09019257680146023,
-        "cooling_c_area_mean": 0.03515382661822824,
-        "pm25_reduction_population_mean": 0.1135933661915214,
+        "pm25_reduction_area_mean": 0.09013161148925537,
+        "cooling_c_area_mean": 0.010719794868081734,
+        "pm25_reduction_population_mean": 0.11342988055894462,
         "co2_tons_year": 22.439999999999998,
-        "heuristic_objective": 1029.6406816466083
+        "heuristic_objective": 784.1633718943685
       },
       "allocation": {
         "AST-033": 260,
         "AST-023": 260,
         "AST-008": 260,
-        "AST-020": 122,
-        "AST-027": 58,
-        "AST-025": 20,
-        "AST-010": 20
+        "AST-020": 220
       }
     },
     {
@@ -5529,20 +5473,17 @@
       "actual_factor": 0.8,
       "metrics": {
         "used_trees": 1000,
-        "pm25_reduction_area_mean": 0.09019142756998484,
-        "cooling_c_area_mean": 0.028115121385684595,
-        "pm25_reduction_population_mean": 0.11359217987404437,
+        "pm25_reduction_area_mean": 0.09013161148925537,
+        "cooling_c_area_mean": 0.008575835894465386,
+        "pm25_reduction_population_mean": 0.11342988055894462,
         "co2_tons_year": 18.7,
-        "heuristic_objective": 922.0281672110793
+        "heuristic_objective": 725.7209376635403
       },
       "allocation": {
         "AST-033": 260,
         "AST-023": 260,
         "AST-008": 260,
-        "AST-020": 128,
-        "AST-027": 55,
-        "AST-025": 19,
-        "AST-010": 18
+        "AST-020": 220
       }
     },
     {
@@ -5552,20 +5493,17 @@
       "actual_factor": 1.2,
       "metrics": {
         "used_trees": 1000,
-        "pm25_reduction_area_mean": 0.09019916762974056,
-        "cooling_c_area_mean": 0.04220216856832798,
-        "pm25_reduction_population_mean": 0.1135607876829135,
-        "co2_tons_year": 18.700000000000003,
-        "heuristic_objective": 1063.7920227782715
+        "pm25_reduction_area_mean": 0.09013161148925537,
+        "cooling_c_area_mean": 0.01286375384169808,
+        "pm25_reduction_population_mean": 0.11342988055894462,
+        "co2_tons_year": 18.7,
+        "heuristic_objective": 769.0256422842652
       },
       "allocation": {
         "AST-033": 260,
         "AST-023": 260,
         "AST-008": 260,
-        "AST-020": 114,
-        "AST-027": 58,
-        "AST-025": 24,
-        "AST-010": 24
+        "AST-020": 220
       }
     }
   ]

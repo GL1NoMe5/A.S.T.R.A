@@ -16,15 +16,22 @@ SPECIES = {
     "poplar": {"label": "Тополь", "crown_m2": 35.0, "lai": 3.0, "deposition_m_s": 0.0018,
                "survival": 0.80, "annual_co2_kg": 28.0, "cooling_max_c": 5.0},
 }
+SUMMER_DAY = {"air_temp_c": 28.0, "surface_temp_before": 38.0}
 METHODOLOGY = {
-    "version": "scenario-v1", "parameter_kind": "illustrative_assumptions_not_astana_calibration",
+    "version": "scenario-v2", "parameter_kind": "illustrative_assumptions_not_astana_calibration",
     "mixing_height_m": 20, "residence_seconds": 3600, "maturity_years": 10,
     "deposition_basis": "F = Vd × C × leaf area; scenario box-model concentration response",
     "sources": ["https://www.itreetools.org/eco/resources/iTree_Eco_Dry_Deposition_Model_Descriptions.pdf",
                 "https://research.fs.usda.gov/treesearch/46254",
+                "https://doi.org/10.2134/jeq2015.02.0097",
                 "https://www.epa.gov/heatislands/benefits-trees-and-vegetation"],
     "note": "Источники обосновывают механизмы; численные коэффициенты пород — сценарные допущения, не измерения Астаны",
-    "baseline_kind": "same_sites_frozen_weather_no_new_planting",
+    "baseline_kind": "same_sites_same_scenario_no_new_planting",
+    "thermal_model": {
+        "kind": "area_mean_shade_of_surface_excess", "summer_day": SUMMER_DAY,
+        "canopy_extinction": 0.5, "leaf_fraction_temp_range_c": [0, 20],
+        "cold_leaf_fraction": {"pine": 0.6, "elm": 0.12, "poplar": 0.12},
+    },
     "summary_domain": "area_weighted_planted_sites_only",
     "allocation_policy": {
         "kind": "heuristic_not_universal_ecological_optimum", "max_selected_sites": 10,
@@ -34,7 +41,13 @@ METHODOLOGY = {
 }
 
 
-def ecological_effect(zone, reading, trees, species, years):
+def thermal_conditions(reading, thermal_scenario):
+    if thermal_scenario == "summer_day":
+        return SUMMER_DAY["air_temp_c"], SUMMER_DAY["surface_temp_before"]
+    return reading["air_temp_c"], reading["surface_temp_c"]
+
+
+def ecological_effect(zone, reading, trees, species, years, thermal_scenario="current_weather"):
     """Dimensionally explicit box model; does not model urban street-canyon CFD."""
     p = SPECIES[species]
     growth = min(1.0, years / 10)
@@ -47,14 +60,21 @@ def ecological_effect(zone, reading, trees, species, years):
     exponent = p["deposition_m_s"] * leaf_area * residence / (zone["area_m2"] * 20)
     fraction = min(0.35, 1 - math.exp(-exponent))
     pm = reading["pm25"]
-    shade_fraction = canopy / zone["area_m2"]
-    heat_factor = min(1, max(0, (reading["air_temp_c"] - 10) / 20))
-    cooling = p["cooling_max_c"] * (1 - math.exp(-3 * shade_fraction)) * heat_factor
+    air_temp, surface_temp = thermal_conditions(reading, thermal_scenario)
+    # Intercepted light and extra crown coverage scale the average over the whole site.
+    thermal = METHODOLOGY["thermal_model"]
+    cold_leaf = thermal["cold_leaf_fraction"][species]
+    low, high = thermal["leaf_fraction_temp_range_c"]
+    foliage = cold_leaf + (1 - cold_leaf) * min(1.0, max(0.0, (air_temp - low) / (high - low)))
+    interception = -math.expm1(-thermal["canopy_extinction"] * p["lai"] * foliage)
+    excess = max(0.0, surface_temp - air_temp)
+    cooling = canopy / zone["area_m2"] * interception * min(excess, p["cooling_max_c"])
     return {"trees": trees, "surviving_trees": surviving, "canopy_m2": canopy,
             "pm25_before": pm, "pm25_after": pm * (1 - fraction),
             "pm25_reduction": pm * fraction, "pm25_reduction_pct": fraction * 100,
-            "surface_temp_before": reading["surface_temp_c"],
-            "surface_temp_after": reading["surface_temp_c"] - cooling,
+            "thermal_air_temp_c": air_temp, "site_air_temp_c": reading["air_temp_c"],
+            "site_surface_temp_c": reading["surface_temp_c"],
+            "surface_temp_before": surface_temp, "surface_temp_after": surface_temp - cooling,
             "cooling_c": cooling,
             "co2_tons_year": surviving * p["annual_co2_kg"] * growth / 1000}
 
@@ -66,7 +86,8 @@ def select_sites(request: OptimizeRequest, zones: list[dict], latest: dict):
     scores = {}
     for z in candidates:
         r = latest[z["id"]]
-        heat = max(0, r["surface_temp_c"] - 25)
+        _, surface_temp = thermal_conditions(r, request.thermal_scenario)
+        heat = max(0, surface_temp - 25)
         scores[z["id"]] = (r["predicted_pm25"] + 2 * heat + r["predicted_esi"] / 5) * (
             1 - z["ndvi"]) * math.sqrt(z["population"] / 1000)
     # A proximity bonus encourages adjacent interventions without pretending to
@@ -82,7 +103,7 @@ def select_sites(request: OptimizeRequest, zones: list[dict], latest: dict):
         r = latest[choice["id"]]
         selection_context[choice["id"]] = {
             "predicted_pm25": r["predicted_pm25"], "predicted_esi": r["predicted_esi"],
-            "heat_above_25_c": max(0, r["surface_temp_c"] - 25),
+            "heat_above_25_c": max(0, thermal_conditions(r, request.thermal_scenario)[1] - 25),
             "selection_rank": len(selected) + 1,
             "proximity_bonus_pct": 12 * max(
                 (math.exp(-distance_m(choice, s) / 1200) for s in selected), default=0),
@@ -103,8 +124,8 @@ def optimize(request: OptimizeRequest, zones: list[dict], latest: dict, backgrou
             if n >= z["planting_capacity"]:
                 continue
             r = latest[z["id"]]
-            a = ecological_effect(z, r, n, request.species, request.horizon_years)
-            b = ecological_effect(z, r, n + 1, request.species, request.horizon_years)
+            a = ecological_effect(z, r, n, request.species, request.horizon_years, request.thermal_scenario)
+            b = ecological_effect(z, r, n + 1, request.species, request.horizon_years, request.thermal_scenario)
             gain = (b["pm25_reduction"] - a["pm25_reduction"] +
                     2 * (b["cooling_c"] - a["cooling_c"]) +
                     0.1 * (b["co2_tons_year"] - a["co2_tons_year"])) * scores[z["id"]]
@@ -117,7 +138,8 @@ def optimize(request: OptimizeRequest, zones: list[dict], latest: dict, backgrou
     for z in selected:
         n = allocations[z["id"]]
         if n:
-            effect = ecological_effect(z, latest[z["id"]], n, request.species, request.horizon_years)
+            effect = ecological_effect(z, latest[z["id"]], n, request.species, request.horizon_years,
+                                       request.thermal_scenario)
             output.append({**z, **effect, "priority_score": scores[z["id"]],
                            "priority_inputs": selection_context[z["id"]],
                            "population_covered": z["population"]})
@@ -150,6 +172,7 @@ def optimize(request: OptimizeRequest, zones: list[dict], latest: dict, backgrou
                       yearly_care + request.annual_platform_cost_kzt)},
         "methodology": {**deepcopy(METHODOLOGY), "species_parameters": deepcopy(SPECIES[request.species]),
                         "sensitivity_factors": [0.5, 1.5], "forecast_policy": deepcopy(FORECAST_POLICY)},
-        "note": FORECAST_POLICY["note"] + " Эффект через заданное число лет при текущем погодном фоне; "
-                "зоны, население и коэффициенты сценарные.",
+        "note": FORECAST_POLICY["note"] + " Загрязнение рассчитывается при исходном погодном фоне. "
+                "Для поверхности используется выбранный температурный сценарий. "
+                "Зоны, население и коэффициенты сценарные.",
     }

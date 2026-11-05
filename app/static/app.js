@@ -257,9 +257,19 @@ function resultZoneCell(zone) {
   cell.append(details);
   return cell;
 }
+function thermalCondition(plan) {
+  switch (plan.request.thermal_scenario) {
+    case 'summer_day': return 'summer';
+    case 'current_weather': return 'current';
+    default: return 'legacy';
+  }
+}
+
+function thermalLabel(plan) { return t('thermal.' + thermalCondition(plan)); }
+
 function renderResultContext(result) {
   const s = result.summary, parameters = result.methodology?.species_parameters;
-  setText('result-scenario-note', t('result.scenario', {years: result.horizon_years}));
+  setText('result-scenario-note', t(thermalCondition(result) === 'summer' ? 'thermal.summerNote' : 'result.scenario', {years: result.horizon_years}));
   const rows = [
     ['PM2.5', s.pm25_before, s.pm25_after, t('d18')],
     [t('d19'), s.surface_temp_before, s.surface_temp_after, '°C']
@@ -353,10 +363,7 @@ function renderResult(result,{activate=true,scroll=true}={}) {
   const s = result.summary, cost = result.costs;
   $('results').hidden = false;
   $('result-description').textContent = t("d85",{"0":(result.zones.length),"1":(plural(result.zones.length,[t("d79"),t("d80"),t("d81")])),"2":(fmt(result.used_trees,0)),"3":(fmt(result.unused_trees,0)),"4":(result.horizon_years),"5":(plural(result.horizon_years,[t("d82"),t("d83"),t("d84")])),"6":(fmt(cost.first_year_total,0)),"7":(fmt(cost.horizon_total,0)),"8":(localTime(result.created_at))});
-  const airTemp = result.background?.weather?.values?.air_temp_c;
-  const coolingDetail = s.cooling_c === 0 && Number.isFinite(airTemp) && airTemp <= 10
-    ? t('result.coldCooling', {temp: fmt(airTemp, 1)})
-    : t('d89', {0: s.cooling_c_range.map(effectAmount).join('–')});
+  const coolingDetail = t('thermal.' + thermalCondition(result) + 'Detail');
   $('result-kpis').replaceChildren(
     resultCard(t("d86"),effectAmount(s.pm25_reduction),t("d18"),t("d87",{"0":(fmt(s.pm25_reduction_pct,2)),"1":(s.pm25_reduction_range.map(effectAmount).join('–'))})),
     resultCard(t("d88"),effectAmount(s.cooling_c),'°C',coolingDetail),
@@ -371,7 +378,7 @@ function renderResult(result,{activate=true,scroll=true}={}) {
 async function runOptimization(event) {
   event.preventDefault(); const version = ++optimizationVersion;
   $('optimize-button').disabled = true; $('optimization-status').textContent = t("d98");
-  const body = {budget_trees:Number($('trees').value),species:$('species').value,target_district:$('district').value,horizon_years:Number($('horizon').value),sapling_cost_kzt:Number($('sapling-cost').value),planting_cost_kzt:Number($('planting-cost').value),annual_care_cost_kzt:Number($('care-cost').value),pilot_equipment_cost_kzt:Number($('equipment-cost').value),annual_platform_cost_kzt:Number($('platform-cost').value)};
+  const body = {thermal_scenario:$('thermal-scenario').value,budget_trees:Number($('trees').value),species:$('species').value,target_district:$('district').value,horizon_years:Number($('horizon').value),sapling_cost_kzt:Number($('sapling-cost').value),planting_cost_kzt:Number($('planting-cost').value),annual_care_cost_kzt:Number($('care-cost').value),pilot_equipment_cost_kzt:Number($('equipment-cost').value),annual_platform_cost_kzt:Number($('platform-cost').value)};
   try { const result = await api('/api/v1/optimize/greening',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}); if(version!==optimizationVersion)return;renderResult(result);state.savedLoaded=false;$('optimization-status').textContent=t("d99",{"0":(result.zones.length),"1":(plural(result.zones.length,[t("d79"),t("d80"),t("d81")]))}); }
   catch(error){$('optimization-status').textContent=error.message;toast(error.message);}finally{$('optimize-button').disabled=false;}
 }
@@ -389,6 +396,7 @@ function openReport(result=state.result) {
 }
 
 function applyParameters(request) {
+  $('thermal-scenario').value = request.thermal_scenario || 'current_weather';
   const fields={budget_trees:'trees',species:'species',target_district:'district',horizon_years:'horizon',sapling_cost_kzt:'sapling-cost',planting_cost_kzt:'planting-cost',annual_care_cost_kzt:'care-cost',pilot_equipment_cost_kzt:'equipment-cost',annual_platform_cost_kzt:'platform-cost'};
   for(const[key,id]of Object.entries(fields))if(request[key]!==undefined)$(id).value=request[key];$('trees').oninput();$('horizon').oninput();
 }
@@ -398,7 +406,15 @@ async function planAction(id,action,button) {
   try{
     const plan=await api(`/api/v1/optimizations/${encodeURIComponent(id)}`);if(version!==state.planSequence)return;
     if(action==='open'){applyParameters(plan.request);renderResult(plan);}
-    if(action==='repeat'){applyParameters(plan.request);state.result=null;$('results').hidden=true;try{sessionStorage.removeItem('astra:last-plan-id');}catch(_){}showView('planning');updateMarkers();$('optimization-status').textContent=t("d102");}
+    if (action === 'repeat') {
+      applyParameters(plan.request);
+      state.result = null;
+      $('results').hidden = true;
+      try { sessionStorage.removeItem('astra:last-plan-id'); } catch (_) {}
+      showView('planning');
+      updateMarkers();
+      $('optimization-status').textContent = t("d102");
+    }
     if(action==='json')downloadResult(plan);if(action==='report')openReport(plan);
   }catch(error){toast(error.message);}finally{button.disabled=false;}
 }
@@ -406,8 +422,12 @@ function renderSavedCard(item) {
   const card=element('article','saved-card'),head=element('div','saved-card-heading');
   head.append(element('h3',null,t("d103",{"0":(speciesLabels[item.request.species]||item.request.species),"1":(fmt(item.used_trees,0))})),element('time',null,localTime(item.created_at)));
   const meta=element('p','saved-card-meta',t("d104",{"0":(districtLabels[item.request.target_district]||item.request.target_district),"1":(item.horizon_years),"2":(plural(item.horizon_years,[t("d82"),t("d83"),t("d84")])),"3":(fmt(item.costs.first_year_total,0))}));
+  meta.append(document.createTextNode(' · ' + thermalLabel(item)));
   const effect=element('p','saved-card-effect',t("d105",{"0":(effectAmount(item.summary.pm25_reduction)),"1":(effectAmount(item.summary.cooling_c))})),actions=element('div','saved-card-actions');
-  for(const[action,label]of[['open',t("d106")],['repeat',t("d107")],['json','JSON'],['report',t("d108")]]){const b=element('button',action==='open'?'primary-button':'secondary-button',label);b.type='button';b.onclick=()=>planAction(item.run_id,action,b);actions.append(b);}
+  const buttons = [['open', t('d106')]];
+  if (thermalCondition(item) !== 'legacy') buttons.push(['repeat', t('d107')]);
+  buttons.push(['json','JSON'], ['report', t('d108')]);
+  for(const[action,label]of buttons){const b=element('button',action==='open'?'primary-button':'secondary-button',label);b.type='button';b.onclick=()=>planAction(item.run_id,action,b);actions.append(b);}
   card.append(head,meta,effect,actions);return card;
 }
 function updateCompareOptions() {
@@ -436,7 +456,7 @@ async function comparePlans() {
 function renderComparison(plans,a=$('compare-a').value,b=$('compare-b').value) {
     const table=element('table','comparison-table'),thead=element('thead'),header=element('tr');
     for(const value of[t("d122"),t("d123"),t("d124")])header.append(element('th',null,value));thead.append(header);table.append(thead);
-    const rows=[[t("d125"),p=>localTime(p.created_at)],[t("d126"),p=>speciesLabels[p.request.species]||p.request.species],[t("d127"),p=>districtLabels[p.request.target_district]||p.request.target_district],[t("d128"),p=>fmt(p.request.budget_trees,0)],[t("d129"),p=>`${fmt(p.used_trees,0)} / ${fmt(p.unused_trees,0)}`],[t("d130"),p=>fmt(p.horizon_years,0)],[t("d131"),p=>fmt(p.costs.first_year_total,0)],[t("d132"),p=>fmt(p.costs.horizon_total,0)],[t("d133"),p=>fmt(p.summary.pm25_before,2)],[t("d134"),p=>fmt(p.summary.pm25_reduction,3)],[t("d135"),p=>fmt(p.summary.cooling_c,3)],[t("d136"),p=>fmt(p.summary.co2_tons_year,2)],[t("d137"),p=>localTime(p.background?.air?.source_time)],[t("d138"),p=>localTime(p.background?.weather?.source_time)]];
+    const rows=[[t("d125"),p=>localTime(p.created_at)],[t("d126"),p=>speciesLabels[p.request.species]||p.request.species],[t("d127"),p=>districtLabels[p.request.target_district]||p.request.target_district],[t("d128"),p=>fmt(p.request.budget_trees,0)],[t("d129"),p=>`${fmt(p.used_trees,0)} / ${fmt(p.unused_trees,0)}`],[t("d130"),p=>fmt(p.horizon_years,0)],[t("thermal.label"),thermalLabel],[t("d131"),p=>fmt(p.costs.first_year_total,0)],[t("d132"),p=>fmt(p.costs.horizon_total,0)],[t("d133"),p=>fmt(p.summary.pm25_before,2)],[t("d134"),p=>fmt(p.summary.pm25_reduction,3)],[t("d135"),p=>fmt(p.summary.cooling_c,3)],[t("d136"),p=>fmt(p.summary.co2_tons_year,2)],[t("d137"),p=>localTime(p.background?.air?.source_time)],[t("d138"),p=>localTime(p.background?.weather?.source_time)]];
     const tbody=element('tbody');for(const[label,value]of rows){const row=element('tr');row.append(element('th',null,label),...plans.map(p=>element('td',null,value(p))));tbody.append(row);}table.append(tbody);
     if($('compare-a').value!==a||$('compare-b').value!==b){setText('plan-comparison',t("d139"));return;}
     $('plan-comparison').replaceChildren(table,element('p','form-note',t("d140")));
@@ -446,6 +466,10 @@ async function restorePlan() {
   const sequence=state.planSequence,version=optimizationVersion;
   try{
     const plan=await api(`/api/v1/optimizations/${encodeURIComponent(id)}`);if(sequence!==state.planSequence||version!==optimizationVersion||state.result)return;
+    if (thermalCondition(plan) === 'legacy') {
+      try { sessionStorage.removeItem('astra:last-plan-id'); } catch (_) {}
+      return;
+    }
     applyParameters(plan.request);renderResult(plan,{activate:!location.hash||location.hash==='#planning',scroll:false});setText('optimization-status',t("d142"));
   }catch(error){if(error.status===404){try{sessionStorage.removeItem('astra:last-plan-id');}catch(_){}setText('optimization-status',t("d143"));}else setText('optimization-status',t("d144",{"0":(error.message)}));}
 }

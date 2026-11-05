@@ -1,6 +1,6 @@
 import asyncio
 from collections import defaultdict
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, nullcontext
 from datetime import timedelta
 import logging
 
@@ -27,11 +27,13 @@ class Storage:
         self.mode = mode
         self.reason = reason
         self.sessions = async_sessionmaker(engine, expire_on_commit=False)
+        # Give a waiting local plan save a turn between telemetry batches.
+        self.writer_gate = asyncio.Lock() if engine.dialect.name == "sqlite" else nullcontext()
         self.network_version = None
 
     @asynccontextmanager
     async def write_session(self):
-        async with self.sessions() as session:
+        async with self.writer_gate, self.sessions() as session:
             if self.engine.dialect.name == "sqlite":
                 # Reserve the single writer before reading deduplication/aggregate
                 # state. busy_timeout can then wait without upgrading a stale read.
@@ -121,7 +123,11 @@ class Storage:
             records = (await session.scalars(
                 select(OptimizationRun).order_by(OptimizationRun.timestamp.desc(), OptimizationRun.id.desc())
                 .limit(limit).offset(offset))).all()
-            items = [{key: record.payload[key] for key in OPTIMIZATION_SUMMARY_KEYS} for record in records]
+            items = [
+                {**{key: record.payload[key] for key in OPTIMIZATION_SUMMARY_KEYS},
+                 "methodology_version": record.payload.get("methodology", {}).get("version")}
+                for record in records
+            ]
         return items, int(total or 0)
 
     async def get_optimization(self, run_id):

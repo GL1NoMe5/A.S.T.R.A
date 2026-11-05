@@ -10,7 +10,7 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from app.core.zones import make_zones
-from app.ml.optimizer import SPECIES, ecological_effect, optimize, select_sites
+from app.ml.optimizer import METHODOLOGY, SPECIES, ecological_effect, optimize, select_sites
 from app.schemas.telemetry import OptimizeRequest
 from app.services.simulator import stress_index
 
@@ -51,7 +51,7 @@ def evaluate(zones, readings, allocation, request):
     pm = cooling = co2 = objective = exposure = 0.0
     for z in zones:
         effect = ecological_effect(z, readings[z['id']], allocation.get(z['id'], 0),
-                                   request.species, request.horizon_years)
+                                   request.species, request.horizon_years, request.thermal_scenario)
         pm += effect['pm25_reduction'] * z['area_m2']
         cooling += effect['cooling_c'] * z['area_m2']
         co2 += effect['co2_tons_year']
@@ -112,7 +112,8 @@ def run():
                 for comparison in ['better', 'equal', 'worse']} for key in keys}
     files = ['app/ml/optimizer.py', 'app/core/zones.py', 'app/core/pilot_sites.json',
              'app/schemas/telemetry.py', 'app/services/simulator.py', 'benchmarks/greening/benchmark.py']
-    return dict(protocol='greening-audit-v1', data_kind='synthetic_fixed_scenarios',
+    return dict(protocol='greening-audit-v1', model_version=METHODOLOGY['version'],
+        thermal_scenario=request.thermal_scenario, data_kind='synthetic_fixed_scenarios',
         forecast_kind='fixed_pm25_and_esi_inputs_not_ml_validation',
         primary_comparator='equal allocation on the same selected sites with capacity limits',
         secondary_comparator='equal allocation across all 40 sites; relaxed site-count constraint',
