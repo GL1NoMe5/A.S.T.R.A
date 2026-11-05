@@ -288,6 +288,23 @@ function effectAmount(value) {
   return value < 0.001 ? `< ${fmt(0.001, 3)}` : fmt(value, 3);
 }
 
+function surfaceDeltaText(zone) {
+  let delta;
+  if (Number.isFinite(zone.surface_temp_before) && Number.isFinite(zone.surface_temp_after)) {
+    delta = zone.surface_temp_after - zone.surface_temp_before;
+  } else if (Number.isFinite(zone.cooling_c)) {
+    delta = -zone.cooling_c;
+  } else {
+    return '—';
+  }
+  if (delta === 0) return '0';
+  const magnitude = Math.abs(delta);
+  const number = magnitude < 0.001
+    ? magnitude.toLocaleString(i18n.locale, {maximumSignificantDigits: 1})
+    : magnitude.toLocaleString(i18n.locale, {maximumFractionDigits: 3});
+  return (delta < 0 ? '−' : '+') + number;
+}
+
 function renderZoneEffect(zone) {
   const row = document.createElement('tr');
   const pm = element('td', 'zone-pm');
@@ -296,7 +313,7 @@ function renderZoneEffect(zone) {
     pm.append(element('small', null, `${fmt(zone.pm25_before, 3)} → ${fmt(zone.pm25_after, 3)}`));
   }
   row.append(resultZoneCell(zone), element('td', null, fmt(zone.trees, 0)), pm,
-    element('td', null, effectAmount(zone.cooling_c)));
+    element('td', null, surfaceDeltaText(zone)));
   return row;
 }
 
