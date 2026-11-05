@@ -120,3 +120,22 @@ body[data-ui-motion=off] :is(.primary-button,.secondary-button,.result-kpi):hove
 .city-notes .network-stat small.esi-explanation{grid-column:1 / -1;font-size:10px;line-height:1.55;max-width:32ch;margin-top:3px}
 
 #overview .kpi p.metric-explanation{font-size:10px;line-height:1.55;margin:9px 0 0;max-width:36ch}
+
+.comparison-values {
+  margin: 0 0 3px;
+  font-size: .875rem;
+  font-variant-numeric: tabular-nums;
+}
+#comparison-chart { height: 200px; }
+.zone-effects-table :is(td, th):not(:first-child) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.zone-effects-table th { white-space: normal; }
+.zone-pm strong, .zone-pm small { display: block; }
+.zone-pm small {
+  color: var(--folio-muted);
+  white-space: nowrap;
+  font-size: .7rem;
+  margin-top: .2rem;
+}

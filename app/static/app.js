@@ -282,22 +282,72 @@ function renderResultContext(result) {
     }));
   }));
 }
+function effectAmount(value) {
+  if (!Number.isFinite(value)) return '—';
+  if (value === 0) return '0';
+  return value < 0.001 ? `< ${fmt(0.001, 3)}` : fmt(value, 3);
+}
+
+function renderZoneEffect(zone) {
+  const row = document.createElement('tr');
+  const pm = element('td', 'zone-pm');
+  pm.append(element('strong', null, effectAmount(zone.pm25_reduction)));
+  if (Number.isFinite(zone.pm25_before) && Number.isFinite(zone.pm25_after)) {
+    pm.append(element('small', null, `${fmt(zone.pm25_before, 3)} → ${fmt(zone.pm25_after, 3)}`));
+  }
+  row.append(resultZoneCell(zone), element('td', null, fmt(zone.trees, 0)), pm,
+    element('td', null, effectAmount(zone.cooling_c)));
+  return row;
+}
+
+function renderPmComparison(summary) {
+  const before = summary.pm25_before, after = summary.pm25_after, unit = t('d18');
+  // Magnify the observed interval, with 1/2/5 ticks and millesimal display precision.
+  const rawStep = Math.max(Math.abs(before - after) / 3, 0.001);
+  const power = 10 ** Math.floor(Math.log10(rawStep));
+  const step = power * [1, 2, 5, 10].find(n => n * power >= rawStep);
+  const firstTick = Math.max(0, Math.floor(Math.min(before, after) / step) - 1);
+  const lastTick = Math.max(firstTick + 2, Math.ceil(Math.max(before, after) / step));
+  const ticks = [];
+  for (let i = firstTick; i <= lastTick; i++) ticks.push(i * step);
+  const digits = Math.max(0, -Math.floor(Math.log10(step)));
+  const label = t('result.pmPair', {before: fmt(before, 3), after: fmt(after, 3), unit});
+  setText('comparison-values', label);
+  const css = getComputedStyle(document.documentElement);
+  const accent = css.getPropertyValue('--chart-pm').trim() || '#42745a';
+  const muted = layout.font.color;
+  const names = [t('d96'), t('d97')];
+  Plotly.react('comparison-chart', [{
+    type: 'scatter', mode: 'markers+lines', x: [before, after], y: [1, 0],
+    line: {color: muted, width: 1.5, dash: 'dot'},
+    marker: {color: [muted, accent], size: 12, symbol: ['circle-open', 'diamond']},
+    text: [before, after].map((value, i) => `${names[i]}: ${fmt(value, 3)} ${unit}`),
+    hovertemplate: '%{text}<extra></extra>'
+  }], {...layout, showlegend: false, margin: {l: 72, r: 22, t: 12, b: 52},
+    xaxis: {...layout.xaxis, range: [(firstTick - 0.3) * step, (lastTick + 0.4) * step], tickvals: ticks,
+      ticktext: ticks.map(v => fmt(v, digits)), title: unit, fixedrange: true},
+    yaxis: {...layout.yaxis, range: [-0.45, 1.45], tickvals: [1, 0], ticktext: names,
+      fixedrange: true, showgrid: false, automargin: true}
+  }, plotConfig);
+}
+
 function renderResult(result,{activate=true,scroll=true}={}) {
   state.result = result;rememberPlan(result.run_id);if(activate)showView('planning');
   const s = result.summary, cost = result.costs;
   $('results').hidden = false;
   $('result-description').textContent = t("d85",{"0":(result.zones.length),"1":(plural(result.zones.length,[t("d79"),t("d80"),t("d81")])),"2":(fmt(result.used_trees,0)),"3":(fmt(result.unused_trees,0)),"4":(result.horizon_years),"5":(plural(result.horizon_years,[t("d82"),t("d83"),t("d84")])),"6":(fmt(cost.first_year_total,0)),"7":(fmt(cost.horizon_total,0)),"8":(localTime(result.created_at))});
+  const airTemp = result.background?.weather?.values?.air_temp_c;
+  const coolingDetail = s.cooling_c === 0 && Number.isFinite(airTemp) && airTemp <= 10
+    ? t('result.coldCooling', {temp: fmt(airTemp, 1)})
+    : t('d89', {0: s.cooling_c_range.map(effectAmount).join('–')});
   $('result-kpis').replaceChildren(
-    resultCard(t("d86"),fmt(s.pm25_reduction,2),t("d18"),t("d87",{"0":(fmt(s.pm25_reduction_pct,1)),"1":(s.pm25_reduction_range.map(v=>fmt(v,2)).join('–'))})),
-    resultCard(t("d88"),fmt(s.cooling_c,2),'°C',t("d89",{"0":(s.cooling_c_range.map(v=>fmt(v,2)).join('–'))})),
+    resultCard(t("d86"),effectAmount(s.pm25_reduction),t("d18"),t("d87",{"0":(fmt(s.pm25_reduction_pct,2)),"1":(s.pm25_reduction_range.map(effectAmount).join('–'))})),
+    resultCard(t("d88"),effectAmount(s.cooling_c),'°C',coolingDetail),
     resultCard(t("d90"),fmt(s.co2_tons_year,2),t("d91"),t("d92",{"0":(result.horizon_years)})),
     resultCard(t("d93"),fmt(s.population_covered,0),t("d94"), t("d95")));
   renderResultContext(result);
-  $('zones-table').replaceChildren(...result.zones.map(z=>{const tr=document.createElement('tr');tr.append(resultZoneCell(z));for(const v of [fmt(z.trees,0),`−${fmt(z.pm25_reduction,2)}`,`−${fmt(z.cooling_c,2)}`]){const td=document.createElement('td');td.textContent=v;tr.append(td);}return tr;}));
-  Plotly.react('comparison-chart',[
-    {type:'bar',name:t("d96"),x:[t("d40")],y:[s.pm25_before],marker:{color:'#bcc7b6'}},
-    {type:'bar',name:t("d97"),x:[t("d40")],y:[s.pm25_after],marker:{color:'#42745a'}}
-  ],{...layout,showlegend:true,barmode:'group',legend:{orientation:'h',y:1.15},margin:{l:45,r:15,t:35,b:40},yaxis:{...layout.yaxis,title:t("d18")}},plotConfig);
+  $('zones-table').replaceChildren(...result.zones.map(renderZoneEffect));
+  renderPmComparison(s);
   updateMarkers();
   if(scroll)requestAnimationFrame(()=>$('results').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'}));
 }
@@ -442,7 +492,8 @@ function syncChartTheme() {
   const css=getComputedStyle(document.documentElement),text=css.getPropertyValue('--chart-text').trim()||'#657266',grid=css.getPropertyValue('--chart-grid').trim()||'#dfe4da';
   layout.font.color=text;layout.xaxis.gridcolor=grid;layout.yaxis.gridcolor=grid;
   if(!window.Plotly)return;
-  for(const id of ['telemetry-chart','comparison-chart','shap-chart'])if($(id)?._fullLayout)Plotly.relayout(id,{'font.color':text,'xaxis.gridcolor':grid,'yaxis.gridcolor':grid});
+  if(state.result && $('comparison-chart')?._fullLayout)renderPmComparison(state.result.summary);
+  for(const id of ['telemetry-chart','shap-chart'])if($(id)?._fullLayout)Plotly.relayout(id,{'font.color':text,'xaxis.gridcolor':grid,'yaxis.gridcolor':grid});
   if($('telemetry-chart')?._fullLayout)Plotly.restyle('telemetry-chart',{'line.color':[css.getPropertyValue('--chart-pm').trim()||'#42745a',css.getPropertyValue('--chart-temp').trim()||'#b98b4d']});
 }
 function refreshLanguage() {
