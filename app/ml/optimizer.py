@@ -34,7 +34,8 @@ METHODOLOGY = {
     },
     "summary_domain": "area_weighted_planted_sites_only",
     "allocation_policy": {
-        "kind": "heuristic_not_universal_ecological_optimum", "max_selected_sites": 10,
+        "id": "capacity_expansion_v1", "kind": "heuristic_not_universal_ecological_optimum",
+        "initial_site_pool": 10, "expand_to_budget": True,
         "marginal_weights": {"pm25_reduction": 1, "cooling_c": 2, "co2_tons_year": 0.1},
         "tradeoff": "Higher heuristic score does not guarantee higher cooling or every individual benefit",
     },
@@ -80,7 +81,7 @@ def ecological_effect(zone, reading, trees, species, years, thermal_scenario="cu
 
 
 def select_sites(request: OptimizeRequest, zones: list[dict], latest: dict):
-    """Return the fixed candidate pool and selection evidence before allocation."""
+    """Keep the initial priority pool, expanding it until the budget can fit."""
     candidates = [z for z in zones if (request.target_district == "all" or z["district"] == request.target_district)
                   and z["id"] in latest and z["planting_capacity"] > 0]
     scores = {}
@@ -95,7 +96,9 @@ def select_sites(request: OptimizeRequest, zones: list[dict], latest: dict):
     selected = []
     selection_context = {}
     remaining = list(candidates)
-    while remaining and len(selected) < 10:
+    selected_capacity = 0
+    initial_pool = METHODOLOGY["allocation_policy"]["initial_site_pool"]
+    while remaining and (len(selected) < initial_pool or selected_capacity < request.budget_trees):
         def priority(z):
             proximity = max((math.exp(-distance_m(z, s) / 1200) for s in selected), default=0)
             return scores[z["id"]] * (1 + 0.12 * proximity)
@@ -109,6 +112,7 @@ def select_sites(request: OptimizeRequest, zones: list[dict], latest: dict):
                 (math.exp(-distance_m(choice, s) / 1200) for s in selected), default=0),
         }
         selected.append(choice)
+        selected_capacity += choice["planting_capacity"]
         remaining.remove(choice)
     return selected, scores, selection_context
 
@@ -116,7 +120,7 @@ def select_sites(request: OptimizeRequest, zones: list[dict], latest: dict):
 def optimize(request: OptimizeRequest, zones: list[dict], latest: dict, background: dict) -> dict:
     selected, scores, selection_context = select_sites(request, zones, latest)
     allocations = {z["id"]: 0 for z in selected}
-    # Single-tree marginal allocation is bounded at 10,000 × 10 evaluations.
+    # A larger budget can use more than ten sites, up to the eligible catalog.
     for _ in range(request.budget_trees):
         best, best_gain = None, -1.0
         for z in selected:
@@ -144,6 +148,9 @@ def optimize(request: OptimizeRequest, zones: list[dict], latest: dict, backgrou
                            "priority_inputs": selection_context[z["id"]],
                            "population_covered": z["population"]})
     used = sum(z["trees"] for z in output)
+    eligible = [z for z in zones if z["id"] in scores]
+    unused_reason = None if used == request.budget_trees else (
+        "territory_capacity" if eligible else "no_eligible_sites")
     population = sum(z["population_covered"] for z in output)
     weight = sum(z["area_m2"] for z in output)
     avg = lambda key: sum(z[key] * z["area_m2"] for z in output) / weight if weight else 0
@@ -154,6 +161,11 @@ def optimize(request: OptimizeRequest, zones: list[dict], latest: dict, backgrou
     return {
         "run_id": str(uuid4()), "created_at": utcnow().isoformat(), "request": request.model_dump(),
         "zones": output, "used_trees": used, "unused_trees": request.budget_trees - used,
+        "allocation": {"eligible_sites": len(eligible),
+                       "eligible_capacity_trees": sum(z["planting_capacity"] for z in eligible),
+                       "selected_sites": len(selected),
+                       "selected_capacity_trees": sum(z["planting_capacity"] for z in selected),
+                       "unused_reason": unused_reason},
         "horizon_years": request.horizon_years, "background": deepcopy(background),
         "summary": {"pm25_before": avg("pm25_before"), "pm25_after": avg("pm25_after"),
                     "pm25_reduction": reduction,

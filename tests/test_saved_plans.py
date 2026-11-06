@@ -15,10 +15,18 @@ def test_saved_plan_list_pagination_and_validation(tmp_path):
         assert empty == {"items": [], "total": 0, "limit": 20, "offset": 0, "retention_days": 30}
         originals = []
         for parameters, scenario in [({"budget_trees": 100}, "current_weather"),
-                                     ({"budget_trees": 200, "thermal_scenario": "summer_day"}, "summer_day")]:
+                                     ({"budget_trees": 10000, "thermal_scenario": "summer_day"}, "summer_day")]:
             response = client.post("/api/v1/optimize/greening", json=parameters)
             assert response.status_code == 200
             assert response.json()["request"]["thermal_scenario"] == scenario
+            if parameters["budget_trees"] == 10000:
+                plan = response.json()
+                assert plan["used_trees"] == 10000 and plan["unused_trees"] == 0
+                assert len(plan["zones"]) > 10
+                assert plan["allocation"]["unused_reason"] is None
+                assert plan["summary"]["pm25_reduction"] > 0
+                assert plan["summary"]["cooling_c"] > 0
+                assert client.get(f"/api/v1/optimizations/{plan['run_id']}").json() == plan
             originals.append(response.json())
 
         expected_keys = {"run_id", "created_at", "request", "used_trees", "unused_trees",

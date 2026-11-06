@@ -5,15 +5,15 @@
   "data_kind": "synthetic_fixed_scenarios",
   "forecast_kind": "fixed_pm25_and_esi_inputs_not_ml_validation",
   "primary_comparator": "equal allocation on the same selected sites with capacity limits",
-  "secondary_comparator": "equal allocation across all 40 sites; relaxed site-count constraint",
+  "secondary_comparator": "equal allocation across all 40 sites; no priority preselection",
   "averaging_domain": "all eligible zones; zero planting included",
   "source_sha256": {
-    "app/ml/optimizer.py": "8d4857821f29e14f81d138967b865cafd5ff52071ac6fbde4754856cccdcc6d0",
+    "app/ml/optimizer.py": "fc8172129c8374da5138329569077df73f0534bc0a07a1760abbc819fbcb8a12",
     "app/core/zones.py": "b31b06f7714bb14759103e2cad2afabda53cabac024331a61f1d4fee82b413c0",
     "app/core/pilot_sites.json": "3224ae4a506186dc9c2f9cf869e8e16fe625837f5250ea68d7db9f47007cc9ad",
     "app/schemas/telemetry.py": "ac156cf7bf99824b9508e4f89cb6c1fa7955662304f2d5c1c20b4a5f0266866e",
     "app/services/simulator.py": "ca806d5721750bc0b60d106743fca3972a63a6e25655b27ca396ca9328238c7d",
-    "benchmarks/greening/benchmark.py": "bb99b93a54ebc20f1373b3f7380a7c4df0a4ed8754af99f434107ad89fa0994e"
+    "benchmarks/greening/benchmark.py": "de121f2d541b25729db5e79c7145e633d7915462f4061888a41a08c4d6753f4f"
   },
   "totals": {
     "equal_same_sites": {

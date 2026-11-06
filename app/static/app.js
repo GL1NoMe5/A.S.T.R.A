@@ -363,6 +363,12 @@ function renderResult(result,{activate=true,scroll=true}={}) {
   const s = result.summary, cost = result.costs;
   $('results').hidden = false;
   $('result-description').textContent = t("d85",{"0":(result.zones.length),"1":(plural(result.zones.length,[t("d79"),t("d80"),t("d81")])),"2":(fmt(result.used_trees,0)),"3":(fmt(result.unused_trees,0)),"4":(result.horizon_years),"5":(plural(result.horizon_years,[t("d82"),t("d83"),t("d84")])),"6":(fmt(cost.first_year_total,0)),"7":(fmt(cost.horizon_total,0)),"8":(localTime(result.created_at))});
+  if (result.unused_trees > 0) {
+    const reason = result.allocation?.unused_reason;
+    const key = reason === 'territory_capacity' ? 'result.unusedTerritory'
+      : reason === 'no_eligible_sites' ? 'result.unusedNoSites' : 'result.unusedLegacy';
+    $('result-description').textContent += ' ' + t(key);
+  }
   const coolingDetail = t('thermal.' + thermalCondition(result) + 'Detail');
   $('result-kpis').replaceChildren(
     resultCard(t("d86"),effectAmount(s.pm25_reduction),t("d18"),t("d87",{"0":(fmt(s.pm25_reduction_pct,2)),"1":(s.pm25_reduction_range.map(effectAmount).join('–'))})),

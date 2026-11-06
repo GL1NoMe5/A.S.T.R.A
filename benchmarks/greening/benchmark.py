@@ -76,9 +76,9 @@ def run():
         selected, _, _ = select_sites(request, zones, readings)
         result = optimize(request, zones, readings, {})
         allocation = {z['id']: z['trees'] for z in result['zones']}
-        # Primary comparator shares both the 10-site constraint and exact sites.
+        # Primary comparator uses the same budget-sized candidate pool and sites.
         equal = equal_allocation(selected, budget)
-        # Secondary reference deliberately relaxes the 10-site constraint.
+        # Secondary reference uses all eligible sites without priority preselection.
         uniform_city = equal_allocation(zones, budget)
         cases.append(dict(weather=label, species=species, budget=budget, years=years,
             eligible_ids=[z['id'] for z in zones], selected_ids=[z['id'] for z in selected],
@@ -116,7 +116,7 @@ def run():
         thermal_scenario=request.thermal_scenario, data_kind='synthetic_fixed_scenarios',
         forecast_kind='fixed_pm25_and_esi_inputs_not_ml_validation',
         primary_comparator='equal allocation on the same selected sites with capacity limits',
-        secondary_comparator='equal allocation across all 40 sites; relaxed site-count constraint',
+        secondary_comparator='equal allocation across all 40 sites; no priority preselection',
         averaging_domain='all eligible zones; zero planting included',
         source_sha256={p: sha256((ROOT / p).read_bytes()).hexdigest() for p in files},
         totals={ref: tally(ref) for ref in ['equal_same_sites', 'equal_all_sites']},

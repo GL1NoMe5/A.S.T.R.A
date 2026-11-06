@@ -834,9 +834,13 @@
 
     doc.getElementById("dec-unused-trees").textContent = `${formatInt(data.unused_trees)} шт.`;
     doc.getElementById("dec-unused-sub").textContent =
-      data.unused_trees > 0
-        ? "Остаток при ограничении расчётной ёмкости выбранных зон"
-        : "Бюджет посадки распределён полностью";
+      data.unused_trees === 0
+        ? "Бюджет посадки распределён полностью"
+        : data.allocation?.unused_reason === "territory_capacity"
+          ? "Расчётная вместимость выбранной территории исчерпана. Для оставшихся деревьев нужны дополнительные участки."
+          : data.allocation?.unused_reason === "no_eligible_sites"
+            ? "Нет доступных участков с данными для расчёта. Выберите другую территорию или дождитесь обновления данных."
+            : "Остаток сохранённого плана с ограниченным числом участков. Новый расчёт может задействовать больше участков.";
 
     doc.getElementById("dec-zones-count").textContent = `${formatInt(zones.length)} ${pluralizeRu(
       zones.length,

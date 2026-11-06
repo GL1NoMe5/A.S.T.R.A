@@ -339,3 +339,36 @@ test("user strings remain literal text and only HTTP(S) sources become links", (
   assert.equal(links[0].href, "https://example.org/source");
   assert.equal(links[0].rel, "noopener noreferrer");
 });
+
+
+test("expanded plans render every site and distinguish capacity from a legacy limit", () => {
+  const report = bootReport();
+  const plan = cloneSample();
+  plan.zones = Array.from({length: 24}, (_, index) => ({...plan.zones[0],
+    id: `expanded-${index}`, name: `Участок ${index + 1}`}));
+  plan.used_trees = 10000;
+  plan.unused_trees = 0;
+  plan.request.budget_trees = 10000;
+  plan.summary.pm25_reduction = 0.512;
+  plan.summary.cooling_c = 0.367;
+  plan.summary.co2_tons_year = 187;
+  plan.costs.first_year_total = 281800000;
+  report.renderReportDom(plan, report.docMock);
+  assert.equal(report.nodes.get("zones-tbody").children.length, 24);
+  assert.match(report.nodes.get("zones-tbody").textContent, /Участок 24/);
+  assert.equal(report.nodes.get("eco-pm25-main").textContent, "0,51 мкг/м³");
+  assert.equal(report.nodes.get("eco-cooling-main").textContent, "0,37 °C");
+  assert.match(report.nodes.get("eco-co2-main").textContent, /187/);
+  assert.equal(report.nodes.get("cost-first-year").textContent.replace(/\D/g, ""), "281800000");
+  assert.match(report.nodes.get("dec-unused-sub").textContent, /распределён полностью/);
+  plan.unused_trees = 100;
+  plan.allocation = {unused_reason: "territory_capacity"};
+  report.renderReportDom(plan, report.docMock);
+  assert.match(report.nodes.get("dec-unused-sub").textContent, /выбранной территории исчерпана/);
+  plan.allocation.unused_reason = "no_eligible_sites";
+  report.renderReportDom(plan, report.docMock);
+  assert.match(report.nodes.get("dec-unused-sub").textContent, /Нет доступных участков с данными/);
+  delete plan.allocation;
+  report.renderReportDom(plan, report.docMock);
+  assert.match(report.nodes.get("dec-unused-sub").textContent, /сохранённого плана с ограниченным/);
+});

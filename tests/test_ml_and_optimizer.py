@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 from app.ml.engine import FEATURES, MLEngine, training_data
-from app.ml.optimizer import SPECIES, ecological_effect, optimize
+from app.ml.optimizer import SPECIES, ecological_effect, optimize, select_sites
 from app.schemas.telemetry import OptimizeRequest
 from app.services.background import BackgroundService
 from app.core.config import Settings
@@ -102,7 +102,12 @@ def test_optimizer_budget_capacity_and_accounting(ml, zones, tmp_path, species, 
     result = optimize(request, zones, readings, bg)
     assert result["used_trees"] + result["unused_trees"] == budget
     assert sum(z["trees"] for z in result["zones"]) == result["used_trees"]
-    assert len(result["zones"]) <= (8 if district != "all" else 10)
+    eligible = [z for z in zones if district == "all" or z["district"] == district]
+    assert len(result["zones"]) <= len(eligible)
+    assert result["used_trees"] == min(budget, sum(z["planting_capacity"] for z in eligible))
+    if budget == 10000 and district == "all":
+        assert len(result["zones"]) > 10
+        assert result["unused_trees"] == 0
     assert len({z["id"] for z in result["zones"]}) == len(result["zones"])
     for zone in result["zones"]:
         assert 0 < zone["trees"] <= zone["planting_capacity"]
@@ -159,11 +164,71 @@ def test_summer_plan_uses_thermal_scenario_in_allocation_and_summary(zones):
     assert plan["summary"]["surface_temp_after"] < 38
 
 
+def test_large_budget_expands_priority_pool_and_accounts_for_every_site(zones):
+    readings = {z["id"]: {"pm25": 20 + i, "predicted_pm25": 20 + i, "predicted_esi": 40,
+                "air_temp_c": 28, "surface_temp_c": 38, "wind_speed": 1 + i % 3}
+                for i, z in enumerate(zones)}
+    request = OptimizeRequest(budget_trees=10000, horizon_years=30, thermal_scenario="summer_day",
+                              sapling_cost_kzt=12300, planting_cost_kzt=7900,
+                              annual_care_cost_kzt=2300, pilot_equipment_cost_kzt=400000,
+                              annual_platform_cost_kzt=850000)
+    initial, _, _ = select_sites(OptimizeRequest(budget_trees=1000, thermal_scenario="summer_day"),
+                                 zones, readings)
+    expanded, _, _ = select_sites(request, zones, readings)
+    assert len(initial) == 10
+    assert expanded[:10] == initial
+    assert sum(z["planting_capacity"] for z in expanded) >= 10000
+    assert sum(z["planting_capacity"] for z in expanded[:-1]) < 10000
+
+    plan = optimize(request, zones, readings, {})
+    assert plan["used_trees"] == 10000 and plan["unused_trees"] == 0
+    assert plan["allocation"] == {
+        "eligible_sites": 40, "eligible_capacity_trees": 16600,
+        "selected_sites": len(expanded),
+        "selected_capacity_trees": sum(z["planting_capacity"] for z in expanded),
+        "unused_reason": None,
+    }
+    planted = plan["zones"]
+    assert any(z["priority_inputs"]["selection_rank"] > 10 for z in planted)
+    area = sum(z["area_m2"] for z in planted)
+    for key in ("pm25_before", "pm25_after", "pm25_reduction", "surface_temp_before",
+                "surface_temp_after", "cooling_c"):
+        assert plan["summary"][key] == pytest.approx(sum(z[key] * z["area_m2"] for z in planted) / area)
+    assert plan["summary"]["co2_tons_year"] == pytest.approx(10000 * .85 * 22 / 1000)
+    assert plan["summary"]["population_covered"] == sum(z["population"] for z in planted)
+    assert sum(z["surviving_trees"] for z in planted) == pytest.approx(8500)
+    assert plan["costs"]["planting"] == 10000 * (12300 + 7900)
+    assert plan["costs"]["annual_care"] == 10000 * 2300
+    assert plan["costs"]["first_year_total"] == 10000 * (12300 + 7900 + 2300) + 400000 + 850000
+    assert plan["costs"]["horizon_total"] == 10000 * (12300 + 7900) + 400000 + 30 * (10000 * 2300 + 850000)
+
+
+def test_unallocated_budget_only_after_available_territory_is_full(zones):
+    readings = {z["id"]: {"pm25": 30, "predicted_pm25": 30, "predicted_esi": 40,
+                "air_temp_c": 28, "surface_temp_c": 38, "wind_speed": 2} for z in zones}
+    # An unavailable site's space cannot be silently used, nor can another district.
+    missing = next(z for z in zones if z["district"] == "yesil")
+    readings.pop(missing["id"])
+    req = OptimizeRequest(budget_trees=10000, target_district="yesil")
+    plan = optimize(req, zones, readings, {})
+    eligible = [z for z in zones if z["district"] == "yesil" and z["id"] in readings]
+    capacity = sum(z["planting_capacity"] for z in eligible)
+    assert plan["used_trees"] == capacity
+    assert plan["unused_trees"] == 10000 - capacity
+    assert {z["id"] for z in plan["zones"]} == {z["id"] for z in eligible}
+    assert all(z["trees"] == z["planting_capacity"] for z in plan["zones"])
+    assert plan["allocation"]["eligible_capacity_trees"] == capacity
+    assert plan["allocation"]["selected_capacity_trees"] == capacity
+    assert plan["allocation"]["unused_reason"] == "territory_capacity"
+
+
 def test_empty_optimizer_has_no_fabricated_population(zones):
     result = optimize(OptimizeRequest(), zones, {}, {})
     assert result["zones"] == []
     assert result["used_trees"] == 0 and result["unused_trees"] == 1000
     assert result["summary"]["population_covered"] == 0
+    assert result["allocation"]["unused_reason"] == "no_eligible_sites"
+    assert result["allocation"]["eligible_capacity_trees"] == 0
 
 
 def test_priority_explanation_preserves_inputs_and_baseline(zones):
